@@ -34,13 +34,12 @@ public class SearchPanel extends JPanel {
 
 //From, To, Two ways
         DatabaseHandler dbhand = new DatabaseHandler();
-        Connection conn = dbhand.getDbConnection();
         add(Box.createVerticalGlue());
         JPanel fromToP = new JPanel();
         fromToP.add(new JLabel("From:"));
-        JComboBox Countries_from=new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,""));
+        JComboBox Countries_from=new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,""));
         fromToP.add(Countries_from);
-        String[] cities= dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"");
+        String[] cities= dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"");
         JComboBox Cities_from=new JComboBox(cities);
         String WhereSt=Const.AIRPORTS_COUNTRY+"="+'\''+"Israel"+'\'';
         ActionListener al = new ActionListener() {
@@ -53,7 +52,12 @@ public class SearchPanel extends JPanel {
                 if (WselectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
                     WselectedCountry="";
                 }
-                String[] cities=dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,WselectedCountry);
+                String[] cities= new String[0];
+                try {
+                    cities = dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,WselectedCountry);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
                 System.out.println(Arrays.toString(cities));
                 //Cities_from.addItem("aaaa");
                 for (String i:cities) {
@@ -65,12 +69,12 @@ public class SearchPanel extends JPanel {
         String WselectedCountry = Const.AIRPORTS_COUNTRY+"="+'\''+Countries_from.getSelectedItem()+'\'';
         //
         fromToP.add(Cities_from);
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
         fromToP.add(new JLabel("To:"));
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,"")));
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"")));
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,"")));
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"")));
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
         JCheckBox twoWaysCB = new JCheckBox("Two ways ticket", true);
         fromToP.add(twoWaysCB);

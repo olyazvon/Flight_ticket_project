@@ -21,12 +21,12 @@ public class DatabaseHandler extends Configs{
 
     // ввыводит на экран, перечисленные поля таблицы,
     // если массив пустой, выводит всю таблицу
-    public void read_data(Connection conn, String table_name,String[] column_names) {
+    public void read_data(String table_name,String[] column_names) throws SQLException, ClassNotFoundException {
     System.out.println("Reading " + Arrays.toString(column_names) +"from "+ table_name);
     String columns="";
     if (column_names.length==0){
         columns="*";
-        column_names=describe_table(conn,table_name);
+        column_names=describe_table(getDbConnection(),table_name);
     }
     else {
         columns= column_names[0];
@@ -36,7 +36,7 @@ public class DatabaseHandler extends Configs{
     }
     String query = String.format("SELECT "+ columns +" FROM %s", table_name);
 
-    try (Statement statement = conn.createStatement();
+    try (Statement statement = getDbConnection().createStatement();
          ResultSet rs = statement.executeQuery(query)) {
 
         while (rs.next()) {
@@ -48,8 +48,10 @@ public class DatabaseHandler extends Configs{
         }
     } catch (SQLException e) {
         e.printStackTrace();
+    } catch (ClassNotFoundException e) {
+        throw new RuntimeException(e);
     }
-}
+    }
 
 ////ввыводит в строковый массив уникальные значения столбца
 //    public String[] read_distinct_column(Connection conn, String table_name,String column_name) {
@@ -76,8 +78,8 @@ public class DatabaseHandler extends Configs{
 //    }
 
     //ввыводит в строковый массив уникальные значения столбца c условием
-    public String[] read_distinct_column(Connection conn, String table_name,
-                                         String column_name,String Where) {
+    public String[] read_distinct_column(String table_name,
+                                         String column_name,String Where) throws ClassNotFoundException {
         System.out.println("Reading distinct " + column_name + " from " + table_name);
         String where_st="";
 
@@ -88,7 +90,7 @@ public class DatabaseHandler extends Configs{
 
         String st="";
         int i = 0;
-        try (Statement statement = conn.createStatement();
+        try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
 
             while (rs.next()) {
