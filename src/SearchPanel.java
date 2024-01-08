@@ -37,29 +37,26 @@ public class SearchPanel extends JPanel {
         add(Box.createVerticalGlue());
         JPanel fromToP = new JPanel();
         fromToP.add(new JLabel("From:"));
-        JComboBox Countries_from=new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,""));
+        JComboBox Countries_from=new JComboBox(dbhand.Allcountries());
         fromToP.add(Countries_from);
-        String[] cities= dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"");
+        String[] cities= dbhand.Cities("","");
         JComboBox Cities_from=new JComboBox(cities);
-        String WhereSt=Const.AIRPORTS_COUNTRY+"="+'\''+"Israel"+'\'';
         ActionListener al = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("A");
-                String WselectedCountry = Const.AIRPORTS_COUNTRY+"="+'\''+Countries_from.getSelectedItem()+'\'';
-                System.out.println(WselectedCountry);
+                String SelectedCountry = (String) Countries_from.getSelectedItem();
+                System.out.println(SelectedCountry);
                 Cities_from.removeAllItems();
-                if (WselectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
-                    WselectedCountry="";
+                if (SelectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
+                    SelectedCountry="";
                 }
                 String[] cities= new String[0];
                 try {
-                    cities = dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,WselectedCountry);
+                    cities =dbhand.Cities(SelectedCountry,"");
                 } catch (ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
                 System.out.println(Arrays.toString(cities));
-                //Cities_from.addItem("aaaa");
                 for (String i:cities) {
                     Cities_from.addItem(i);
                 }

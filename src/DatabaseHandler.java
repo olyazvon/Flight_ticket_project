@@ -135,4 +135,25 @@ public String[] describe_table(Connection conn, String table_name) {
     return new String[]{};
 }
 
+
+    //String[] Allcountries() - Массив стран без повторов
+    public String[]Allcountries() throws ClassNotFoundException {
+        String[] Countries=read_distinct_column(Const.AIRPORT_TABLE,Const.AIRPORTS_COUNTRY,"");
+        return Countries;
+    }
+    String[] Cities(String SelectedCountry,String ExludedCity) throws ClassNotFoundException {
+        String stExludedCity="";
+        String stSelectedCountry="";
+        if(!SelectedCountry.isEmpty()) {
+            stSelectedCountry = Const.AIRPORTS_COUNTRY + "= \'" + SelectedCountry + "\'";
+        }
+        if(!ExludedCity.isEmpty()){
+            stExludedCity=" AND "+Const.AIRPORTS_CITY+" Not like \'"+ExludedCity+"\'";
+        }
+        if (SelectedCountry.isEmpty() && (!ExludedCity.isEmpty())){
+            stExludedCity=Const.AIRPORTS_CITY+" Not like \'"+ExludedCity+"\'";        }
+     String[] Cities= read_distinct_column(Const.AIRPORT_TABLE,Const.AIRPORTS_CITY,
+                                        stSelectedCountry +stExludedCity);
+        return Cities;
+    }
 }
