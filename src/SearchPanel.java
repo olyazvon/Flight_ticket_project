@@ -41,32 +41,69 @@ public class SearchPanel extends JPanel {
         fromToP.add(Countries_from);
         String[] cities= dbhand.Cities("","");
         JComboBox Cities_from=new JComboBox(cities);
-        ActionListener al = new ActionListener() {
+//        ActionListener al = new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                String SelectedCountry = (String) Countries_from.getSelectedItem();
+//                Cities_from.removeAllItems();
+//                if (SelectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
+//                    SelectedCountry="";
+//                }
+//                String[] cities= new String[0];
+//                try {
+//                    cities =dbhand.Cities(SelectedCountry,"");
+//                } catch (ClassNotFoundException ex) {
+//                    throw new RuntimeException(ex);
+//                }
+//                System.out.println(Arrays.toString(cities));
+//                for (String i:cities) {
+//                    Cities_from.addItem(i);
+//                }
+//            }
+//        };
+//        Countries_from.addActionListener(al);
+        fromToP.add(Cities_from);
+        JComboBox IATA_from= new JComboBox(dbhand.IATAs("","","SVO"));
+        System.out.println(Arrays.toString(dbhand.IATAs("", "", "SVO")));
+        ActionListener alIATA_from = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 String SelectedCountry = (String) Countries_from.getSelectedItem();
-                System.out.println(SelectedCountry);
+                String SelectedCity = (String) Cities_from.getSelectedItem();
                 Cities_from.removeAllItems();
-                if (SelectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
-                    SelectedCountry="";
+                IATA_from.removeAllItems();
+                if (SelectedCountry.equals(Const.AIRPORTS_COUNTRY + "=\'Any country\'")) {
+                    SelectedCountry = "";
                 }
-                String[] cities= new String[0];
+                if (SelectedCity.equals(Const.AIRPORTS_COUNTRY + "=\'Any city\'")) {
+                    SelectedCity = "";}
+                String[]cities=new String[0];
                 try {
                     cities =dbhand.Cities(SelectedCountry,"");
                 } catch (ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
-                System.out.println(Arrays.toString(cities));
-                for (String i:cities) {
-                    Cities_from.addItem(i);
+                String[] IATAs = new String[0];
+                try {
+                    IATAs = dbhand.IATAs(SelectedCountry, dbhand.Cities(SelectedCountry,"")[0], "");
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
                 }
+
+                System.out.println(Arrays.toString(IATAs));
+                for (String i : cities) {
+                    Cities_from.addItem(i);}
+                for (String j : IATAs) {
+                        IATA_from.addItem(j);}
             }
         };
-        Countries_from.addActionListener(al);
-        String WselectedCountry = Const.AIRPORTS_COUNTRY+"="+'\''+Countries_from.getSelectedItem()+'\'';
-        //
+        Countries_from.addActionListener(alIATA_from);
+        //Cities_from.addActionListener(alIATA_from);
+        //IATA_from.addActionListener(alIATA_from);
         fromToP.add(Cities_from);
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
+        fromToP.add(IATA_from);
+
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
         fromToP.add(new JLabel("To:"));
         fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,"")));
