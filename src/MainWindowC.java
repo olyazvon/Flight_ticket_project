@@ -1,12 +1,13 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
+import java.sql.SQLException;
 
 
 public class MainWindowC extends JFrame {
     JPanel pages;
 
-    public MainWindowC() {
+    public MainWindowC() throws SQLException, ClassNotFoundException {
         super("Search");
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

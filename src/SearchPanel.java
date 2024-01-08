@@ -6,10 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Arrays;
 
 public class SearchPanel extends JPanel {
 
-    public SearchPanel() {
+    public SearchPanel() throws SQLException, ClassNotFoundException {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 //INTERFACE
@@ -30,22 +33,49 @@ public class SearchPanel extends JPanel {
         add(Box.createVerticalGlue());
 
 //From, To, Two ways
+        DatabaseHandler dbhand = new DatabaseHandler();
+        Connection conn = dbhand.getDbConnection();
         add(Box.createVerticalGlue());
         JPanel fromToP = new JPanel();
         fromToP.add(new JLabel("From:"));
-        fromToP.add(new JComboBox(new String[] {"Any country"}));
-        fromToP.add(new JComboBox(new String[] {"Any city"}));
-        fromToP.add(new JComboBox(new String[] {"Any airport"}));
+        JComboBox Countries_from=new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,""));
+        fromToP.add(Countries_from);
+        String[] cities= dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"");
+        JComboBox Cities_from=new JComboBox(cities);
+        String WhereSt=Const.AIRPORTS_COUNTRY+"="+'\''+"Israel"+'\'';
+        ActionListener al = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("A");
+                String WselectedCountry = Const.AIRPORTS_COUNTRY+"="+'\''+Countries_from.getSelectedItem()+'\'';
+                System.out.println(WselectedCountry);
+                Cities_from.removeAllItems();
+                if (WselectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
+                    WselectedCountry="";
+                }
+                String[] cities=dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,WselectedCountry);
+                System.out.println(Arrays.toString(cities));
+                //Cities_from.addItem("aaaa");
+                for (String i:cities) {
+                    Cities_from.addItem(i);
+                }
+            }
+        };
+        Countries_from.addActionListener(al);
+        String WselectedCountry = Const.AIRPORTS_COUNTRY+"="+'\''+Countries_from.getSelectedItem()+'\'';
+        //
+        fromToP.add(Cities_from);
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
         fromToP.add(new JLabel("To:"));
-        fromToP.add(new JComboBox(new String[] {"Any country"}));
-        fromToP.add(new JComboBox(new String[] {"Any city"}));
-        fromToP.add(new JComboBox(new String[] {"Any airport"}));
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,"")));
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"")));
+        fromToP.add(new JComboBox(dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
         JCheckBox twoWaysCB = new JCheckBox("Two ways ticket", true);
         fromToP.add(twoWaysCB);
         add(fromToP);
-        add(Box.createVerticalGlue());
+
 //Selection panels
 
         JPanel twoSelectors = new JPanel();
