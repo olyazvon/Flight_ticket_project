@@ -63,8 +63,8 @@ public class SearchPanel extends JPanel {
 //        };
 //        Countries_from.addActionListener(al);
         fromToP.add(Cities_from);
-        JComboBox IATA_from= new JComboBox(dbhand.IATAs("","","SVO"));
-        System.out.println(Arrays.toString(dbhand.IATAs("", "", "SVO")));
+        JComboBox IATA_from= new JComboBox(dbhand.IATAs("","",""));
+        System.out.println(Arrays.toString(dbhand.IATAs("", "", "")));
         ActionListener alIATA_from = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -138,7 +138,14 @@ public class DatabaseHandler extends Configs {
     String[] Cities(String SelectedCountry, String ExcludedCity) throws ClassNotFoundException {
         String stExludedCity = "";
         String stSelectedCountry = "";
-        if (!SelectedCountry.isEmpty()) {
+        if (SelectedCountry.equals("Any country")){
+            stSelectedCountry="";
+        }
+
+        if (!SelectedCountry.isEmpty() && (!SelectedCountry.equals("Any country"))) {
+            stSelectedCountry = Const.AIRPORTS_COUNTRY + "= \'" + SelectedCountry + "\'";
+        }
+        if (!SelectedCountry.isEmpty() && (!SelectedCountry.equals("Any country"))) {
             stSelectedCountry = Const.AIRPORTS_COUNTRY + "= \'" + SelectedCountry + "\'";
         }
         if (!ExcludedCity.isEmpty()) {
@@ -146,6 +153,10 @@ public class DatabaseHandler extends Configs {
         }
         if (SelectedCountry.isEmpty() && (!ExcludedCity.isEmpty())) {
             stExludedCity = Const.AIRPORTS_CITY + " Not like \'" + ExcludedCity + "\'";
+        }
+        if (SelectedCountry.isEmpty() && (ExcludedCity.isEmpty())) {
+            stExludedCity="";
+
         }
         String[] Cities = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
                 stSelectedCountry + stExludedCity);
@@ -155,16 +166,26 @@ public class DatabaseHandler extends Configs {
         String stExcludedIATA="";
         String stCountry="";
         String stCity="";
-        if(!selectedCountry.isEmpty()){
+        if (selectedCity.equals("Any city")){
+            stCity="";
+        }
+        if (selectedCountry.equals("Any country")){
+            stCountry="";
+        }
+        if(!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")){
             stCountry=Const.AIRPORTS_COUNTRY+"= \'"+selectedCountry+"\'";
         }
-        if(!selectedCity.isEmpty()){
+        if(selectedCountry.isEmpty()&&(!selectedCity.isEmpty()&& !selectedCity.equals("Any city"))){
+            stCity=Const.AIRPORTS_CITY+"= \'"+selectedCity+"\'";
+        }
+        if(!selectedCity.isEmpty()&& !selectedCity.equals("Any city")){
             stCity=" AND "+Const.AIRPORTS_CITY+"= \'"+selectedCity+"\'";
         }
+
         if (!ExcludedIATA.isEmpty()) {
             stExcludedIATA= " AND " + Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
         }
-        if (selectedCity.isEmpty() && selectedCountry.isEmpty()) {
+        if (selectedCity.isEmpty() && selectedCountry.isEmpty()&&(!ExcludedIATA.isEmpty())) {
             stExcludedIATA= Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
         }
 
