@@ -168,7 +168,7 @@ public class SearchPanel extends JPanel {
                 if (WselectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
                     WselectedCountry="";
                 }
-                String[] cities=dbhand.Cities(WselectedCountry, "");
+                String[] cities=dbhand.Cities((String)Countries_from.getSelectedItem(), "");
                 System.out.println(Arrays.toString(cities));
                 //Cities_from.addItem("aaaa");
                 for (String i:cities) {

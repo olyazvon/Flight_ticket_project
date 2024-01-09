@@ -135,11 +135,11 @@ public class DatabaseHandler extends Configs {
 
     //Массив без повторов городов для выбраной страны. Если страна не выбрана
     //или Any country, то все города
-    String[] Cities(String SelectedCountry, String ExcludedCity){
+    String[] Cities(String SelectedCountry, String ExcludedCity) {
         String stExludedCity = "";
         String stSelectedCountry = "";
-        if (SelectedCountry.equals("Any country")){
-            stSelectedCountry="";
+        if (SelectedCountry.equals("Any country")) {
+            stSelectedCountry = "";
         }
 
         if (!SelectedCountry.isEmpty() && (!SelectedCountry.equals("Any country"))) {
@@ -155,109 +155,81 @@ public class DatabaseHandler extends Configs {
             stExludedCity = Const.AIRPORTS_CITY + " Not like \'" + ExcludedCity + "\'";
         }
         if (SelectedCountry.isEmpty() && (ExcludedCity.isEmpty())) {
-            stExludedCity="";
+            stExludedCity = "";
 
         }
         String[] Cities = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
                 stSelectedCountry + stExludedCity);
         return Cities;
     }
+
     String[] IATAs(String selectedCountry, String selectedCity, String ExcludedIATA) throws ClassNotFoundException {
-        String stExcludedIATA="";
-        String stCountry="";
-        String stCity="";
-        if (selectedCity.equals("Any city")){
-            stCity="";
+        String stExcludedIATA = "";
+        String stCountry = "";
+        String stCity = "";
+        if (selectedCity.equals("Any city")) {
+            stCity = "";
         }
-        if (selectedCountry.equals("Any country")){
-            stCountry="";
+        if (selectedCountry.equals("Any country")) {
+            stCountry = "";
         }
-        if(!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")){
-            stCountry=Const.AIRPORTS_COUNTRY+"= \'"+selectedCountry+"\'";
+        if (!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")) {
+            stCountry = Const.AIRPORTS_COUNTRY + "= \'" + selectedCountry + "\'";
         }
-        if(selectedCountry.isEmpty()&&(!selectedCity.isEmpty()&& !selectedCity.equals("Any city"))){
-            stCity=Const.AIRPORTS_CITY+"= \'"+selectedCity+"\'";
+        if (selectedCountry.isEmpty() && (!selectedCity.isEmpty() && !selectedCity.equals("Any city"))) {
+            stCity = Const.AIRPORTS_CITY + "= \'" + selectedCity + "\'";
         }
-        if(!selectedCity.isEmpty()&& !selectedCity.equals("Any city")){
-            stCity=" AND "+Const.AIRPORTS_CITY+"= \'"+selectedCity+"\'";
+        if (!selectedCity.isEmpty() && !selectedCity.equals("Any city")) {
+            stCity = " AND " + Const.AIRPORTS_CITY + "= \'" + selectedCity + "\'";
         }
 
         if (!ExcludedIATA.isEmpty()) {
-            stExcludedIATA= " AND " + Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
+            stExcludedIATA = " AND " + Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
         }
-        if (selectedCity.isEmpty() && selectedCountry.isEmpty()&&(!ExcludedIATA.isEmpty())) {
-            stExcludedIATA= Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
+        if (selectedCity.isEmpty() && selectedCountry.isEmpty() && (!ExcludedIATA.isEmpty())) {
+            stExcludedIATA = Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
         }
 
 
         String[] IATAs = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,
-                (stCountry+ stCity + stExcludedIATA));
+                (stCountry + stCity + stExcludedIATA));
         return IATAs;
     }
 
-//    public void search_all_tickets() throws SQLException, ClassNotFoundException {
-//        String columns = "";
-//        ;
-//
-//        String query = String.format("SELECT " + columns + " FROM %s", table_name);
-//
-//        try (Statement statement = getDbConnection().createStatement();
-//             ResultSet rs = statement.executeQuery(query)) {
-//
-//            while (rs.next()) {
-//                for (int i = 0; i < column_names.length; i++) {
-//                    System.out.print(rs.getString(column_names[i]) + " ");
-//
-//                }
-//                System.out.println();
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
-
-
-
-
-
-
-    public void seats_left(String TicketClass)  {
-//
-//        String st = "";
-//        String q1=String.format("SELECT * from "+Const.SEAT_TABLE);
-//        try (Statement statement = getDbConnection().createStatement();
-//             ResultSet rs = statement.executeQuery(q1)) {
-//            System.out.println(getDbConnection().getClientInfo().isEmpty());
-//            System.out.println(q1);
-//            while (rs.next()) {
-//                System.out.println("khjkh");
-//                st += rs.getString("flight_id") + ";";
-//            }
-//            System.out.println(st);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-        String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID+", " +
-                "(count(" + Const.SEAT +") - count(" + Const.SEATS_BOUGHT + ")-count(" + Const.SEATS_BOOKED+")) AS seats_left_" + TicketClass +
-                " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'"+" GROUP BY "+Const.SEATS_FLIGHT_ID);
-                System.out.println(query);
+    public void search_all_tickets() {
+        String query = String.format("SELECT fl.*,s_economy.seats_left_economy,s_business.seats_left_business " +
+                " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" + seats_left("Business") + ") s_business,(" +
+                seats_left("Economy") + ") s_economy" +
+                " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." + Const.FLIGHTS_ID + "=s_business.flight_id  " +
+                "and (seats_left_business>0 OR seats_left_economy>0)");
+        System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
-        ResultSet rs = statement.executeQuery(query))
-                     {
-            //System.out.println(rs.getString(1));
+             ResultSet rs = statement.executeQuery(query)) {
             while (rs.next()) {
-                System.out.print(rs.getString(Const.SEATS_FLIGHT_ID)+"; ");
-                System.out.println(rs.getString("seats_left_"+TicketClass) + ";");
+                System.out.print(rs.getString(1)+ " ");
+                System.out.print(rs.getString(2) + " ");
+                System.out.print(rs.getString(3) + " ");
+                System.out.print(rs.getString(4) + " ");
+                System.out.print(rs.getString(5) + " ");
+                System.out.print(rs.getString(6) + " ");
+                System.out.print(rs.getString(7) + " ");
+                System.out.println(rs.getString(8) + " ");
             }
-
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    //возращает запрос свободных сидений по классу
+     public String seats_left(String TicketClass) {
+        String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID + ", " +
+                "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOUGHT + ")-count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
+                " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'" + " GROUP BY " + Const.SEATS_FLIGHT_ID);
+        System.out.println(query);
+        return(query);
     }
 
 }

@@ -8,8 +8,8 @@ public class Main {
         mainWindow.setVisible(true);
         DatabaseHandler dbhand= new DatabaseHandler();
         //Connection conn=dbhand.getDbConnection();
-        dbhand.seats_left("Economy");
-        System.out.println(Arrays.toString(dbhand.Cities("", "Tel Aviv")));
+        dbhand.search_all_tickets();
+        //System.out.println(Arrays.toString(dbhand.Cities("", "Tel Aviv")));
 //        System.out.println(Arrays.toString(dbhand.IATAs("Russia", "Moscow","")));
 //        System.out.println(Arrays.toString(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
     }
