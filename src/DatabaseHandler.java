@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Objects;
@@ -196,12 +197,29 @@ public class DatabaseHandler extends Configs {
         return IATAs;
     }
 
-    public void search_all_tickets() {
-        String query = String.format("SELECT fl.*,s_economy.seats_left_economy,s_business.seats_left_business " +
+
+    public void search_tickets(String iata_from, String iata_to, Data data_from) {
+        String query_all = String.format("SELECT fl.*,s_economy.seats_left_economy,s_business.seats_left_business " +
                 " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" + seats_left("Business") + ") s_business,(" +
                 seats_left("Economy") + ") s_economy" +
                 " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." + Const.FLIGHTS_ID + "=s_business.flight_id  " +
                 "and (seats_left_business>0 OR seats_left_economy>0)");
+        String from="";
+        if (iata_from.equals("Any iata")){from="";}
+        if(!iata_from.isEmpty()&&!(iata_from.equals("Any iata"))){
+            from=" AND "+ Const.FLIGHTS_FROM+"= '"+iata_from+"'";
+        }
+        String to="";
+        if (iata_to.equals("Any iata")){to="";}
+        if(!iata_to.isEmpty()&&!(iata_from.equals("Any iata"))){
+            to=" AND "+ Const.FLIGHTS_TO+"= '"+iata_to+"'";
+        }
+        String stDataFrom="";
+        if(data_from != null){
+            stDataFrom=" AND "+ Const.FLIGHTS_DEPARTURE+"= '"+stDataFrom+"'";
+        }
+
+        String query=query_all+from+to+stDataFrom;
         System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -213,7 +231,8 @@ public class DatabaseHandler extends Configs {
                 System.out.print(rs.getString(5) + " ");
                 System.out.print(rs.getString(6) + " ");
                 System.out.print(rs.getString(7) + " ");
-                System.out.println(rs.getString(8) + " ");
+                System.out.print(rs.getString(8) + " ");
+                System.out.println(rs.getString(9) + " ");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -222,6 +241,7 @@ public class DatabaseHandler extends Configs {
         }
 
     }
+
 
     //возращает запрос свободных сидений по классу
      public String seats_left(String TicketClass) {
