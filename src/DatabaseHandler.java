@@ -12,7 +12,7 @@ public class DatabaseHandler extends Configs {
                 dbPass + "@" + dbHost + ":" + dbPort + ":" + dbName;
         Class.forName("oracle.jdbc.OracleDriver");
         dbConnection = DriverManager.getConnection(connectionString, dbUser, dbPass);
-//        if (dbConnection != null) {
+//       if (dbConnection != null) {
 //            System.out.println("Connected!");
 //        }
         return dbConnection;
@@ -194,4 +194,70 @@ public class DatabaseHandler extends Configs {
                 (stCountry+ stCity + stExcludedIATA));
         return IATAs;
     }
+
+//    public void search_all_tickets() throws SQLException, ClassNotFoundException {
+//        String columns = "";
+//        ;
+//
+//        String query = String.format("SELECT " + columns + " FROM %s", table_name);
+//
+//        try (Statement statement = getDbConnection().createStatement();
+//             ResultSet rs = statement.executeQuery(query)) {
+//
+//            while (rs.next()) {
+//                for (int i = 0; i < column_names.length; i++) {
+//                    System.out.print(rs.getString(column_names[i]) + " ");
+//
+//                }
+//                System.out.println();
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+
+
+
+
+
+
+    public void seats_left(String TicketClass)  {
+//
+//        String st = "";
+//        String q1=String.format("SELECT * from "+Const.SEAT_TABLE);
+//        try (Statement statement = getDbConnection().createStatement();
+//             ResultSet rs = statement.executeQuery(q1)) {
+//            System.out.println(getDbConnection().getClientInfo().isEmpty());
+//            System.out.println(q1);
+//            while (rs.next()) {
+//                System.out.println("khjkh");
+//                st += rs.getString("flight_id") + ";";
+//            }
+//            System.out.println(st);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+        String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID+", " +
+                "(count(" + Const.SEAT +") - count(" + Const.SEATS_BOUGHT + ")-count(" + Const.SEATS_BOOKED+")) AS seats_left_" + TicketClass +
+                " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'"+" GROUP BY "+Const.SEATS_FLIGHT_ID);
+                System.out.println(query);
+        try (Statement statement = getDbConnection().createStatement();
+        ResultSet rs = statement.executeQuery(query))
+                     {
+            //System.out.println(rs.getString(1));
+            while (rs.next()) {
+                System.out.print(rs.getString(Const.SEATS_FLIGHT_ID)+"; ");
+                System.out.println(rs.getString("seats_left_"+TicketClass) + ";");
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

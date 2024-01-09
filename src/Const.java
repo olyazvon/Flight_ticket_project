@@ -18,8 +18,9 @@ public class Const {
     public static final String  BUYERS_PASSPORT="passport";
     public static final String  SEAT_TABLE="seats";
     public static final String  SEATS_FLIGHT_ID="flight_id";
-    public static final String  SEATS_BOOKED="boooked";
-    public static final String  SEATS_BUYED="buyed";
+    public static final String  SEAT="seat";
+    public static final String  SEATS_BOOKED="booked";
+    public static final String  SEATS_BOUGHT="buyed";
     public static final String  SEATS_class="TicketClass";
 
 
