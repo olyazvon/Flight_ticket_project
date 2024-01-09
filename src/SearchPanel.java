@@ -36,7 +36,6 @@ public class SearchPanel extends JPanel {
         add(Box.createVerticalGlue());
 
 //From, To, Two ways
-        DatabaseHandler dbhand = new DatabaseHandler();
         add(Box.createVerticalGlue());
         JPanel fromToP = new JPanel();
         fromToP.add(new JLabel("From:"));
@@ -44,6 +43,7 @@ public class SearchPanel extends JPanel {
         fromToP.add(Countries_from);
         String[] cities= dbhand.Cities("","");
         JComboBox Cities_from=new JComboBox(cities);
+        Cities_from.setPrototypeDisplayValue(longestString(cities));
 //        ActionListener al = new ActionListener() {
 //            @Override
 //            public void actionPerformed(ActionEvent e) {
@@ -82,11 +82,8 @@ public class SearchPanel extends JPanel {
                 if (SelectedCity.equals(Const.AIRPORTS_COUNTRY + "=\'Any city\'")) {
                     SelectedCity = "";}
                 String[]cities=new String[0];
-                try {
-                    cities =dbhand.Cities(SelectedCountry,"");
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
+                cities =dbhand.Cities(SelectedCountry,"");
+
                 String[] IATAs = new String[0];
                 try {
                     IATAs = dbhand.IATAs(SelectedCountry, dbhand.Cities(SelectedCountry,"")[0], "");
@@ -171,7 +168,7 @@ public class SearchPanel extends JPanel {
                 if (WselectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
                     WselectedCountry="";
                 }
-                String[] cities=dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,WselectedCountry);
+                String[] cities=dbhand.Cities(WselectedCountry, "");
                 System.out.println(Arrays.toString(cities));
                 //Cities_from.addItem("aaaa");
                 for (String i:cities) {

@@ -78,7 +78,7 @@ public class DatabaseHandler extends Configs {
 
     //ввыводит в строковый массив уникальные значения столбца c условием
     public String[] read_distinct_column(String table_name,
-                                         String column_name, String Where) throws ClassNotFoundException {
+                                         String column_name, String Where) {
         String where_st = "";
 
         if (!Where.isEmpty()) {
@@ -94,7 +94,7 @@ public class DatabaseHandler extends Configs {
             while (rs.next()) {
                 st += rs.getString(column_name) + ";";
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         String[] column = st.split(";");
@@ -135,7 +135,7 @@ public class DatabaseHandler extends Configs {
 
     //Массив без повторов городов для выбраной страны. Если страна не выбрана
     //или Any country, то все города
-    String[] Cities(String SelectedCountry, String ExcludedCity) throws ClassNotFoundException {
+    String[] Cities(String SelectedCountry, String ExcludedCity){
         String stExludedCity = "";
         String stSelectedCountry = "";
         if (SelectedCountry.equals("Any country")){
