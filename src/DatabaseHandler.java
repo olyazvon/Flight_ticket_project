@@ -162,7 +162,7 @@ public class DatabaseHandler extends Configs {
                 stSelectedCountry + stExludedCity);
         return Cities;
     }
-    String[] IATAs(String selectedCountry, String selectedCity, String ExcludedIATA) throws ClassNotFoundException {
+    String[] IATAs(String selectedCountry, String selectedCity, String ExcludedIATA) {
         String stExcludedIATA="";
         String stCountry="";
         String stCity="";
