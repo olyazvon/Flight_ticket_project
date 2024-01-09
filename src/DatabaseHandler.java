@@ -164,12 +164,12 @@ public class DatabaseHandler extends Configs {
         return Cities;
     }
 
-    String[] IATAs(String selectedCountry, String selectedCity, String ExcludedIATA) throws ClassNotFoundException {
-        String stExcludedIATA = "";
-        String stCountry = "";
-        String stCity = "";
-        if (selectedCity.equals("Any city")) {
-            stCity = "";
+    String[] IATAs(String selectedCountry, String selectedCity, String ExcludedIATA) {
+        String stExcludedIATA="";
+        String stCountry="";
+        String stCity="";
+        if (selectedCity.equals("Any city")){
+            stCity="";
         }
         if (selectedCountry.equals("Any country")) {
             stCountry = "";

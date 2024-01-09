@@ -44,65 +44,14 @@ public class SearchPanel extends JPanel {
         String[] cities= dbhand.Cities("","");
         JComboBox Cities_from=new JComboBox(cities);
         Cities_from.setPrototypeDisplayValue(longestString(cities));
-//        ActionListener al = new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                String SelectedCountry = (String) Countries_from.getSelectedItem();
-//                Cities_from.removeAllItems();
-//                if (SelectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
-//                    SelectedCountry="";
-//                }
-//                String[] cities= new String[0];
-//                try {
-//                    cities =dbhand.Cities(SelectedCountry,"");
-//                } catch (ClassNotFoundException ex) {
-//                    throw new RuntimeException(ex);
-//                }
-//                System.out.println(Arrays.toString(cities));
-//                for (String i:cities) {
-//                    Cities_from.addItem(i);
-//                }
-//            }
-//        };
-//        Countries_from.addActionListener(al);
         fromToP.add(Cities_from);
+
         JComboBox IATA_from= new JComboBox(dbhand.IATAs("","",""));
-        System.out.println(Arrays.toString(dbhand.IATAs("", "", "")));
-        ActionListener alIATA_from = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                String SelectedCountry = (String) Countries_from.getSelectedItem();
-                String SelectedCity = (String) Cities_from.getSelectedItem();
-                Cities_from.removeAllItems();
-                IATA_from.removeAllItems();
-                if (SelectedCountry.equals(Const.AIRPORTS_COUNTRY + "=\'Any country\'")) {
-                    SelectedCountry = "";
-                }
-                if (SelectedCity.equals(Const.AIRPORTS_COUNTRY + "=\'Any city\'")) {
-                    SelectedCity = "";}
-                String[]cities=new String[0];
-                cities =dbhand.Cities(SelectedCountry,"");
-
-                String[] IATAs = new String[0];
-                try {
-                    IATAs = dbhand.IATAs(SelectedCountry, dbhand.Cities(SelectedCountry,"")[0], "");
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                System.out.println(Arrays.toString(IATAs));
-                for (String i : cities) {
-                    Cities_from.addItem(i);}
-                for (String j : IATAs) {
-                        IATA_from.addItem(j);}
-            }
-        };
-        Countries_from.addActionListener(alIATA_from);
+        //System.out.println(Arrays.toString(dbhand.IATAs("", "", "")));
         //Cities_from.addActionListener(alIATA_from);
         //IATA_from.addActionListener(alIATA_from);
 
-        fromToP.add(Cities_from);
+        //fromToP.add(Cities_from);
         fromToP.add(IATA_from);
 
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -161,18 +110,36 @@ public class SearchPanel extends JPanel {
 
         Countries_from.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("A");
-                String WselectedCountry = Const.AIRPORTS_COUNTRY+"="+'\''+Countries_from.getSelectedItem()+'\'';
-                System.out.println(WselectedCountry);
-                Cities_from.removeAllItems();
-                if (WselectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
-                    WselectedCountry="";
-                }
                 String[] cities=dbhand.Cities((String)Countries_from.getSelectedItem(), "");
-                System.out.println(Arrays.toString(cities));
-                //Cities_from.addItem("aaaa");
+                Cities_from.removeAllItems();
                 for (String i:cities) {
                     Cities_from.addItem(i);
+                }
+
+                String SelectedCountry = (String) Countries_from.getSelectedItem();
+                String SelectedCity = (String) Cities_from.getSelectedItem();
+
+                String[] IATAs = dbhand.IATAs(SelectedCountry, SelectedCity, "");
+
+                IATA_from.removeAllItems();
+                for (String j : IATAs) {
+                    IATA_from.addItem(j);
+                }
+            }
+        });
+
+        Cities_from.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (Cities_from.hasFocus()) {
+                    String SelectedCountry = (String) Countries_from.getSelectedItem();
+                    String SelectedCity = (String) Cities_from.getSelectedItem();
+
+                    String[] IATAs = dbhand.IATAs(SelectedCountry, SelectedCity, "");
+
+                    IATA_from.removeAllItems();
+                    for (String j : IATAs) {
+                        IATA_from.addItem(j);
+                    }
                 }
             }
         });
