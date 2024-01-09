@@ -1,22 +1,14 @@
-import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
-import com.github.lgooddatepicker.components.TimePicker;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Arrays;
 
 public class SearchPanel extends JPanel {
 
-    public SearchPanel() throws SQLException, ClassNotFoundException {
+    public SearchPanel() throws ClassNotFoundException {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         DatabaseHandler dbhand = new DatabaseHandler();
-        Connection conn = dbhand.getDbConnection();
 
 //INTERFACE
 
@@ -36,32 +28,38 @@ public class SearchPanel extends JPanel {
         add(Box.createVerticalGlue());
 
 //From, To, Two ways
-        add(Box.createVerticalGlue());
         JPanel fromToP = new JPanel();
         fromToP.add(new JLabel("From:"));
-        JComboBox Countries_from=new JComboBox(dbhand.Allcountries());
+
+        JComboBox<String> Countries_from = new JComboBox<>(dbhand.Allcountries());
         fromToP.add(Countries_from);
-        String[] cities= dbhand.Cities("","");
-        JComboBox Cities_from=new JComboBox(cities);
+
+        String[] cities = dbhand.Cities("","");
+        JComboBox<String> Cities_from = new JComboBox<>(cities);
         Cities_from.setPrototypeDisplayValue(longestString(cities));
         fromToP.add(Cities_from);
 
-        JComboBox IATA_from= new JComboBox(dbhand.IATAs("","",""));
-        //System.out.println(Arrays.toString(dbhand.IATAs("", "", "")));
-        //Cities_from.addActionListener(alIATA_from);
-        //IATA_from.addActionListener(alIATA_from);
-
-        //fromToP.add(Cities_from);
+        JComboBox<String> IATA_from = new JComboBox<>(dbhand.IATAs("","",""));
         fromToP.add(IATA_from);
 
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
+
         fromToP.add(new JLabel("To:"));
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY,"")));
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,"")));
-        fromToP.add(new JComboBox(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
+        JComboBox<String> Countries_to = new JComboBox<>(dbhand.Allcountries());
+        fromToP.add(Countries_to);
+
+        JComboBox<String> Cities_to = new JComboBox<>(cities);
+        Cities_to.setPrototypeDisplayValue(longestString(cities));
+        fromToP.add(Cities_to);
+
+        JComboBox<String> IATA_to = new JComboBox<>(dbhand.IATAs("","",""));
+        fromToP.add(IATA_to);
+
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
+
         JCheckBox twoWaysCB = new JCheckBox("Two ways ticket", true);
         fromToP.add(twoWaysCB);
+
         add(fromToP);
 
 //Selection panels
@@ -110,36 +108,70 @@ public class SearchPanel extends JPanel {
 
         Countries_from.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String[] cities=dbhand.Cities((String)Countries_from.getSelectedItem(), "");
-                Cities_from.removeAllItems();
-                for (String i:cities) {
-                    Cities_from.addItem(i);
-                }
-
-                String SelectedCountry = (String) Countries_from.getSelectedItem();
-                String SelectedCity = (String) Cities_from.getSelectedItem();
-
-                String[] IATAs = dbhand.IATAs(SelectedCountry, SelectedCity, "");
-
-                IATA_from.removeAllItems();
-                for (String j : IATAs) {
-                    IATA_from.addItem(j);
-                }
+                updateCitiesBox(Countries_from, Cities_from,
+                        (String) Cities_to.getSelectedItem(), dbhand);
+                updateIATAbox(Countries_from, Cities_from, IATA_from,
+                        (String) Cities_to.getSelectedItem(), dbhand);
+                updateCitiesBox(Countries_to, Cities_to,
+                        (String) Cities_from.getSelectedItem(), dbhand);
             }
         });
 
         Cities_from.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (Cities_from.hasFocus()) {
-                    String SelectedCountry = (String) Countries_from.getSelectedItem();
-                    String SelectedCity = (String) Cities_from.getSelectedItem();
+                    updateIATAbox(Countries_from, Cities_from, IATA_from,
+                            (String) Cities_to.getSelectedItem(), dbhand);
+                    updateCitiesBox(Countries_to, Cities_to,
+                            (String) Cities_from.getSelectedItem(), dbhand);
+                }
+            }
+        });
 
-                    String[] IATAs = dbhand.IATAs(SelectedCountry, SelectedCity, "");
+        IATA_to.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (IATA_to.hasFocus()) {
+                    Cities_to.setSelectedItem(
+                            dbhand.cityByIATA((String) IATA_to.getSelectedItem()));
+                    updateIATAbox(Countries_from, Cities_from, IATA_from,
+                            (String) Cities_to.getSelectedItem(), dbhand);
+                    updateCitiesBox(Countries_from, Cities_from,
+                            dbhand.cityByIATA((String) IATA_to.getSelectedItem()), dbhand);
+                }
+            }
+        });
 
-                    IATA_from.removeAllItems();
-                    for (String j : IATAs) {
-                        IATA_from.addItem(j);
-                    }
+        Countries_to.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateCitiesBox(Countries_to, Cities_to,
+                        (String) Cities_from.getSelectedItem(), dbhand);
+                updateIATAbox(Countries_to, Cities_to, IATA_to,
+                        (String) Cities_from.getSelectedItem(), dbhand);
+                updateCitiesBox(Countries_from, Cities_from,
+                        (String) Cities_to.getSelectedItem(), dbhand);
+            }
+        });
+
+        Cities_to.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (Cities_to.hasFocus()) {
+                    updateIATAbox(Countries_to, Cities_to, IATA_to,
+                            (String) Cities_from.getSelectedItem(), dbhand);
+                    updateCitiesBox(Countries_from, Cities_from,
+                            (String) Cities_to.getSelectedItem(), dbhand);
+                }
+            }
+        });
+
+        IATA_from.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (IATA_from.hasFocus()) {
+                    Cities_from.setSelectedItem(
+                            dbhand.cityByIATA((String)IATA_from.getSelectedItem()));
+                    updateIATAbox(Countries_to, Cities_to, IATA_to,
+                            (String) Cities_from.getSelectedItem(), dbhand);
+                    updateCitiesBox(Countries_to, Cities_to,
+                            dbhand.cityByIATA((String) IATA_from.getSelectedItem()), dbhand);
                 }
             }
         });
@@ -154,5 +186,35 @@ public class SearchPanel extends JPanel {
             }
         }
         return tmp;
+    }
+
+    private void updateIATAbox(JComboBox<String> countries, JComboBox<String> cities,
+                               JComboBox<String> iatas, String cityToExclude,
+                               DatabaseHandler dbh) {
+
+        String SelectedCountry = (String) countries.getSelectedItem();
+        String SelectedCity = (String) cities.getSelectedItem();
+
+        Object selectedElement = iatas.getSelectedItem();
+
+        String[] IATAs = dbh.IATAs(SelectedCountry, SelectedCity, cityToExclude);
+
+        iatas.removeAllItems();
+        for (String j : IATAs) {
+            iatas.addItem(j);
+        }
+        iatas.setSelectedItem(selectedElement);
+    }
+
+    private void updateCitiesBox(JComboBox<String> countries, JComboBox<String> cities,
+                                 String cityToExclude, DatabaseHandler dbh) {
+        String[] citiesToShow = dbh.Cities(
+                (String) countries.getSelectedItem(), cityToExclude);
+        Object selectedElement = cities.getSelectedItem();
+        cities.removeAllItems();
+        for (String i:citiesToShow) {
+            cities.addItem(i);
+        }
+        cities.setSelectedItem(selectedElement);
     }
 }

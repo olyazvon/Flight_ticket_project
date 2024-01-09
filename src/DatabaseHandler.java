@@ -136,65 +136,52 @@ public class DatabaseHandler extends Configs {
 
     //Массив без повторов городов для выбраной страны. Если страна не выбрана
     //или Any country, то все города
-    String[] Cities(String SelectedCountry, String ExcludedCity) {
-        String stExludedCity = "";
-        String stSelectedCountry = "";
-        if (SelectedCountry.equals("Any country")) {
-            stSelectedCountry = "";
+    String[] Cities(String selectedCountry, String excludedCity) {
+        //if (excludedCity == null) return new String[] {};
+        String whereString = "";
+
+        if (!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")) {
+            whereString += Const.AIRPORTS_COUNTRY + "= \'" + selectedCountry + "\'";
+        }
+        if (!excludedCity.isEmpty() && !excludedCity.equals("Any city")) {
+            if (whereString != "") {
+                whereString += " AND ";
+            }
+            whereString += Const.AIRPORTS_CITY + " Not like \'" + excludedCity + "\'";
         }
 
-        if (!SelectedCountry.isEmpty() && (!SelectedCountry.equals("Any country"))) {
-            stSelectedCountry = Const.AIRPORTS_COUNTRY + "= \'" + SelectedCountry + "\'";
-        }
-        if (!SelectedCountry.isEmpty() && (!SelectedCountry.equals("Any country"))) {
-            stSelectedCountry = Const.AIRPORTS_COUNTRY + "= \'" + SelectedCountry + "\'";
-        }
-        if (!ExcludedCity.isEmpty()) {
-            stExludedCity = " AND " + Const.AIRPORTS_CITY + " Not like \'" + ExcludedCity + "\'";
-        }
-        if (SelectedCountry.isEmpty() && (!ExcludedCity.isEmpty())) {
-            stExludedCity = Const.AIRPORTS_CITY + " Not like \'" + ExcludedCity + "\'";
-        }
-        if (SelectedCountry.isEmpty() && (ExcludedCity.isEmpty())) {
-            stExludedCity = "";
-
-        }
         String[] Cities = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
-                stSelectedCountry + stExludedCity);
+                whereString);
         return Cities;
     }
 
-    String[] IATAs(String selectedCountry, String selectedCity, String ExcludedIATA) {
-        String stExcludedIATA="";
-        String stCountry="";
-        String stCity="";
-        if (selectedCity.equals("Any city")){
-            stCity="";
-        }
-        if (selectedCountry.equals("Any country")) {
-            stCountry = "";
-        }
+    String[] IATAs(String selectedCountry, String selectedCity, String excludedCity) {
+        String whereString = "";
+
         if (!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")) {
-            stCountry = Const.AIRPORTS_COUNTRY + "= \'" + selectedCountry + "\'";
-        }
-        if (selectedCountry.isEmpty() && (!selectedCity.isEmpty() && !selectedCity.equals("Any city"))) {
-            stCity = Const.AIRPORTS_CITY + "= \'" + selectedCity + "\'";
+            whereString += Const.AIRPORTS_COUNTRY + "= \'" + selectedCountry + "\'";
         }
         if (!selectedCity.isEmpty() && !selectedCity.equals("Any city")) {
-            stCity = " AND " + Const.AIRPORTS_CITY + "= \'" + selectedCity + "\'";
+            if (whereString != "") {
+                whereString += " AND ";
+            }
+            whereString += Const.AIRPORTS_CITY + "= \'" + selectedCity + "\'";
         }
-
-        if (!ExcludedIATA.isEmpty()) {
-            stExcludedIATA = " AND " + Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
+        if (!excludedCity.isEmpty() && !excludedCity.equals("Any iata")) {
+            if (whereString != "") {
+                whereString += " AND ";
+            }
+            whereString += Const.AIRPORTS_CITY + " Not like \'" + excludedCity + "\'";
         }
-        if (selectedCity.isEmpty() && selectedCountry.isEmpty() && (!ExcludedIATA.isEmpty())) {
-            stExcludedIATA = Const.AIRPORTS_ID + " Not like \'" + ExcludedIATA + "\'";
-        }
-
 
         String[] IATAs = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,
-                (stCountry + stCity + stExcludedIATA));
+                whereString);
         return IATAs;
+    }
+
+    String cityByIATA(String iata) {
+        return read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
+                (Const.AIRPORTS_ID+"=\'"+iata+"\'"))[1];
     }
 
 
