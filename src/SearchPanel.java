@@ -15,6 +15,9 @@ public class SearchPanel extends JPanel {
     public SearchPanel() throws SQLException, ClassNotFoundException {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+        DatabaseHandler dbhand = new DatabaseHandler();
+        Connection conn = dbhand.getDbConnection();
+
 //INTERFACE
 
 //Log In button
@@ -101,6 +104,7 @@ public class SearchPanel extends JPanel {
         Countries_from.addActionListener(alIATA_from);
         //Cities_from.addActionListener(alIATA_from);
         //IATA_from.addActionListener(alIATA_from);
+
         fromToP.add(Cities_from);
         fromToP.add(IATA_from);
 
@@ -157,5 +161,34 @@ public class SearchPanel extends JPanel {
                 );
             }
         });
+
+        Countries_from.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("A");
+                String WselectedCountry = Const.AIRPORTS_COUNTRY+"="+'\''+Countries_from.getSelectedItem()+'\'';
+                System.out.println(WselectedCountry);
+                Cities_from.removeAllItems();
+                if (WselectedCountry.equals(Const.AIRPORTS_COUNTRY+"=\'Any country\'")){
+                    WselectedCountry="";
+                }
+                String[] cities=dbhand.read_distinct_column(conn, Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,WselectedCountry);
+                System.out.println(Arrays.toString(cities));
+                //Cities_from.addItem("aaaa");
+                for (String i:cities) {
+                    Cities_from.addItem(i);
+                }
+            }
+        });
+
+    }
+
+    private String longestString(String[] input) {
+        String tmp = "";
+        for (String i : input) {
+            if (i.length() > tmp.length()) {
+                tmp = i;
+            }
+        }
+        return tmp;
     }
 }
