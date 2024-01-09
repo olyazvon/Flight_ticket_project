@@ -6,7 +6,7 @@ public class Const {
     public static final String  FLIGHT_TABLE="flights";
     public static final String  FLIGHTS_ID="flight_id";
     public static final String  FLIGHTS_FROM="airport_from";
-    public static final String  FLIGHTS_TO_="airport_to";
+    public static final String  FLIGHTS_TO="airport_to";
     public static final String  FLIGHTS_DEPARTURE="Departure";
     public static final String  FLIGHTS_ARRIVAL="Arrival";
     public static final String  FLIGHTS_PRICE_ECONOM="PriceEconom";
