@@ -67,8 +67,10 @@ public class SearchPanel extends JPanel {
         JPanel twoSelectors = new JPanel();
         twoSelectors.setLayout(new BoxLayout(twoSelectors, BoxLayout.X_AXIS));
         SelectPanel selectP1 = new SelectPanel("There:");
-        twoSelectors.add(selectP1);
         SelectPanel selectP2 = new SelectPanel("Back:");
+        selectP1.laterPanel = selectP2;
+        selectP2.earlierPanel = selectP1;
+        twoSelectors.add(selectP1);
         twoSelectors.add(selectP2);
         add(twoSelectors);
 
@@ -124,6 +126,8 @@ public class SearchPanel extends JPanel {
                             (String) Cities_to.getSelectedItem(), dbhand);
                     updateCitiesBox(Countries_to, Cities_to,
                             (String) Cities_from.getSelectedItem(), dbhand);
+                    updateIATAbox(Countries_to, Cities_to, IATA_to,
+                            (String) Cities_from.getSelectedItem(), dbhand);
                 }
             }
         });
@@ -137,6 +141,8 @@ public class SearchPanel extends JPanel {
                             (String) Cities_to.getSelectedItem(), dbhand);
                     updateCitiesBox(Countries_from, Cities_from,
                             dbhand.cityByIATA((String) IATA_to.getSelectedItem()), dbhand);
+                    selectP1.iataTo = (String) IATA_to.getSelectedItem();
+                    selectP2.iataFrom = (String) IATA_to.getSelectedItem();
                 }
             }
         });
@@ -159,6 +165,8 @@ public class SearchPanel extends JPanel {
                             (String) Cities_from.getSelectedItem(), dbhand);
                     updateCitiesBox(Countries_from, Cities_from,
                             (String) Cities_to.getSelectedItem(), dbhand);
+                    updateIATAbox(Countries_from, Cities_from, IATA_from,
+                            (String) Cities_to.getSelectedItem(), dbhand);
                 }
             }
         });
@@ -172,6 +180,8 @@ public class SearchPanel extends JPanel {
                             (String) Cities_from.getSelectedItem(), dbhand);
                     updateCitiesBox(Countries_to, Cities_to,
                             dbhand.cityByIATA((String) IATA_from.getSelectedItem()), dbhand);
+                    selectP1.iataFrom = (String) IATA_to.getSelectedItem();
+                    selectP2.iataTo = (String) IATA_to.getSelectedItem();
                 }
             }
         });

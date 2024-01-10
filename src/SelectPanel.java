@@ -1,6 +1,10 @@
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
+
+import java.time.LocalDate;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,13 +14,20 @@ import java.awt.event.ActionListener;
 public class SelectPanel extends JPanel {
     Dimension normalSize;
     int growShrinkStep = 25;
+    String iataFrom = "Any iata";
+    String iataTo = "Any iata";
+    LocalDate minDate = LocalDate.now();
+    LocalDate maxDate = LocalDate.MAX;
+    DatePickerSettings dateSettings = new DatePickerSettings();
+    SelectPanel earlierPanel;
+    SelectPanel laterPanel;
+
     public SelectPanel(String name) {
         GroupLayout lo = new GroupLayout(this);
         setLayout(lo);
         lo.setAutoCreateGaps(true);
         lo.setAutoCreateContainerGaps(true);
 
-        DatePickerSettings dateSettings = new DatePickerSettings();
         dateSettings.setFormatForDatesCommonEra("dd.MM.yyyy");
         dateSettings.setFormatForDatesBeforeCommonEra("dd.MM.uuuu");
 
@@ -34,10 +45,14 @@ public class SelectPanel extends JPanel {
 
         JLabel nameL = new JLabel(name);
         nameL.setMinimumSize(new Dimension(0,0));
+
         DatePicker dateP = new DatePicker(dateSettings);
+        dateSettings.setDateRangeLimits(minDate, maxDate);
         dateP.setMinimumSize(new Dimension(0,0));
+
         TimePicker timeP = new TimePicker();
         timeP.setMinimumSize(new Dimension(0,0));
+
         JButton searchB = new JButton("Search");
         searchB.setMinimumSize(new Dimension(0,0));
 
@@ -87,7 +102,26 @@ public class SelectPanel extends JPanel {
                         GroupLayout.DEFAULT_SIZE,
                         GroupLayout.PREFERRED_SIZE)
         );
+
+        dateP.addDateChangeListener(new DateChangeListener() {
+            @Override
+            public void dateChanged(DateChangeEvent dateChangeEvent) {
+                if (earlierPanel != null) earlierPanel.setMaxDate(dateP.getDate());
+                if (laterPanel != null) laterPanel.setMinDate(dateP.getDate());
+            }
+        });
     }
+
+    public void setMaxDate(LocalDate newMax) {
+        maxDate = newMax;
+        dateSettings.setDateRangeLimits(dateSettings.getDateRangeLimits().firstDate, newMax);
+    }
+
+    public void setMinDate(LocalDate newMin) {
+        maxDate = newMin;
+        dateSettings.setDateRangeLimits(newMin, dateSettings.getDateRangeLimits().lastDate);
+    }
+
 
     public void disappear() {
         if (normalSize == null) {
