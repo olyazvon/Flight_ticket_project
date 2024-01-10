@@ -2,6 +2,7 @@ import com.privatejgoodies.common.base.Objects;
 
 import javax.xml.crypto.Data;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -123,7 +124,7 @@ public class DatabaseHandler extends Configs {
 
 
     //String[] Allcountries() - Массив стран без повторов
-    public String[] Allcountries() throws ClassNotFoundException {
+    public String[] Allcountries() {
         String[] Countries = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY, "");
         return Countries;
     }
@@ -180,45 +181,45 @@ public class DatabaseHandler extends Configs {
 
 
 
-        public String q_search_flights (String iata_from, String iata_to, Data data_from) {
-        String query_all = String.format("SELECT fl.*,s_economy.seats_left_economy,s_business.seats_left_business " +
-                " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" + seats_left("Business") + ") s_business,(" +
+    public String q_search_flights (String iata_from, String iata_to, LocalDate data_from) {
+        String query = String.format(
+                "SELECT fl.flight_id, airport_from, airport_to, to_char(departure, 'dd.mm.yy hh:mi'), to_char(arrival, 'dd.mm.yy hh:mi'), priceeconom, pricebusiness,s_economy.seats_left_economy,s_business.seats_left_business " +
+                " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
+                seats_left("Business") + ") s_business,(" +
                 seats_left("Economy") + ") s_economy" +
-                " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." + Const.FLIGHTS_ID + "=s_business.flight_id  " +
+                " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
+                Const.FLIGHTS_ID + "=s_business.flight_id  " +
                 "and (seats_left_business>0 OR seats_left_economy>0)");
-        String from = "";
-        if (iata_from.equals("Any iata")) {
-            from = "";
+
+        if (!iata_from.equals("Any iata") && !iata_from.isEmpty()) {
+            query += " AND " + Const.FLIGHTS_FROM + "= '" + iata_from + "'";
         }
-        if (!iata_from.isEmpty() && !(iata_from.equals("Any iata"))) {
-            from = " AND " + Const.FLIGHTS_FROM + "= '" + iata_from + "'";
+
+        if (!iata_to.equals("Any iata") && !iata_to.isEmpty()) {
+            query += " AND " + Const.FLIGHTS_TO + "= '" + iata_to + "'";
         }
-        String to = "";
-        if (iata_to.equals("Any iata")) {
-            to = "";
-        }
-        if (!iata_to.isEmpty() && !(iata_from.equals("Any iata"))) {
-            to = " AND " + Const.FLIGHTS_TO + "= '" + iata_to + "'";
-        }
-        String stDataFrom = "";
+
         if (data_from != null) {
-            stDataFrom = " AND " + Const.FLIGHTS_DEPARTURE + "= '" + stDataFrom + "'";
+            query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
+                    + data_from.toString() + "', 'yyyy-mm-dd')";
         }
-        String query = query_all + from + to + stDataFrom;
+
         System.out.println(query);
         return query;
 
     }
-    public ArrayList[] search_flights_print(String query) {
+    public ArrayList[] search_flights(String query) {
         try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)){
-            System.out.println(query);
+            ResultSet rs = statement.executeQuery(query)){
             int columns = rs.getMetaData().getColumnCount();
             System.out.println(columns);
             ArrayList[] searchResult = new ArrayList[columns];
+            for (int i = 0; i < columns; i++) {
+                searchResult[i] = new ArrayList();
+            };
             while (rs.next()) {
                 for (int i = 1; i <= columns; i++) {
-                    searchResult[i].add(rs.getString(i));
+                    searchResult[i-1].add(rs.getString(i));
                 }
             }
             return searchResult;

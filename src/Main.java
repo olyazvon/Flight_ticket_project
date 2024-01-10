@@ -7,6 +7,7 @@ public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         MainWindowC mainWindow = new MainWindowC();
         mainWindow.setVisible(true);
-       // DatabaseHandler dbhand= new DatabaseHandler();
+        // DatabaseHandler dbhand= new DatabaseHandler();
+
     }
 }
