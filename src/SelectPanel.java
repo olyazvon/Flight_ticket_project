@@ -21,6 +21,7 @@ public class SelectPanel extends JPanel {
     DatePickerSettings dateSettings = new DatePickerSettings();
     SelectPanel earlierPanel;
     SelectPanel laterPanel;
+    DatePicker dateP;
 
     public SelectPanel(String name) {
         GroupLayout lo = new GroupLayout(this);
@@ -46,7 +47,7 @@ public class SelectPanel extends JPanel {
         JLabel nameL = new JLabel(name);
         nameL.setMinimumSize(new Dimension(0,0));
 
-        DatePicker dateP = new DatePicker(dateSettings);
+        dateP = new DatePicker(dateSettings);
         dateSettings.setDateRangeLimits(minDate, maxDate);
         dateP.setMinimumSize(new Dimension(0,0));
 
@@ -118,10 +119,9 @@ public class SelectPanel extends JPanel {
     }
 
     public void setMinDate(LocalDate newMin) {
-        maxDate = newMin;
+        minDate = newMin;
         dateSettings.setDateRangeLimits(newMin, dateSettings.getDateRangeLimits().lastDate);
     }
-
 
     public void disappear() {
         if (normalSize == null) {
@@ -141,6 +141,8 @@ public class SelectPanel extends JPanel {
                 if (stepsToDisappear <= 0) {
                     timer.stop();
                     System.out.println("stop");
+                    dateP.setDate(null);
+                    earlierPanel.setMaxDate(LocalDate.MAX);
                 }
                 //repaint();
                 revalidate();
