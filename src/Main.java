@@ -1,4 +1,5 @@
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -6,11 +7,6 @@ public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         MainWindowC mainWindow = new MainWindowC();
         mainWindow.setVisible(true);
-        DatabaseHandler dbhand= new DatabaseHandler();
-        //Connection conn=dbhand.getDbConnection();
-        dbhand.search_tickets("SVO","TLV",null);
-        System.out.println(Arrays.toString(dbhand.Cities("", "")));
-//        System.out.println(Arrays.toString(dbhand.IATAs("Russia", "Moscow","")));
-//        System.out.println(Arrays.toString(dbhand.read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,"")));
+       // DatabaseHandler dbhand= new DatabaseHandler();
     }
 }
