@@ -265,14 +265,21 @@ public class DatabaseHandler extends Configs {
     }
 
     public ArrayList<Double> prices_for_flight(String flight){
-        String query ="SELECT "+Const.SEAT_TABLE+"."+Const.SEATS_FLIGHT_ID+","+Const.SEAT+" ,"+
-                "Case "+Const.SEATS_class+" WHEN 'Economy' THEN "+Const.FLIGHTS_PRICE_ECONOM+
-                " ELSE "+Const.FLIGHTS_PRICE_BUSINESS+" END price FROM "+Const.SEAT_TABLE+","+
-                Const.FLIGHT_TABLE+" WHERE "+Const.SEAT_TABLE+"."+Const.SEATS_FLIGHT_ID+" = "+
-                Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+
-                " AND "+Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+" = '"+flight+"'" +
-                " ORDER BY LENGTH(" + Const.SEAT + "), " + Const.SEAT;
-        ArrayList arList= new ArrayList<>();
+        String query = String.format(
+                "SELECT %1$s.%2$s, %3$s, " +
+                "CASE %4$s WHEN 'Economy' THEN %5$s ELSE %6$s END price " +
+                "FROM %7$s, %8$s " +
+                "WHERE %9$s.%10$s = %11$s.%12$s " +
+                "AND %13$s.%14$s = '%15$s' " +
+                "ORDER BY LENGTH(%16$s), %17$s",
+                Const.SEAT_TABLE, Const.SEATS_FLIGHT_ID, Const.SEAT,
+                Const.SEATS_class, Const.FLIGHTS_PRICE_ECONOM, Const.FLIGHTS_PRICE_BUSINESS,
+                Const.SEAT_TABLE, Const.FLIGHT_TABLE,
+                Const.SEAT_TABLE, Const.SEATS_FLIGHT_ID, Const.FLIGHT_TABLE, Const.FLIGHTS_ID,
+                Const.FLIGHT_TABLE, Const.FLIGHTS_ID, flight,
+                Const.SEAT, Const.SEAT);
+
+        ArrayList<Double> arList = new ArrayList<>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             while (rs.next()) {
@@ -284,21 +291,22 @@ public class DatabaseHandler extends Configs {
         return arList;
 
     }
-    public ArrayList<Boolean>occupied(String flight){
-        String query= "Select (Case When "+ Const.SEATS_BOOKED+" is null then 0 Else 1" +
-                "End + Case When "+Const.SEATS_BOUGHT+
-                " is null then 0  Else 1 End )oc from " +
-                Const.SEAT_TABLE+" WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'"+
-                "ORDER BY LENGTH(" + Const.SEAT + "), " + Const.SEAT;
-        //System.out.println(query);
-        ArrayList arList= new ArrayList<>();
+    public ArrayList<Boolean> occupied(String flight){
+        String query = String.format(
+                "SELECT (CASE WHEN %1$s IS NULL AND %2$s IS NULL THEN 0 ELSE 1 END) oc " +
+                "FROM %3$s " +
+                "WHERE %4$s = '%5$s' " +
+                "ORDER BY LENGTH(%6$s), %7$s",
+                Const.SEATS_BOOKED,
+                Const.SEATS_BOUGHT,
+                Const.SEAT_TABLE,
+                Const.FLIGHTS_ID, flight,
+                Const.SEAT, Const.SEAT);
+        ArrayList<Boolean> arList = new ArrayList<>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             while (rs.next()) {
-                if (rs.getString("oc").equals("0")) {
-                    arList.add(false);
-                }
-                else { arList.add(true);}
+                arList.add(rs.getBoolean("oc"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -307,10 +315,13 @@ public class DatabaseHandler extends Configs {
     }
 
     public String qFromTo(String flight){
-        String query="SELECT "+ Const.FLIGHTS_FROM +", "+Const.FLIGHTS_TO+
-                " FROM "+Const.FLIGHT_TABLE+
-                " WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'";
-        //System.out.println(query);
+        String query = String.format(
+                "SELECT %1$s, %2$s " +
+                "FROM %3$s " +
+                "WHERE %4$s = '%5$s'",
+                Const.FLIGHTS_FROM, Const.FLIGHTS_TO,
+                Const.FLIGHT_TABLE,
+                Const.FLIGHTS_ID, flight);
         String result = "";
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -322,8 +333,5 @@ public class DatabaseHandler extends Configs {
         }
         return result;
     }
-
-
-
 
 }
