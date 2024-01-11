@@ -20,7 +20,7 @@ public class Const {
     public static final String  SEATS_FLIGHT_ID="flight_id";
     public static final String  SEAT="seat";
     public static final String  SEATS_BOOKED="booked";
-    public static final String  SEATS_BOUGHT="buyed";
+    public static final String  SEATS_BOUGHT="bought";
     public static final String  SEATS_class="TicketClass";
 
 
