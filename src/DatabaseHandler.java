@@ -82,7 +82,6 @@ public class DatabaseHandler extends Configs {
             where_st = String.format(" WHERE " + Where);
         }
         String query = String.format("SELECT DISTINCT " + column_name + " FROM %s", table_name + where_st);
-        System.out.println(query);
         String st = "";
         int i = 0;
         try (Statement statement = getDbConnection().createStatement();
@@ -204,8 +203,6 @@ public class DatabaseHandler extends Configs {
             query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
                     + data_from.toString() + "', 'yyyy-mm-dd')";
         }
-
-        System.out.println(query);
         return query;
 
     }
@@ -213,7 +210,6 @@ public class DatabaseHandler extends Configs {
         try (Statement statement = getDbConnection().createStatement();
             ResultSet rs = statement.executeQuery(query)){
             int columns = rs.getMetaData().getColumnCount();
-            System.out.println(columns);
             ArrayList[] searchResult = new ArrayList[columns];
             for (int i = 0; i < columns; i++) {
                 searchResult[i] = new ArrayList();
@@ -235,7 +231,6 @@ public class DatabaseHandler extends Configs {
         String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID + ", " +
                 "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOUGHT + ")-count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
                 " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'" + " GROUP BY " + Const.SEATS_FLIGHT_ID);
-        System.out.println(query);
         return(query);
     }
     //Seat Panel functions
@@ -276,7 +271,6 @@ public class DatabaseHandler extends Configs {
                 Const.FLIGHT_TABLE+" WHERE "+Const.SEAT_TABLE+"."+Const.SEATS_FLIGHT_ID+" = "+
                 Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+
                 " AND "+Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+" = '"+flight+"'"+ " ORDER BY "+Const.SEAT;
-        System.out.println(query);
         ArrayList arList= new ArrayList<>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
