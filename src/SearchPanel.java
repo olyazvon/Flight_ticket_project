@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class SearchPanel extends JPanel {
 
-    public SearchPanel() throws ClassNotFoundException {
+    public SearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         DatabaseHandler dbhand = new DatabaseHandler();
@@ -180,8 +180,8 @@ public class SearchPanel extends JPanel {
                             (String) Cities_from.getSelectedItem(), dbhand);
                     updateCitiesBox(Countries_to, Cities_to,
                             dbhand.cityByIATA((String) IATA_from.getSelectedItem()), dbhand);
-                    selectP1.iataFrom = (String) IATA_to.getSelectedItem();
-                    selectP2.iataTo = (String) IATA_to.getSelectedItem();
+                    selectP1.iataFrom = (String) IATA_from.getSelectedItem();
+                    selectP2.iataTo = (String) IATA_from.getSelectedItem();
                 }
             }
         });
