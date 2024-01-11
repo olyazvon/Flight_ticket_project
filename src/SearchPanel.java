@@ -103,7 +103,8 @@ public class SearchPanel extends JPanel {
         proceedB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 ((MainWindowC)SwingUtilities.getWindowAncestor(proceedB)).proceedToSeats(
-                        "123", twoWaysCB.isSelected() ? "321" : ""
+                        selectP1.getFlight(),
+                        twoWaysCB.isSelected() ? selectP2.getFlight() : ""
                 );
             }
         });

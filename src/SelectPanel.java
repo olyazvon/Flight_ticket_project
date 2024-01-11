@@ -26,6 +26,7 @@ public class SelectPanel extends JPanel {
     SelectPanel earlierPanel;
     SelectPanel laterPanel;
     DatePicker dateP;
+    JTable table;
 
     public SelectPanel(String name) {
         DatabaseHandler dbhand = new DatabaseHandler();
@@ -37,7 +38,7 @@ public class SelectPanel extends JPanel {
         dateSettings.setFormatForDatesCommonEra("dd.MM.yyyy");
         dateSettings.setFormatForDatesBeforeCommonEra("dd.MM.uuuu");
         FlightTableModel tabMod = new FlightTableModel(dbhand.search_flights(dbhand.q_search_flights("","",null)));
-        JTable table = new JTable(tabMod);
+        table = new JTable(tabMod);
         //table.setDefaultEditor(Object.class, null);
         //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setRowHeight(30);
@@ -259,5 +260,9 @@ public class SelectPanel extends JPanel {
         public String getColumnName(int columnIndex) {
             return columnNames[columnIndex];
         }
+    }
+
+    public String getFlight() {
+        return (String) table.getValueAt(table.getSelectedRow(),0);
     }
 }

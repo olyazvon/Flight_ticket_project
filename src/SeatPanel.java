@@ -8,8 +8,11 @@ import java.util.Comparator;
 import java.util.Objects;
 
 public class SeatPanel extends JPanel {
+
+    DatabaseHandler dbhand;
     public SeatPanel(String flightThere, String flightBack) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        dbhand = new DatabaseHandler();
 
 //INTERFACE
         add(Box.createRigidArea(new Dimension(0, 15)));
@@ -141,45 +144,45 @@ public class SeatPanel extends JPanel {
     }
 
     private class SeatMap extends JPanel {
-        public SeatMap(String[] seats, double[] prices, boolean[] occupied, String flight, Accountant total) {
+        public SeatMap(ArrayList<String> seats, ArrayList<Double> prices, ArrayList<Boolean> occupied, String flight, Accountant total) {
             super();
             setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-            if (seats.length < 100) {
+            if (seats.size() < 100) {
                 //2+2
-                setLayout(new GridLayout(seats.length/4, 5, 4, 4));
-                for (int i = 0; i < seats.length; i++) {
+                setLayout(new GridLayout(seats.size()/4, 5, 4, 4));
+                for (int i = 0; i < seats.size(); i++) {
                     if ((i - 2) % 4 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats[i], prices[i], occupied[i], flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
                 }
-            } else if (seats.length < 200) {
+            } else if (seats.size() < 200) {
                 //3+3
-                setLayout(new GridLayout(seats.length/6, 7, 5, 5));
-                for (int i = 0; i < seats.length; i++) {
+                setLayout(new GridLayout(seats.size()/6, 7, 5, 5));
+                for (int i = 0; i < seats.size(); i++) {
                     if ((i - 3) % 6 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats[i], prices[i], occupied[i], flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
                 }
-            } else if (seats.length < 300) {
+            } else if (seats.size() < 300) {
                 //2+4+2
-                setLayout(new GridLayout(seats.length/8, 10, 5, 5));
-                for (int i = 0; i < seats.length; i++) {
+                setLayout(new GridLayout(seats.size()/8, 10, 5, 5));
+                for (int i = 0; i < seats.size(); i++) {
                     if ((i - 2) % 8 == 0 || (i - 6) % 8 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats[i], prices[i], occupied[i], flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
                 }
             } else {
                 //3+3+3
-                setLayout(new GridLayout(seats.length/9, 11, 5, 5));
-                for (int i = 0; i < seats.length; i++) {
+                setLayout(new GridLayout(seats.size()/9, 11, 5, 5));
+                for (int i = 0; i < seats.size(); i++) {
                     if ((i - 3) % 9 == 0 || (i - 6) % 9 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats[i], prices[i], occupied[i], flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
                 }
             }
         }
@@ -192,14 +195,14 @@ public class SeatPanel extends JPanel {
 
             super();
             this.seatMap = new SeatMap(
-                    qSeats(flight),
-                    qPrices(flight),
-                    qOccupied(flight),
+                    dbhand.read_seats_for_flight(flight),
+                    dbhand.prices_for_flight(flight),
+                    dbhand.occupied(flight),
                     flight,
                     total);
             setViewportView(seatMap);
 
-            JLabel fromToL = new JLabel(qFromTo(flight));
+            JLabel fromToL = new JLabel(dbhand.qFromTo(flight));
             fromToL.setHorizontalAlignment(SwingConstants.CENTER);
             fromToL.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             setColumnHeaderView(fromToL);

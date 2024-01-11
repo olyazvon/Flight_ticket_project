@@ -284,9 +284,9 @@ public class DatabaseHandler extends Configs {
 
     }
     public ArrayList<Boolean>occupied(String flight){
-        String query= "Select (Case When "+ Const.SEATS_BOOKED+" is null then 0  Else "+
-                Const.SEATS_BOOKED+" End + Case When "+Const.SEATS_BOUGHT+
-                " is null then 0  Else "+Const.SEATS_BOUGHT+" End )oc from " +
+        String query= "Select (Case When "+ Const.SEATS_BOOKED+" is null then 0 Else 1" +
+                "End + Case When "+Const.SEATS_BOUGHT+
+                " is null then 0  Else 1 End )oc from " +
                 Const.SEAT_TABLE+" WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'";
         //System.out.println(query);
         ArrayList arList= new ArrayList<>();
@@ -304,21 +304,21 @@ public class DatabaseHandler extends Configs {
         return arList;
     }
 
-    public ArrayList<String> qFromTo(String flight){
-        String query="SELECT "+ Const.FLIGHTS_FROM+"||' - '||"+Const.FLIGHTS_TO+" fromto"+
+    public String qFromTo(String flight){
+        String query="SELECT "+ Const.FLIGHTS_FROM +", "+Const.FLIGHTS_TO+
                 " FROM "+Const.FLIGHT_TABLE+
                 " WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'";
         //System.out.println(query);
-        ArrayList arList= new ArrayList<>();
+        String result = "";
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
-            while (rs.next()) {
-                arList.add(rs.getString("fromto") );
-            }
+            rs.next();
+            result = rs.getString(1);
+            result += "- " + rs.getString(2);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return arList;
+        return result;
     }
 
 
