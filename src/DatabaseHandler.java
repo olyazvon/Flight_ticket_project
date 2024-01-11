@@ -287,7 +287,8 @@ public class DatabaseHandler extends Configs {
         String query= "Select (Case When "+ Const.SEATS_BOOKED+" is null then 0  Else "+
                 Const.SEATS_BOOKED+" End + Case When "+Const.SEATS_BOUGHT+
                 " is null then 0  Else "+Const.SEATS_BOUGHT+" End )oc from " +
-                Const.SEAT_TABLE;
+                Const.SEAT_TABLE+" WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'";
+        //System.out.println(query);
         ArrayList arList= new ArrayList<>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -302,5 +303,25 @@ public class DatabaseHandler extends Configs {
         }
         return arList;
     }
+
+    public ArrayList<String> qFromTo(String flight){
+        String query="SELECT "+ Const.FLIGHTS_FROM+"||' - '||"+Const.FLIGHTS_TO+" fromto"+
+                " FROM "+Const.FLIGHT_TABLE+
+                " WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'";
+        //System.out.println(query);
+        ArrayList arList= new ArrayList<>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            while (rs.next()) {
+                arList.add(rs.getString("fromto") );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arList;
+    }
+
+
+
 
 }
