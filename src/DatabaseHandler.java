@@ -244,7 +244,7 @@ public class DatabaseHandler extends Configs {
             HowOrd = " desc";
         }
         if (!OrderBy.isEmpty()) {
-            OrdBy = " ORDER BY " + String.format(OrderBy);
+            OrdBy = " ORDER BY LENGTH(" + OrderBy + "), " + OrderBy;
         }
         String query = String.format("SELECT " + column_name + " FROM "+ table_name +" WHERE "+
                 Const.SEATS_FLIGHT_ID+ " = "+"'"+flightNumber +"' "+ OrdBy + HowOrd);
@@ -270,7 +270,8 @@ public class DatabaseHandler extends Configs {
                 " ELSE "+Const.FLIGHTS_PRICE_BUSINESS+" END price FROM "+Const.SEAT_TABLE+","+
                 Const.FLIGHT_TABLE+" WHERE "+Const.SEAT_TABLE+"."+Const.SEATS_FLIGHT_ID+" = "+
                 Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+
-                " AND "+Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+" = '"+flight+"'"+ " ORDER BY "+Const.SEAT;
+                " AND "+Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+" = '"+flight+"'" +
+                " ORDER BY LENGTH(" + Const.SEAT + "), " + Const.SEAT;
         ArrayList arList= new ArrayList<>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -287,7 +288,8 @@ public class DatabaseHandler extends Configs {
         String query= "Select (Case When "+ Const.SEATS_BOOKED+" is null then 0 Else 1" +
                 "End + Case When "+Const.SEATS_BOUGHT+
                 " is null then 0  Else 1 End )oc from " +
-                Const.SEAT_TABLE+" WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'";
+                Const.SEAT_TABLE+" WHERE "+Const.FLIGHTS_ID+" = '"+flight+"'"+
+                "ORDER BY LENGTH(" + Const.SEAT + "), " + Const.SEAT;
         //System.out.println(query);
         ArrayList arList= new ArrayList<>();
         try (Statement statement = getDbConnection().createStatement();
