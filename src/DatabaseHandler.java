@@ -73,6 +73,7 @@ public class DatabaseHandler extends Configs {
 
 
     //ввыводит в строковый массив уникальные значения столбца c условием
+    //и добавляет в 0 элемент Any + название этого столбца
     public String[] read_distinct_column(String table_name,
                                          String column_name, String Where) {
         String where_st = "";
@@ -81,7 +82,6 @@ public class DatabaseHandler extends Configs {
             where_st = String.format(" WHERE " + Where);
         }
         String query = String.format("SELECT DISTINCT " + column_name + " FROM %s", table_name + where_st);
-        System.out.println(query);
         String st = "";
         int i = 0;
         try (Statement statement = getDbConnection().createStatement();
@@ -203,8 +203,6 @@ public class DatabaseHandler extends Configs {
             query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
                     + data_from.toString() + "', 'yyyy-mm-dd')";
         }
-
-        System.out.println(query);
         return query;
 
     }
@@ -212,7 +210,6 @@ public class DatabaseHandler extends Configs {
         try (Statement statement = getDbConnection().createStatement();
             ResultSet rs = statement.executeQuery(query)){
             int columns = rs.getMetaData().getColumnCount();
-            System.out.println(columns);
             ArrayList[] searchResult = new ArrayList[columns];
             for (int i = 0; i < columns; i++) {
                 searchResult[i] = new ArrayList();
@@ -234,8 +231,76 @@ public class DatabaseHandler extends Configs {
         String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID + ", " +
                 "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOUGHT + ")-count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
                 " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'" + " GROUP BY " + Const.SEATS_FLIGHT_ID);
-        System.out.println(query);
         return(query);
+    }
+    //Seat Panel functions
+    //ввыводит в arrayList значения столбца, упорядоченый по  столбцу
+    public String q_read_column_for_flight(String table_name,String column_name,String flightNumber,String OrderBy,
+                                 Boolean Desc) {
+        String HowOrd = "";
+        String OrdBy = "";
+
+        if (Desc) {
+            HowOrd = " desc";
+        }
+        if (!OrderBy.isEmpty()) {
+            OrdBy = " ORDER BY " + String.format(OrderBy);
+        }
+        String query = String.format("SELECT " + column_name + " FROM "+ table_name +" WHERE "+
+                Const.SEATS_FLIGHT_ID+ " = "+"'"+flightNumber +"' "+ OrdBy + HowOrd);
+        return query;
+    }
+    public ArrayList<String> read_seats_for_flight(String flight){
+        String query=q_read_column_for_flight(Const.SEAT_TABLE,Const.SEAT,flight,Const.SEAT,false);
+        ArrayList arList= new ArrayList<>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+             while (rs.next()) {
+                arList.add(rs.getString(Const.SEAT) );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arList;
+    }
+
+    public ArrayList<Double> prices_for_flight(String flight){
+        String query ="SELECT "+Const.SEAT_TABLE+"."+Const.SEATS_FLIGHT_ID+","+Const.SEAT+" ,"+
+                "Case "+Const.SEATS_class+" WHEN 'Economy' THEN "+Const.FLIGHTS_PRICE_ECONOM+
+                " ELSE "+Const.FLIGHTS_PRICE_BUSINESS+" END price FROM "+Const.SEAT_TABLE+","+
+                Const.FLIGHT_TABLE+" WHERE "+Const.SEAT_TABLE+"."+Const.SEATS_FLIGHT_ID+" = "+
+                Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+
+                " AND "+Const.FLIGHT_TABLE+"."+Const.FLIGHTS_ID+" = '"+flight+"'"+ " ORDER BY "+Const.SEAT;
+        ArrayList arList= new ArrayList<>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            while (rs.next()) {
+                arList.add(rs.getDouble("price") );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arList;
+
+    }
+    public ArrayList<Boolean>occupied(String flight){
+        String query= "Select (Case When "+ Const.SEATS_BOOKED+" is null then 0  Else "+
+                Const.SEATS_BOOKED+" End + Case When "+Const.SEATS_BOUGHT+
+                " is null then 0  Else "+Const.SEATS_BOUGHT+" End )oc from " +
+                Const.SEAT_TABLE;
+        ArrayList arList= new ArrayList<>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            while (rs.next()) {
+                if (rs.getString("oc").equals("0")) {
+                    arList.add(false);
+                }
+                else { arList.add(true);}
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arList;
     }
 
 }
