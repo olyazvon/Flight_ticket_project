@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class SearchPanel extends JPanel {
 
@@ -102,7 +105,27 @@ public class SearchPanel extends JPanel {
 
         proceedB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                ((MainWindowC)SwingUtilities.getWindowAncestor(proceedB)).proceedToSeats(
+                Window parent = SwingUtilities.getWindowAncestor(proceedB);
+                if (selectP1.getFlight() == null ||
+                        (twoWaysCB.isSelected() && selectP2.getFlight() == null)) {
+                    JOptionPane.showMessageDialog(parent, "Flight is not selected!",
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (twoWaysCB.isSelected() &&
+                        !matchFromTo(dbhand.qFromTo(selectP1.getFlight()),
+                                dbhand.qFromTo(selectP2.getFlight()))) {
+                    JOptionPane.showMessageDialog(parent, "Airports do not match!",
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (twoWaysCB.isSelected() && dbhand.getArrival(selectP1.getFlight())
+                        .after(dbhand.getArrival(selectP2.getFlight()))) {
+                    JOptionPane.showMessageDialog(parent, "Back before there!",
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                ((MainWindowC)parent).proceedToSeats(
                         selectP1.getFlight(),
                         twoWaysCB.isSelected() ? selectP2.getFlight() : ""
                 );
@@ -197,6 +220,13 @@ public class SearchPanel extends JPanel {
             }
         }
         return tmp;
+    }
+
+    private boolean matchFromTo(String one, String two) {
+        String[] oneSpl = one.split(" - ");
+        String[] twoSpl = two.split(" - ");
+        System.out.println(Arrays.toString(oneSpl) + "   " + Arrays.toString(twoSpl));
+        return Objects.equals(oneSpl[0], twoSpl[1]) && Objects.equals(oneSpl[1], twoSpl[0]);
     }
 
     private void updateIATAbox(JComboBox<String> countries, JComboBox<String> cities,

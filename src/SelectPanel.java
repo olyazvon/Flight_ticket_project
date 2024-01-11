@@ -263,6 +263,7 @@ public class SelectPanel extends JPanel {
     }
 
     public String getFlight() {
+        if (table.getSelectedRow() == -1) return null;
         return (String) table.getValueAt(table.getSelectedRow(),0);
     }
 }

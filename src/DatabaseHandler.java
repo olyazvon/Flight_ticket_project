@@ -331,7 +331,43 @@ public class DatabaseHandler extends Configs {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return result.substring(0, result.length()-1);
+    }
+
+    public Date getArrival(String flight) {
+        String query = String.format(
+                "SELECT %1$s " +
+                "FROM %2$s " +
+                "WHERE %3$s = '%4$s'",
+                Const.FLIGHTS_ARRIVAL,
+                Const.FLIGHT_TABLE,
+                Const.FLIGHTS_ID, flight);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            return rs.getDate(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Date getDeparture(String flight) {
+        String query = String.format(
+                "SELECT %1$s " +
+                "FROM %2$s " +
+                "WHERE %3$s = '%4$s'",
+                Const.FLIGHTS_DEPARTURE,
+                Const.FLIGHT_TABLE,
+                Const.FLIGHTS_ID, flight);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            return rs.getDate(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
