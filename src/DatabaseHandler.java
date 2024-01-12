@@ -181,31 +181,80 @@ public class DatabaseHandler extends Configs {
 
 
 
-    public String q_search_flights (String iata_from, String iata_to, LocalDate data_from) {
-        String query = String.format(
-                "SELECT fl.flight_id, airport_from, airport_to, to_char(departure, 'dd.mm.yy hh:mi'), to_char(arrival, 'dd.mm.yy hh:mi'), priceeconom, pricebusiness,s_economy.seats_left_economy,s_business.seats_left_business " +
-                " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
-                seats_left("Business") + ") s_business,(" +
-                seats_left("Economy") + ") s_economy" +
-                " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
-                Const.FLIGHTS_ID + "=s_business.flight_id  " +
-                "and (seats_left_business>0 OR seats_left_economy>0)");
+//    public String q_search_flights (String iata_from, String iata_to, LocalDate data_from) {
+//        String query = String.format(
+//                "SELECT fl.flight_id, airport_from, airport_to, " +
+//                        "to_char(departure, 'dd.mm.yy hh:mi'), " +
+//                        "to_char(arrival, 'dd.mm.yy hh:mi')," +
+//                        " priceeconom, pricebusiness,s_economy.seats_left_economy," +
+//                        "s_business.seats_left_business " +
+//                " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
+//                        seats_left("Business") + ") s_business,(" +
+//                        seats_left("Economy") + ") s_economy" +
+//                " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
+//                        Const.FLIGHTS_ID + "=s_business.flight_id  " +
+//                        "and (seats_left_business>0 OR seats_left_economy>0)");
+//
+//        if (!iata_from.equals("Any iata") && !iata_from.isEmpty()) {
+//            query += " AND " + Const.FLIGHTS_FROM + "= '" + iata_from + "'";
+//        }
+//
+//        if (!iata_to.equals("Any iata") && !iata_to.isEmpty()) {
+//            query += " AND " + Const.FLIGHTS_TO + "= '" + iata_to + "'";
+//        }
+//
+//        if (data_from != null) {
+//            query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
+//                    + data_from.toString() + "', 'yyyy-mm-dd')";
+//        }
+//        return query;
+//
+//    }
+public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate data_from) {
+    String query = String.format(
+            "SELECT fl."+ Const.FLIGHTS_ID+","+Const.FLIGHTS_FROM +","+
+                    Const.FLIGHTS_TO+", to_char("+Const.FLIGHTS_DEPARTURE+", 'dd.mm.yy hh:mi'), " +
+                    "to_char("+Const.FLIGHTS_ARRIVAL+", 'dd.mm.yy hh:mi'), " +
+                    Const.FLIGHTS_PRICE_ECONOM+","+Const.FLIGHTS_PRICE_BUSINESS+
+                    ", s_economy.seats_left_economy, " +"s_business.seats_left_business " +
+            " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
+                            seats_left("Business") + ") s_business,(" +
+                            seats_left("Economy") + ") s_economy" +
+            " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
+                    Const.FLIGHTS_ID + "=s_business.flight_id  " +
+                    "and (seats_left_business > 0 OR seats_left_economy > 0)");
 
-        if (!iata_from.equals("Any iata") && !iata_from.isEmpty()) {
-            query += " AND " + Const.FLIGHTS_FROM + "= '" + iata_from + "'";
+    if (!((iata_from.length==1 && iata_from[0].equals("Any iata")) ||iata_from.length==0)) {
+         String stIata_from = "";
+
+        for (String i : iata_from) {
+            stIata_from += "'"+i +"'"+ ",";
         }
-
-        if (!iata_to.equals("Any iata") && !iata_to.isEmpty()) {
-            query += " AND " + Const.FLIGHTS_TO + "= '" + iata_to + "'";
-        }
-
-        if (data_from != null) {
-            query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
-                    + data_from.toString() + "', 'yyyy-mm-dd')";
-        }
-        return query;
-
+        stIata_from = "(" + stIata_from.substring(iata_to[0].length() + 3, stIata_from.length() - 1) + ")";
+        query += " AND " + Const.FLIGHTS_FROM + " in " + stIata_from;
     }
+
+    if (!((iata_to.length==1 && iata_to[0].equals("Any iata")) ||iata_to.length==0)) {
+        String stIata_to="";
+
+        for (String i:iata_to) {
+            stIata_to+= "'"+i+"'"+",";
+        }
+        stIata_to="("+stIata_to.substring(iata_to[0].length()+3, stIata_to.length()-1)+")";
+        query += " AND " + Const.FLIGHTS_TO + " in " + stIata_to;
+    }
+
+    if (data_from != null) {
+        query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
+                + data_from.toString() + "', 'yyyy-mm-dd')";
+    }
+    return query;
+
+}
+
+
+
+
     public ArrayList[] search_flights(String query) {
         try (Statement statement = getDbConnection().createStatement();
             ResultSet rs = statement.executeQuery(query)){
