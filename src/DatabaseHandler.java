@@ -10,7 +10,11 @@ import java.util.Arrays;
 public class DatabaseHandler extends Configs {
     Connection dbConnection;
 
-    public Connection getDbConnection() {
+    public DatabaseHandler() {
+        makeDbConnection();
+    }
+
+    public void makeDbConnection() {
         //{
         String connectionString = "jdbc:oracle:thin" + ":" + dbUser + "/" +
                 dbPass + "@" + dbHost + ":" + dbPort + ":" + dbName;
@@ -20,6 +24,9 @@ public class DatabaseHandler extends Configs {
         } catch (SQLException | ClassNotFoundException  e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Connection getDbConnection() {
         return dbConnection;
     }
 
@@ -379,6 +386,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
                 Const.FLIGHTS_FROM, Const.FLIGHTS_TO,
                 Const.FLIGHT_TABLE,
                 Const.FLIGHTS_ID, flight);
+        System.out.println(query);
         String result = "";
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
