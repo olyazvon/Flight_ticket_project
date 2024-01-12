@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -69,8 +70,8 @@ public class SearchPanel extends JPanel {
 
         JPanel twoSelectors = new JPanel();
         twoSelectors.setLayout(new BoxLayout(twoSelectors, BoxLayout.X_AXIS));
-        SelectPanel selectP1 = new SelectPanel("There:");
-        SelectPanel selectP2 = new SelectPanel("Back:");
+        SelectPanel selectP1 = new SelectPanel("There:", IATA_from, IATA_to);
+        SelectPanel selectP2 = new SelectPanel("Back:", IATA_to, IATA_from);
         selectP1.laterPanel = selectP2;
         selectP2.earlierPanel = selectP1;
         twoSelectors.add(selectP1);
@@ -165,8 +166,6 @@ public class SearchPanel extends JPanel {
                             (String) Cities_to.getSelectedItem(), dbhand);
                     updateCitiesBox(Countries_from, Cities_from,
                             dbhand.cityByIATA((String) IATA_to.getSelectedItem()), dbhand);
-                    selectP1.iataTo = (String) IATA_to.getSelectedItem();
-                    selectP2.iataFrom = (String) IATA_to.getSelectedItem();
                 }
             }
         });
@@ -204,8 +203,6 @@ public class SearchPanel extends JPanel {
                             (String) Cities_from.getSelectedItem(), dbhand);
                     updateCitiesBox(Countries_to, Cities_to,
                             dbhand.cityByIATA((String) IATA_from.getSelectedItem()), dbhand);
-                    selectP1.iataFrom = (String) IATA_from.getSelectedItem();
-                    selectP2.iataTo = (String) IATA_from.getSelectedItem();
                 }
             }
         });

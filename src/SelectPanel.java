@@ -18,8 +18,8 @@ import java.util.Arrays;
 public class SelectPanel extends JPanel {
     Dimension normalSize;
     int growShrinkStep = 25;
-    String iataFrom = "Any iata";
-    String iataTo = "Any iata";
+    JComboBox<String> iataFrom;
+    JComboBox<String> iataTo;
     LocalDate minDate = LocalDate.now();
     LocalDate maxDate = LocalDate.MAX;
     DatePickerSettings dateSettings = new DatePickerSettings();
@@ -28,7 +28,9 @@ public class SelectPanel extends JPanel {
     DatePicker dateP;
     JTable table;
 
-    public SelectPanel(String name) {
+    public SelectPanel(String name, JComboBox<String> iataFromSource, JComboBox<String> iataToSource) {
+        iataFrom = iataFromSource;
+        iataTo = iataToSource;
         DatabaseHandler dbhand = new DatabaseHandler();
         GroupLayout lo = new GroupLayout(this);
         setLayout(lo);
@@ -143,10 +145,34 @@ public class SelectPanel extends JPanel {
         searchB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String[] arrayFrom;
+                if (iataFrom.getSelectedItem().equals("Any iata")) {
+                    ArrayList<String> allItems = new ArrayList<>();
+                    int size = iataFrom.getItemCount();
+                    for (int i = 0; i < size; i++) {
+                        String item = iataFrom.getItemAt(i);
+                        allItems.add(item);
+                    }
+                    arrayFrom = allItems.toArray(new String[iataFrom.getItemCount()]);
+                } else {
+                    arrayFrom = new String[] {(String) iataFrom.getSelectedItem()};
+                }
 
-                tabMod.data = dbhand.search_flights(dbhand.q_search_flights(iataFrom, iataTo, dateP.getDate()));
+                String[] arrayTo;
+                if (iataTo.getSelectedItem().equals("Any iata")) {
+                    ArrayList<String> allItems = new ArrayList<>();
+                    int size = iataTo.getItemCount();
+                    for (int i = 0; i < size; i++) {
+                        String item = iataTo.getItemAt(i);
+                        allItems.add(item);
+                    }
+                    arrayTo = allItems.toArray(new String[iataTo.getItemCount()]);
+                } else {
+                    arrayTo = new String[] {(String) iataTo.getSelectedItem()};
+                }
+                System.out.println(arrayFrom[1]);
+                tabMod.data = dbhand.search_flights(dbhand.q_search_flights(arrayFrom[0], arrayTo[0], dateP.getDate()));
                 tabMod.fireTableDataChanged();
-
             }
         });
     }
