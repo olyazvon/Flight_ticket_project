@@ -39,7 +39,7 @@ public class SelectPanel extends JPanel {
 
         dateSettings.setFormatForDatesCommonEra("dd.MM.yyyy");
         dateSettings.setFormatForDatesBeforeCommonEra("dd.MM.uuuu");
-        FlightTableModel tabMod = new FlightTableModel(dbhand.search_flights(dbhand.q_search_flights("","",null)));
+        FlightTableModel tabMod = new FlightTableModel(dbhand.search_flights(dbhand.q_search_flights(null,null,null)));
         table = new JTable(tabMod);
         //table.setDefaultEditor(Object.class, null);
         //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
