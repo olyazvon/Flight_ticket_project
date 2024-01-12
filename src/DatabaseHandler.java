@@ -86,7 +86,7 @@ public class DatabaseHandler extends Configs {
         String query1=query+" order by "+column_name;
         int i = 0;
         try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
+             ResultSet rs = statement.executeQuery(query1)) {
 
             while (rs.next()) {
                 st += rs.getString(column_name) + ";";
@@ -256,6 +256,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
                 + data_from.toString() + "', 'yyyy-mm-dd')";
     }
+
     return query;
 
 }
