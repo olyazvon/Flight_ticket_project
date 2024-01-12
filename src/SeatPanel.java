@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +44,7 @@ public class SeatPanel extends JPanel {
         }
 
         threeSections.add(total);
+        threeSections.add(Box.createRigidArea(new Dimension(5, 0)));
 
         add(threeSections);
         add(Box.createVerticalGlue());
@@ -64,43 +66,20 @@ public class SeatPanel extends JPanel {
         });
     }
 
-    private String[] qSeats(String flight) {
-        String[] a = {"1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D", "3A", "3B", "3C", "3D",
-                "4A", "4B", "4C", "4D", "5A", "5B", "5C", "5D", "6A", "6B", "6C", "6D"};
-        return a;
-    }
-
-    private double[] qPrices(String flight) {
-        double[] a = {200, 200, 200, 200, 50, 50, 50, 50, 50, 50, 50, 50,
-                50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50};
-        return a;
-    }
-
-    private boolean[] qOccupied(String flight) {
-        boolean[] a = {true, false, false, false,
-                false, false, true, true,
-                false, true, false, false,
-                true, false, false, false,
-                false, false, true, true,
-                false, true, false, false};
-        return a;
-    }
-
-    public String qFromTo(String flight) {
-        if (Objects.equals(flight, "123")) {
-            return "DME-TLV";
-        }
-        return "TLV-DME";
-    }
-
     private class Accountant extends JLabel implements ActionListener {
         public double sum;
         public ArrayList<Seat> seats = new ArrayList<Seat>();
+        private int fixedWidth = 160;
 
         public Accountant() {
-            super("<html>Your selection:<br>Total: 0</html>");
-            setPreferredSize(new Dimension(120, 32767));
-            setMaximumSize(new Dimension(120, 32767));
+            super("<html>Your selection is empty<br>Total: 0</html>");
+            setPreferredSize(new Dimension(fixedWidth, 40));
+            setMaximumSize(new Dimension(fixedWidth, 40));
+            Border borderA = BorderFactory.createLineBorder(Color.BLACK, 1);
+            Border borderB = BorderFactory.createEmptyBorder(5, 5, 5, 1);
+            setBorder(BorderFactory.createCompoundBorder(borderA, borderB));
+            setBackground(new Color(210, 240, 210));
+            setOpaque(true);
         }
         public void actionPerformed(ActionEvent event) {
             if (((Seat)event.getSource()).isSelected()) {
@@ -119,9 +98,12 @@ public class SeatPanel extends JPanel {
             seats.sort(Comparator.comparing(s -> s.flight));
             setText("<html>Your selection:<br>");
             for (Seat i : seats) {
-                setText(getText()+i.flight+" "+qFromTo(i.flight)+" "+i.getText()+"<br>");
+                setText(getText()+i.flight+" "+dbhand.qFromTo(i.flight)+" "+i.getText()+"<br>");
             }
-            setText(getText()+"Total: %s</html>".formatted(sum));
+            setText(getText()+"Total: %.2f</html>".formatted(sum));
+            setPreferredSize(null);
+            setMaximumSize(new Dimension(fixedWidth, getPreferredSize().height));
+            setPreferredSize(new Dimension(fixedWidth, 40));
         }
     }
 
@@ -133,6 +115,7 @@ public class SeatPanel extends JPanel {
             setMargin(new Insets(1, 0, 1, 0));
             this.price = price;
             this.flight = flight;
+            setToolTipText(String.format("%.2f", price));
             setBackground(new Color(210, 240, 210));
             addActionListener(listener);
             if (occupied) {
