@@ -83,6 +83,7 @@ public class DatabaseHandler extends Configs {
         }
         String query = String.format("SELECT DISTINCT " + column_name + " FROM %s", table_name + where_st);
         String st = "";
+        String query1=query+" order by "+column_name;
         int i = 0;
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -176,7 +177,7 @@ public class DatabaseHandler extends Configs {
 
     String cityByIATA(String iata) {
         return read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
-                (Const.AIRPORTS_ID + "=\'" + iata + "\'"))[1];
+                (Const.AIRPORTS_ID + "=\'" + iata + "\'" ))[1];
     }
 
 
@@ -230,7 +231,11 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         for (String i : iata_from) {
             stIata_from += "'"+i +"'"+ ",";
         }
-        stIata_from = "(" + stIata_from.substring(iata_to[0].length() + 3, stIata_from.length() - 1) + ")";
+        System.out.println(Arrays.toString(iata_from));
+        if ((iata_from.length!=1 || iata_from[0].equals("Any iata"))) {
+            stIata_from = "(" + stIata_from.substring(iata_from[0].length() + 3, stIata_from.length() - 1) + ")";
+        }
+        else{stIata_from = "(" + stIata_from.substring(0,stIata_from.length()-1)+")";}
         query += " AND " + Const.FLIGHTS_FROM + " in " + stIata_from;
     }
 
@@ -240,8 +245,11 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         for (String i:iata_to) {
             stIata_to+= "'"+i+"'"+",";
         }
-        stIata_to="("+stIata_to.substring(iata_to[0].length()+3, stIata_to.length()-1)+")";
-        query += " AND " + Const.FLIGHTS_TO + " in " + stIata_to;
+        if ((iata_to.length!=1 || iata_to[0].equals("Any iata"))) {
+            stIata_to = "(" + stIata_to.substring(iata_to[0].length() + 3, stIata_to.length() - 1) + ")";
+        }
+        else{stIata_to = "(" + stIata_to.substring(0,stIata_to.length()-1)+")";}
+               query += " AND " + Const.FLIGHTS_TO + " in " + stIata_to;
     }
 
     if (data_from != null) {
