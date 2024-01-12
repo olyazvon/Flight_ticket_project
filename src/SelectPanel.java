@@ -170,7 +170,7 @@ public class SelectPanel extends JPanel {
                 } else {
                     arrayTo = new String[] {(String) iataTo.getSelectedItem()};
                 }
-                System.out.println(arrayFrom[1]);
+                System.out.println(Arrays.toString(arrayFrom));
                 tabMod.data = dbhand.search_flights(dbhand.q_search_flights(arrayFrom, arrayTo, dateP.getDate()));
                 tabMod.fireTableDataChanged();
             }
