@@ -1,5 +1,3 @@
-import oracle.jdbc.internal.XSCacheOutput;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -40,7 +38,7 @@ public class PassengerPanel extends JPanel {
         }
         int H = this.passengers.get(0).label.getPreferredSize().height;
         for (onePassenger i : this.passengers) {
-            i.label.setPreferredSize(new Dimension(maxW, H));
+            i.label.setPreferredSize(new Dimension(maxW+5, H));
         }
 
         add(Box.createVerticalGlue());
@@ -91,7 +89,7 @@ public class PassengerPanel extends JPanel {
             add(Box.createRigidArea(new Dimension(15, 0)));
 
             add(new JLabel("Last name:"));
-            this.surnameField = inputField();;
+            this.surnameField = inputField();
 
             add(Box.createRigidArea(new Dimension(15, 0)));
 

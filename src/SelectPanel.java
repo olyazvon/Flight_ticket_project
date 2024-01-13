@@ -42,7 +42,7 @@ public class SelectPanel extends JPanel {
         FlightTableModel tabMod = new FlightTableModel(dbhand.search_flights(dbhand.q_search_flights(new String[]{"Any iata"},new String[]{"Any iata"},null)));
         table = new JTable(tabMod);
         //table.setDefaultEditor(Object.class, null);
-        //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setRowHeight(30);
         TableColumn column;
         for (int i = 0; i < 5; i++) {
