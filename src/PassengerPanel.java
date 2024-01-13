@@ -1,3 +1,5 @@
+import oracle.jdbc.internal.XSCacheOutput;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -30,6 +32,17 @@ public class PassengerPanel extends JPanel {
             add(Box.createRigidArea(new Dimension(0, 15)));
         }
 
+        int maxW = 0;
+        for (onePassenger i : this.passengers) {
+             if (i.label.getPreferredSize().width > maxW) {
+                 maxW = i.label.getPreferredSize().width;
+             }
+        }
+        int H = this.passengers.get(0).label.getPreferredSize().height;
+        for (onePassenger i : this.passengers) {
+            i.label.setPreferredSize(new Dimension(maxW, H));
+        }
+
         add(Box.createVerticalGlue());
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -52,9 +65,10 @@ public class PassengerPanel extends JPanel {
 
     private class onePassenger extends JPanel{
         Seat seat;
-        JTextField nameField;
-        JTextField surnameField;
-        JTextField passportField;
+        private JTextField nameField;
+        private JTextField surnameField;
+        private JTextField passportField;
+        public JLabel label;
 
         public onePassenger(Seat seat) {
             this.seat = seat;
@@ -65,9 +79,9 @@ public class PassengerPanel extends JPanel {
 
             add(Box.createHorizontalGlue());
 
-            JLabel a = new JLabel(seat.flight+" "+dbhand.qFromTo(seat.flight)+" "+seat.getText());
-            a.setFont(new Font(null, Font.PLAIN, 18));
-            add(a);
+            label = new JLabel(seat.flight+" "+dbhand.qFromTo(seat.flight)+" "+seat.getText());
+            label.setFont(new Font(null, Font.PLAIN, 18));
+            add(label);
 
             add(Box.createRigidArea(new Dimension(15, 0)));
 
