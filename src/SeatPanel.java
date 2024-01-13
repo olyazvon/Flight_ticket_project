@@ -18,7 +18,7 @@ public class SeatPanel extends JPanel {
 //INTERFACE
         add(Box.createRigidArea(new Dimension(0, 15)));
 
-        JLabel nameL = new JLabel("Select your seats, please");
+        JLabel nameL = new JLabel("Please select your seats");
         nameL.setFont(new Font(null, Font.PLAIN, 24));
         nameL.setAlignmentX(CENTER_ALIGNMENT);
         add(nameL);
@@ -59,6 +59,19 @@ public class SeatPanel extends JPanel {
         add(footer);
 
 //LISTENERS
+        proceedB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (total.seats.isEmpty()) {
+                    Window parent = SwingUtilities.getWindowAncestor(proceedB);
+                    JOptionPane.showMessageDialog(parent, "Seats not selected!",
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                ((MainWindowC) SwingUtilities.getWindowAncestor(back)).proceedToPassengers(total.seats);
+            }
+        });
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSearch();
@@ -104,25 +117,6 @@ public class SeatPanel extends JPanel {
             setPreferredSize(null);
             setMaximumSize(new Dimension(fixedWidth, getPreferredSize().height));
             setPreferredSize(new Dimension(fixedWidth, 40));
-        }
-    }
-
-    private class Seat extends JToggleButton {
-        public double price;
-        public String flight;
-        public Seat(String name, double price, boolean occupied, String flight, ActionListener listener) {
-            super(name);
-            setMargin(new Insets(1, 0, 1, 0));
-            this.price = price;
-            this.flight = flight;
-            setToolTipText(String.format("%.2f", price));
-            setBackground(new Color(210, 240, 210));
-            addActionListener(listener);
-            if (occupied) {
-                setEnabled(false);
-                setBackground(Color.white);
-            }
-            setPreferredSize(new Dimension(30,30));
         }
     }
 

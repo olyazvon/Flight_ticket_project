@@ -2,12 +2,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class MainWindowC extends JFrame {
     JPanel pages;
 
-    public MainWindowC() throws SQLException, ClassNotFoundException {
+    public MainWindowC() {
         super("Search");
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -24,6 +25,16 @@ public class MainWindowC extends JFrame {
 
     public void backToSearch() {
         pages.remove(1);
+        ((CardLayout)pages.getLayout()).previous(pages);
+    }
+
+    public void proceedToPassengers(ArrayList<Seat> seats) {
+        pages.add(new PassengerPanel(seats), 2);
+        ((CardLayout)pages.getLayout()).next(pages);
+    }
+
+    public void backToSeats() {
+        pages.remove(2);
         ((CardLayout)pages.getLayout()).previous(pages);
     }
 
