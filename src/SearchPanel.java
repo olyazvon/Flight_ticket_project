@@ -109,7 +109,7 @@ public class SearchPanel extends JPanel {
                 Window parent = SwingUtilities.getWindowAncestor(proceedB);
                 if (selectP1.getFlight() == null ||
                         (twoWaysCB.isSelected() && selectP2.getFlight() == null)) {
-                    JOptionPane.showMessageDialog(parent, "Flight is not selected!",
+                    JOptionPane.showMessageDialog(parent, "Flight not selected!",
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
