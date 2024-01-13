@@ -467,7 +467,23 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
             e.printStackTrace();
             return  false;
         }
+    }
 
+    //max номер брони, если ошибка в запросе выводит -1
+    public int maxBookedNumber(){
+       int Max=0;
+        String query=" SELECT  MAX("+Const.SEATS_BOOKED+")"+
+                     " FROM "+Const.SEAT_TABLE ;
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            Max=rs.getInt(1);
+            return Max;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  -1;
+        }
     }
 
 }

@@ -16,6 +16,7 @@ public class Main {
         System.out.println(dbhand.occupied("RU1235"));
         System.out.println(dbhand.isFree("RU1235","2A"));
         System.out.println(dbhand.seats_left("Business"));
+        System.out.println(dbhand.maxBookedNumber());
 //        System.out.println(dbhand.qFromTo("RU1235"));
 //        System.out.println(dbhand.q_search_flights(new String[]{"Any iata","LED","SVO"}, new String[]{"Any iata","LED","SVO"},null));
 //        System.out.println(dbhand.read_typeClass_for_flight("RU1235"));
