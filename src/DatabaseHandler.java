@@ -311,8 +311,10 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         if (!OrderBy.isEmpty()) {
             OrdBy = " ORDER BY LENGTH(" + OrderBy + "), " + OrderBy;
         }
-        String query = String.format("SELECT " + column_name + " FROM "+ table_name +" WHERE "+
-                Const.SEATS_FLIGHT_ID+ " = "+"'"+flightNumber +"' "+ OrdBy + HowOrd);
+        String query = String.format("SELECT " + column_name +
+                " FROM "+ table_name +
+                " WHERE "+ Const.SEATS_FLIGHT_ID+ " = "+"'"+flightNumber +
+                "' "+ OrdBy + HowOrd);
         return query;
     }
     public ArrayList<String> read_seats_for_flight(String flight){
@@ -322,6 +324,20 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
              ResultSet rs = statement.executeQuery(query)) {
              while (rs.next()) {
                 arList.add(rs.getString(Const.SEAT) );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arList;
+    }
+    public ArrayList<String> read_typeClass_for_flight(String flight){
+        String query=q_read_column_for_flight(Const.SEAT_TABLE,Const.SEATS_class,
+                                        flight,Const.SEAT,false);
+        ArrayList arList= new ArrayList<>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            while (rs.next()) {
+                arList.add(rs.getString(Const.SEATS_class) );
             }
         } catch (Exception e) {
             e.printStackTrace();
