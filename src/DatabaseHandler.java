@@ -294,7 +294,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
     //возращает запрос свободных сидений по классу
      public String seats_left(String TicketClass) {
         String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID + ", " +
-                "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOUGHT + ")-count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
+                "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
                 " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'" + " GROUP BY " + Const.SEATS_FLIGHT_ID);
         return(query);
     }
@@ -450,6 +450,24 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
             e.printStackTrace();
             return null;
         }
+    }
+
+    public boolean isFree(String flight, String seat){
+        String query=" SELECT "+Const.SEATS_BOOKED+
+                     " FROM "+Const.SEAT_TABLE+
+                     " WHERE "+Const.FLIGHTS_ID+" = '"+ flight+
+                     "' AND "+ Const.SEAT+" = '"+seat+"'" ;
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            String  bookNumber=rs.getString(1);
+            return bookNumber == null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  false;
+        }
+
     }
 
 }
