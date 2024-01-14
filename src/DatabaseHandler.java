@@ -553,7 +553,37 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
 
 
     public ArrayList<Seat> seatsInBooking(int bookingNumber) {
-        return new ArrayList<>();
+        String query= String.format(
+                "SELECT %1$s.*,"+
+                "CASE %2$s WHEN 'Economy' THEN %3$s ELSE %4$s END price " +
+                "FROM %5$s, %6$s " +
+                "WHERE %7$s.%8$s = %9$s.%10$s " +
+                "AND %11$s.%12$s = %13$s ",
+                Const.SEAT_TABLE,
+                Const.SEATS_class, Const.FLIGHTS_PRICE_ECONOM, Const.FLIGHTS_PRICE_BUSINESS,
+                Const.SEAT_TABLE, Const.FLIGHT_TABLE,
+                Const.SEAT_TABLE, Const.SEATS_FLIGHT_ID, Const.FLIGHT_TABLE, Const.FLIGHTS_ID,
+                Const.SEAT_TABLE, Const.SEATS_BOOKED,bookingNumber);
+        System.out.println(query);
+        ArrayList arList= new ArrayList<Seat>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            while (rs.next()) {
+                Boolean occuppied=false;
+                if (rs.getString(Const.SEATS_BOOKED)!=null){
+                    occuppied=true;
+                }
+                Seat seat= new Seat(rs.getString(Const.SEAT),
+                                    rs.getDouble("price"),
+                                    occuppied,
+                                    rs.getString(Const.SEATS_class),
+                                    rs.getString(Const.SEATS_FLIGHT_ID),null);
+                arList.add(seat);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arList;
     }
 
 
