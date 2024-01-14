@@ -536,6 +536,21 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         }
         return Const.NumberSeatsBooked;
     }
+    public String UnBook(int BookingNumber){
+        Const.NumberSeatsBooked--;
+        String query=" UPDATE "+Const.SEAT_TABLE+
+                " SET "+Const.SEATS_BOOKED + " = "+null+
+                " WHERE "+Const.SEATS_BOOKED+" = " + BookingNumber;
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  "не удалось отменить бронирование";
+        }
+        return "бронирование отменено";
+    }
+
 
 
 }
