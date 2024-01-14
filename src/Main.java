@@ -20,8 +20,8 @@ public class Main {
         System.out.println(dbhand.seats_left("Business"));
        // System.out.println(dbhand.maxBookedNumber());
         Seat[] SeatsToBook= new Seat[2];
-        SeatsToBook[0]=new Seat("1A",12,false,"RU1235",null);
-        SeatsToBook[1]=new Seat("2A",12,false,"RU1235",null);
+        SeatsToBook[0]=new Seat("1A",12,false,"RU1235", "Business", null);
+        SeatsToBook[1]=new Seat("2A",12,false,"RU1235", "Business", null);
         System.out.println(dbhand.Book(SeatsToBook));
 //        System.out.println(dbhand.qFromTo("RU1235"));
 //        System.out.println(dbhand.q_search_flights(new String[]{"Any iata","LED","SVO"}, new String[]{"Any iata","LED","SVO"},null));
