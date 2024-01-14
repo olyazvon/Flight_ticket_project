@@ -62,6 +62,7 @@ public class PassengerPanel extends JPanel {
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println(dbhand.UnBook(SeatPanel.BookNumber));
                 ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSeats();
             }
         });
