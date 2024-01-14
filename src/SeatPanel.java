@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public class SeatPanel extends JPanel {
 
+    public static int BookNumber;
     DatabaseHandler dbhand;
     public SeatPanel(String flightThere, String flightBack) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -102,6 +103,10 @@ public class SeatPanel extends JPanel {
                     JOptionPane.showMessageDialog(parent, "Seats not selected!",
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
+                }
+                else{
+
+                     BookNumber=dbhand.Book(total.seats);
                 }
 
                 ((MainWindowC) SwingUtilities.getWindowAncestor(back)).proceedToPassengers(total.seats);

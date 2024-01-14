@@ -20,6 +20,11 @@ public class PassengerPanel extends JPanel {
         nameL.setFont(new Font(null, Font.PLAIN, 24));
         nameL.setAlignmentX(CENTER_ALIGNMENT);
         add(nameL);
+        add(Box.createRigidArea(new Dimension(0, 15)));
+        JLabel booking = new JLabel("Your booking number:"+SeatPanel.BookNumber);
+        nameL.setFont(new Font(null, Font.PLAIN, 24));
+        nameL.setAlignmentX(CENTER_ALIGNMENT);
+        add(booking);
 
         add(Box.createVerticalGlue());
 
