@@ -6,12 +6,12 @@ import java.util.ArrayList;
 
 public class PassengerPanel extends JPanel {
     ArrayList<Seat> seats;
-    ArrayList<onePassenger> passengers = new ArrayList<>();
+    ArrayList<OnePassenger> passengers = new ArrayList<>();
     DatabaseHandler dbhand;
-    public PassengerPanel(ArrayList<Seat> seats) {
-        this.seats = seats;
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    public PassengerPanel(int bookingNumber) {
         dbhand = new DatabaseHandler();
+        this.seats = dbhand.seatsInBooking(bookingNumber);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 //INTERFACE
         add(Box.createRigidArea(new Dimension(0, 15)));
@@ -21,28 +21,26 @@ public class PassengerPanel extends JPanel {
         nameL.setAlignmentX(CENTER_ALIGNMENT);
         add(nameL);
         add(Box.createRigidArea(new Dimension(0, 15)));
-        JLabel booking = new JLabel("Your booking number:"+SeatPanel.BookNumber);
-        nameL.setFont(new Font(null, Font.PLAIN, 24));
-        nameL.setAlignmentX(CENTER_ALIGNMENT);
+        JLabel booking = new JLabel("Your booking number:"+bookingNumber);
         add(booking);
 
         add(Box.createVerticalGlue());
 
         for (Seat seat : this.seats) {
-            onePassenger pss = new onePassenger(seat);
+            OnePassenger pss = new OnePassenger(seat);
             this.passengers.add(pss);
             add(pss);
             add(Box.createRigidArea(new Dimension(0, 15)));
         }
 
         int maxW = 0;
-        for (onePassenger i : this.passengers) {
+        for (OnePassenger i : this.passengers) {
              if (i.label.getPreferredSize().width > maxW) {
                  maxW = i.label.getPreferredSize().width;
              }
         }
         int H = this.passengers.get(0).label.getPreferredSize().height;
-        for (onePassenger i : this.passengers) {
+        for (OnePassenger i : this.passengers) {
             i.label.setPreferredSize(new Dimension(maxW+5, H));
         }
 
@@ -60,23 +58,22 @@ public class PassengerPanel extends JPanel {
 
 //LISTENERS
         back.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(dbhand.UnBook(SeatPanel.BookNumber));
+                System.out.println(dbhand.UnBook(bookingNumber));
                 ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSeats();
             }
         });
 
     }
 
-    private class onePassenger extends JPanel{
+    private class OnePassenger extends JPanel{
         Seat seat;
         private JTextField nameField;
         private JTextField surnameField;
         private JTextField passportField;
         public JLabel label;
 
-        public onePassenger(Seat seat) {
+        public OnePassenger(Seat seat) {
             this.seat = seat;
 
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));

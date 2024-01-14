@@ -28,8 +28,8 @@ public class MainWindowC extends JFrame {
         ((CardLayout)pages.getLayout()).previous(pages);
     }
 
-    public void proceedToPassengers(ArrayList<Seat> seats) {
-        pages.add(new PassengerPanel(seats), 2);
+    public void proceedToPassengers(int bookingNumber) {
+        pages.add(new PassengerPanel(bookingNumber), 2);
         ((CardLayout)pages.getLayout()).next(pages);
     }
 

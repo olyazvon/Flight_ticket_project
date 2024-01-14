@@ -552,6 +552,10 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
     }
 
 
+    public ArrayList<Seat> seatsInBooking(int bookingNumber) {
+        return new ArrayList<>();
+    }
+
 
 }
 

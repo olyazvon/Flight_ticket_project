@@ -121,7 +121,7 @@ public class SearchPanel extends JPanel {
                     return;
                 }
                 if (twoWaysCB.isSelected() && dbhand.getArrival(selectP1.getFlight())
-                        .after(dbhand.getArrival(selectP2.getFlight()))) {
+                        .after(dbhand.getDeparture(selectP2.getFlight()))) {
                     JOptionPane.showMessageDialog(parent, "Back before there!",
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
