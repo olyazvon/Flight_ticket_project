@@ -116,7 +116,7 @@ public class SeatPanel extends JPanel {
 
     private class Accountant extends JLabel implements ActionListener {
         public double sum;
-        public ArrayList<Seat> seats = new ArrayList<Seat>();
+        public ArrayList<Seat> seats = new ArrayList<>();
         private int fixedWidth = 160;
 
         public Accountant() {

@@ -44,6 +44,8 @@ public class PassengerPanel extends JPanel {
         add(Box.createVerticalGlue());
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        footer.add(new JLabel("You can save your booking number and complete this and subsequent steps later."));
+        footer.add(new JButton("Continue later"));
         JButton back = new JButton("Back");
         footer.add(back);
         JButton proceedB = new JButton("Next");
