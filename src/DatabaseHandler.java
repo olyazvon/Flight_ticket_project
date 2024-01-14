@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class DatabaseHandler extends Configs {
-    Connection dbConnection;
+public class  DatabaseHandler extends Configs {
+    static Connection dbConnection;
 
     public DatabaseHandler() {
         makeDbConnection();
     }
 
-    public void makeDbConnection() {
+    public static void makeDbConnection() {
         //{
         String connectionString = "jdbc:oracle:thin" + ":" + dbUser + "/" +
                 dbPass + "@" + dbHost + ":" + dbPort + ":" + dbName;
@@ -294,7 +294,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
     //возращает запрос свободных сидений по классу
      public String seats_left(String TicketClass) {
         String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID + ", " +
-                "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOUGHT + ")-count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
+                "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
                 " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'" + " GROUP BY " + Const.SEATS_FLIGHT_ID);
         return(query);
     }
@@ -452,4 +452,91 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         }
     }
 
+    public boolean isFree(String flight, String seat){
+        String query=" SELECT "+Const.SEATS_BOOKED+
+                     " FROM "+Const.SEAT_TABLE+
+                     " WHERE "+Const.FLIGHTS_ID+" = '"+ flight+
+                     "' AND "+ Const.SEAT+" = '"+seat+"'" ;
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            String  bookNumber=rs.getString(1);
+            return bookNumber == null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  false;
+        }
+    }
+
+    //max номер брони, если ошибка в запросе выводит -2
+    public int maxBookedNumber(){
+        int Max=0;
+        String query=" SELECT  MAX("+Const.SEATS_BOOKED+")"+
+                " FROM "+Const.SEAT_TABLE ;
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            Max=rs.getInt(1);
+            return Max;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  -2;
+        }
+    }
+    //забронировать место UPdate booked in bd,
+    // если место занято-1, если ошибка -2, если забронировано выводит № брони
+//    public int Book(String flight, String seat){
+//       int newBookedNumber=(maxBookedNumber()+1);
+//       if (isFree(flight,seat)){
+//        String query=" UPDATE "+Const.SEAT_TABLE+
+//                     " SET "+Const.SEATS_BOOKED + " = "+newBookedNumber+
+//                     " WHERE "+Const.FLIGHTS_ID + " = '"+ flight+
+//                     "' AND "+ Const.SEAT+" = '"+seat+"'";
+//        try (Statement statement = getDbConnection().createStatement();
+//             ResultSet rs = statement.executeQuery(query)) {
+//            rs.next();
+//            return newBookedNumber;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return  -2;
+//        }
+//    }
+//       else{return -1;}
+//
+//}
+
+//    забронировать местa UPdate booked in bd,
+//     если место занято-1, если ошибка -2, если забронировано выводит № брони
+    public int Book(Seat[]SeatsToBook){
+        String stFlightsToBook="";
+        String stSeatsToBook="";
+        for (Seat i:SeatsToBook) {
+            stFlightsToBook+="'"+i.flight+"',";
+            stSeatsToBook+="'"+i.getText()+"',";
+            if (!isFree(i.flight,i.getText())){
+                return -1;
+            }
+        }
+        stFlightsToBook="("+stFlightsToBook.substring(0,stFlightsToBook.length()-1)+")";
+        System.out.println(stFlightsToBook);
+        stSeatsToBook="("+stSeatsToBook.substring(0,stSeatsToBook.length()-1)+")";
+        Const.NumberSeatsBooked++;
+        String query=" UPDATE "+Const.SEAT_TABLE+
+                     " SET "+Const.SEATS_BOOKED + " = "+Const.NumberSeatsBooked+
+                     " WHERE "+Const.FLIGHTS_ID + " in "+ stFlightsToBook+
+                     " AND "+ Const.SEAT+" in "+stSeatsToBook;
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  -2;
+        }
+        return Const.NumberSeatsBooked;
+    }
+
+
 }
+
