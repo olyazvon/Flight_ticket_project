@@ -509,7 +509,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
 
 //    забронировать местa UPdate booked in bd,
 //     если место занято-1, если ошибка -2, если забронировано выводит № брони
-    public int Book(Seat[]SeatsToBook){
+    public int Book(ArrayList<Seat>SeatsToBook){
         String stFlightsToBook="";
         String stSeatsToBook="";
         for (Seat i:SeatsToBook) {
