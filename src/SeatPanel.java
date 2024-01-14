@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +28,40 @@ public class SeatPanel extends JPanel {
 
         JPanel threeSections = new JPanel();
         threeSections.setLayout(new BoxLayout(threeSections, BoxLayout.X_AXIS));
+
+//Legend
+        JPanel legend = new JPanel();
+        legend.setLayout(new BoxLayout(legend, BoxLayout.Y_AXIS));
+        legend.setMaximumSize(new Dimension(160, 190));
+        legend.setPreferredSize(new Dimension(160, 190));
+        legend.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        JPanel occ = new JPanel(new FlowLayout(FlowLayout.LEFT));;
+        occ.add(new Seat("1A", 0.0, true, "Business", "AA1111", null));
+        occ.add(new JLabel("Occupied"));
+        JPanel bc = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        Seat bcs = new Seat("1A", 0.0, false, "Business", "AA1111", null);
+        bcs.setDemo();
+        bc.add(bcs);
+        bc.add(new JLabel("Business"));
+        JPanel ec = new JPanel(new FlowLayout(FlowLayout.LEFT));;
+        Seat ecs = new Seat("1A", 0.0, false, "Economy", "AA1111", null);
+        ecs.setDemo();
+        ec.add(ecs);
+        ec.add(new JLabel("Economy"));
+        JPanel sel = new JPanel(new FlowLayout(FlowLayout.LEFT));;
+        Seat sels = new Seat("1A", 0.0, false, "Economy", "AA1111", null);
+        sels.setBackground(new Color(184, 207, 229));
+        sels.setDemo();
+        sel.add(sels);
+        sel.add(new JLabel("Your selection"));
+        legend.add(Box.createVerticalGlue());
+        legend.add(occ);
+        legend.add(bc);
+        legend.add(ec);
+        legend.add(sel);
+        legend.add(Box.createVerticalGlue());
+
+        threeSections.add(legend);
 
         threeSections.add(Box.createHorizontalGlue());
 
@@ -121,7 +156,7 @@ public class SeatPanel extends JPanel {
     }
 
     private class SeatMap extends JPanel {
-        public SeatMap(ArrayList<String> seats, ArrayList<Double> prices, ArrayList<Boolean> occupied, String flight, Accountant total) {
+        public SeatMap(ArrayList<String> seats, ArrayList<Double> prices, ArrayList<Boolean> occupied, ArrayList<String> seatClasses,String flight, Accountant total) {
             super();
             setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
@@ -132,7 +167,7 @@ public class SeatPanel extends JPanel {
                     if ((i - 2) % 4 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), seatClasses.get(i), flight, total));
                 }
             } else if (seats.size() < 200) {
                 //3+3
@@ -141,7 +176,7 @@ public class SeatPanel extends JPanel {
                     if ((i - 3) % 6 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), seatClasses.get(i), flight, total));
                 }
             } else if (seats.size() < 300) {
                 //2+4+2
@@ -150,7 +185,7 @@ public class SeatPanel extends JPanel {
                     if ((i - 2) % 8 == 0 || (i - 6) % 8 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), seatClasses.get(i), flight, total));
                 }
             } else {
                 //3+3+3
@@ -159,7 +194,7 @@ public class SeatPanel extends JPanel {
                     if ((i - 3) % 9 == 0 || (i - 6) % 9 == 0) {
                         add(new JLabel());
                     }
-                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), flight, total));
+                    add(new Seat(seats.get(i), prices.get(i), occupied.get(i), seatClasses.get(i), flight, total));
                 }
             }
         }
@@ -175,6 +210,7 @@ public class SeatPanel extends JPanel {
                     dbhand.read_seats_for_flight(flight),
                     dbhand.prices_for_flight(flight),
                     dbhand.occupied(flight),
+                    dbhand.read_typeClass_for_flight(flight),
                     flight,
                     total);
             setViewportView(seatMap);
