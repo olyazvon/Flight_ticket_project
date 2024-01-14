@@ -23,6 +23,10 @@ public class Const {
     public static final String  SEATS_BOUGHT="bought";
     public static final String  SEATS_class="TicketClass";
 
+    public static DatabaseHandler dbhand= new DatabaseHandler();
+
+    public static int NumberSeatsBooked= dbhand.maxBookedNumber();
+
 
 
 
