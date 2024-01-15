@@ -536,10 +536,10 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
       return BookingNumber;
     }
     public String UnBook(int BookingNumber){
-        BookingNumber--;
         String query=" UPDATE "+Const.SEAT_TABLE+
                 " SET "+Const.SEATS_BOOKED + " = "+null+
                 " WHERE "+Const.SEATS_BOOKED+" = " + BookingNumber;
+        System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -548,6 +548,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
             return  "не удалось отменить бронирование";
         }
         return "бронирование отменено";
+
     }
 
 
