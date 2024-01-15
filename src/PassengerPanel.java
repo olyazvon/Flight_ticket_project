@@ -20,13 +20,21 @@ public class PassengerPanel extends JPanel {
         nameL.setFont(new Font(null, Font.PLAIN, 24));
         nameL.setAlignmentX(CENTER_ALIGNMENT);
         add(nameL);
+        add(Box.createRigidArea(new Dimension(0, 15)));
+        JLabel bookingL = new JLabel(
+                "Your seats are successfully booked. Your booking number is "
+                        + bookingNumber);
+        bookingL.setFont(new Font(null, Font.PLAIN, 14));
+        bookingL.setAlignmentX(CENTER_ALIGNMENT);
+        add(bookingL);
 
         add(Box.createVerticalGlue());
         String currentFlight = "";
         for (Seat seat : this.seats) {
             if (!seat.flight.equals(currentFlight)) {
-                JLabel flightL = new JLabel(seat.flight);
+                JLabel flightL = new JLabel(seat.flight+" "+dbhand.qFromTo(seat.flight));
                 flightL.setFont(new Font(null, Font.PLAIN, 18));
+                flightL.setAlignmentX(CENTER_ALIGNMENT);
                 add(flightL);
                 add(Box.createRigidArea(new Dimension(0, 15)));
                 currentFlight = seat.flight;
@@ -64,8 +72,15 @@ public class PassengerPanel extends JPanel {
 //LISTENERS
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println(dbhand.UnBook(bookingNumber));
-                ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSeats();
+                int ans = JOptionPane.showConfirmDialog(
+                        SwingUtilities.getWindowAncestor(back),
+                        "Are you sure? Your booking will be canceled.",
+                        "Confirmation",
+                        JOptionPane.YES_NO_OPTION);
+                if (ans == 0) {
+                    System.out.println(dbhand.UnBook(bookingNumber));
+                    ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSeats();
+                }
             }
         });
 
@@ -87,7 +102,7 @@ public class PassengerPanel extends JPanel {
 
             add(Box.createHorizontalGlue());
 
-            label = new JLabel(seat.flight+" "+dbhand.qFromTo(seat.flight)+" "+seat.getText());
+            label = new JLabel(seat.getText());
             label.setFont(new Font(null, Font.PLAIN, 18));
             add(label);
 
