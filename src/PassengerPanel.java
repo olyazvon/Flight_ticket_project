@@ -20,13 +20,17 @@ public class PassengerPanel extends JPanel {
         nameL.setFont(new Font(null, Font.PLAIN, 24));
         nameL.setAlignmentX(CENTER_ALIGNMENT);
         add(nameL);
-        add(Box.createRigidArea(new Dimension(0, 15)));
-        JLabel booking = new JLabel("Your booking number:"+bookingNumber);
-        add(booking);
 
         add(Box.createVerticalGlue());
-
+        String currentFlight = "";
         for (Seat seat : this.seats) {
+            if (!seat.flight.equals(currentFlight)) {
+                JLabel flightL = new JLabel(seat.flight);
+                flightL.setFont(new Font(null, Font.PLAIN, 18));
+                add(flightL);
+                add(Box.createRigidArea(new Dimension(0, 15)));
+                currentFlight = seat.flight;
+            }
             OnePassenger pss = new OnePassenger(seat);
             this.passengers.add(pss);
             add(pss);
@@ -47,7 +51,8 @@ public class PassengerPanel extends JPanel {
         add(Box.createVerticalGlue());
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        footer.add(new JLabel("You can save your booking number and complete this and subsequent steps later."));
+        footer.add(new JLabel("You can save your booking number " + bookingNumber +
+                " and complete this and subsequent steps later."));
         footer.add(new JButton("Continue later"));
         JButton back = new JButton("Back");
         footer.add(back);
