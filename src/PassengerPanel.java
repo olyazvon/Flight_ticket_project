@@ -32,7 +32,7 @@ public class PassengerPanel extends JPanel {
         String currentFlight = "";
         for (Seat seat : this.seats) {
             if (!seat.flight.equals(currentFlight)) {
-                JLabel flightL = new JLabel(seat.flight+" "+dbhand.qFromTo(seat.flight));
+                JLabel flightL = new JLabel(seat.flight+"  "+dbhand.qFromTo(seat.flight));
                 flightL.setFont(new Font(null, Font.PLAIN, 18));
                 flightL.setAlignmentX(CENTER_ALIGNMENT);
                 add(flightL);
@@ -43,17 +43,6 @@ public class PassengerPanel extends JPanel {
             this.passengers.add(pss);
             add(pss);
             add(Box.createRigidArea(new Dimension(0, 15)));
-        }
-
-        int maxW = 0;
-        for (OnePassenger i : this.passengers) {
-             if (i.label.getPreferredSize().width > maxW) {
-                 maxW = i.label.getPreferredSize().width;
-             }
-        }
-        int H = this.passengers.get(0).label.getPreferredSize().height;
-        for (OnePassenger i : this.passengers) {
-            i.label.setPreferredSize(new Dimension(maxW+5, H));
         }
 
         add(Box.createVerticalGlue());
@@ -74,7 +63,7 @@ public class PassengerPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 int ans = JOptionPane.showConfirmDialog(
                         SwingUtilities.getWindowAncestor(back),
-                        "Are you sure? Your booking will be canceled.",
+                        "Are you sure?\nYour booking will be canceled.",
                         "Confirmation",
                         JOptionPane.YES_NO_OPTION);
                 if (ans == 0) {
@@ -83,7 +72,6 @@ public class PassengerPanel extends JPanel {
                 }
             }
         });
-
     }
 
     private class OnePassenger extends JPanel{
@@ -104,6 +92,7 @@ public class PassengerPanel extends JPanel {
 
             label = new JLabel(seat.getText());
             label.setFont(new Font(null, Font.PLAIN, 18));
+            label.setPreferredSize(new Dimension(40, label.getPreferredSize().height));
             add(label);
 
             add(Box.createRigidArea(new Dimension(15, 0)));
