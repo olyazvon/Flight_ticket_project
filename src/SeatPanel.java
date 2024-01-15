@@ -65,7 +65,7 @@ public class SeatPanel extends JPanel {
 
         threeSections.add(Box.createHorizontalGlue());
 
-        Accountant total = new Accountant();
+        Accountant total = new Accountant(!flightBack.isEmpty());
         SeatMapFrame a = new SeatMapFrame(flightThere, total);
         threeSections.add(a);
 
@@ -97,7 +97,7 @@ public class SeatPanel extends JPanel {
         proceedB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (total.seats.isEmpty()) {
+                if (!total.ok()) {
                     Window parent = SwingUtilities.getWindowAncestor(proceedB);
                     JOptionPane.showMessageDialog(parent, "Seats not selected!",
                             "Warning", JOptionPane.WARNING_MESSAGE);
@@ -116,11 +116,13 @@ public class SeatPanel extends JPanel {
 
     private class Accountant extends JLabel implements ActionListener {
         public double sum;
+        private boolean thereAndBack;
         public ArrayList<Seat> seats = new ArrayList<>();
         private int fixedWidth = 160;
 
-        public Accountant() {
+        public Accountant(boolean thereAndBack) {
             super("<html>Your selection is empty<br>Total: 0</html>");
+            this.thereAndBack = thereAndBack;
             setPreferredSize(new Dimension(fixedWidth, 40));
             setMaximumSize(new Dimension(fixedWidth, 40));
             Border borderA = BorderFactory.createLineBorder(Color.BLACK, 1);
@@ -152,6 +154,18 @@ public class SeatPanel extends JPanel {
             setPreferredSize(null);
             setMaximumSize(new Dimension(fixedWidth, getPreferredSize().height));
             setPreferredSize(new Dimension(fixedWidth, 40));
+        }
+
+        public boolean ok() {
+            if (seats.isEmpty()) return false;
+            if (thereAndBack) {
+                String previousFlight = seats.get(0).flight;
+                for (Seat i : seats) {
+                    if (!i.flight.equals(previousFlight)) return true;
+                }
+                return false;
+            }
+            return true;
         }
     }
 
