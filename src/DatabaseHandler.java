@@ -510,34 +510,33 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
 //    забронировать местa UPdate booked in bd,
 //     если место занято-1, если ошибка -2, если забронировано выводит № брони
     public int Book(ArrayList<Seat>SeatsToBook){
-        String stFlightsToBook="";
-        String stSeatsToBook="";
+        int BookingNumber=maxBookedNumber()+1;
+        String stFlightToBook="";
+        String stSeatToBook="";
+
         for (Seat i:SeatsToBook) {
-            stFlightsToBook+="'"+i.flight+"',";
-            stSeatsToBook+="'"+i.getText()+"',";
-            if (!isFree(i.flight,i.getText())){
-                return -1;
+            stFlightToBook="'"+i.flight+"'";
+            stSeatToBook="'"+i.getText()+"'";
+            if (!isFree(i.flight,i.getText()))
+                {return -1;}
+            else{
+                String query=" UPDATE "+Const.SEAT_TABLE+
+                            " SET "+Const.SEATS_BOOKED + " = "+BookingNumber+
+                            " WHERE "+Const.FLIGHTS_ID + " = "+ stFlightToBook+
+                            " AND "+ Const.SEAT+" = "+stSeatToBook;
+                try (Statement statement = getDbConnection().createStatement();
+                     ResultSet rs = statement.executeQuery(query)) {
+                    rs.next();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return  -2;
+                }
             }
         }
-        stFlightsToBook="("+stFlightsToBook.substring(0,stFlightsToBook.length()-1)+")";
-        System.out.println(stFlightsToBook);
-        stSeatsToBook="("+stSeatsToBook.substring(0,stSeatsToBook.length()-1)+")";
-        Const.NumberSeatsBooked++;
-        String query=" UPDATE "+Const.SEAT_TABLE+
-                     " SET "+Const.SEATS_BOOKED + " = "+Const.NumberSeatsBooked+
-                     " WHERE "+Const.FLIGHTS_ID + " in "+ stFlightsToBook+
-                     " AND "+ Const.SEAT+" in "+stSeatsToBook;
-        try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-            rs.next();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return  -2;
-        }
-        return Const.NumberSeatsBooked;
+      return BookingNumber;
     }
     public String UnBook(int BookingNumber){
-        Const.NumberSeatsBooked--;
+        BookingNumber--;
         String query=" UPDATE "+Const.SEAT_TABLE+
                 " SET "+Const.SEATS_BOOKED + " = "+null+
                 " WHERE "+Const.SEATS_BOOKED+" = " + BookingNumber;
