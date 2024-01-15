@@ -25,7 +25,7 @@ public class Const {
 
     public static DatabaseHandler dbhand= new DatabaseHandler();
 
-    public static int NumberSeatsBooked= dbhand.maxBookedNumber();
+
 
 
 
