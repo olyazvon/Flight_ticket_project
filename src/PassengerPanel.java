@@ -28,24 +28,34 @@ public class PassengerPanel extends JPanel {
         bookingL.setAlignmentX(CENTER_ALIGNMENT);
         add(bookingL);
 
-        add(Box.createVerticalGlue());
+        add(Box.createRigidArea(new Dimension(0, 10)));
+
+        JPanel listP = new JPanel();
+        listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
+
+        listP.add(Box.createVerticalGlue());
+
         String currentFlight = "";
         for (Seat seat : this.seats) {
             if (!seat.flight.equals(currentFlight)) {
                 JLabel flightL = new JLabel(seat.flight+"  "+dbhand.qFromTo(seat.flight));
                 flightL.setFont(new Font(null, Font.PLAIN, 18));
                 flightL.setAlignmentX(CENTER_ALIGNMENT);
-                add(flightL);
-                add(Box.createRigidArea(new Dimension(0, 15)));
+                listP.add(flightL);
+                listP.add(Box.createRigidArea(new Dimension(0, 15)));
                 currentFlight = seat.flight;
             }
             OnePassenger pss = new OnePassenger(seat);
             this.passengers.add(pss);
-            add(pss);
-            add(Box.createRigidArea(new Dimension(0, 15)));
+            listP.add(pss);
+            listP.add(Box.createRigidArea(new Dimension(0, 15)));
         }
 
-        add(Box.createVerticalGlue());
+        listP.add(Box.createVerticalGlue());
+
+        JScrollPane scroll = new JScrollPane(listP);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        add(scroll);
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         footer.add(new JLabel("You can save your booking number " + bookingNumber +
