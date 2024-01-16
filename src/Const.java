@@ -24,6 +24,7 @@ public class Const {
     public static final String  USER_NAME="CardHolderName";
     public static final String  USER_CARD_DATE="CardDate";
     public static final String  USER_CARD_NUMBER="CardNumber";
+    public static final String  USER_CARD_CVV="CardCVV";
     public static final String  USER_BOOKING_NUMBER="BookingNumber";
 
     public static final String  PASSENGER_TABLE="PASSENGERS";
