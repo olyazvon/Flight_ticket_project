@@ -1,8 +1,9 @@
 import com.privatejgoodies.common.base.Objects;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -588,7 +589,29 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         }
         return arList;
     }
+public boolean isBookingValid(int BookingNumber){
 
+    String query=" SELECT "+ Const.BOOKING_DATE+
+                 " FROM "+ Const.BOOKING_TABLE+
+                 " WHERE "+Const.BOOKING_NUMBER+" = '"+ BookingNumber+"'";
+    //System.out.println(query);
+    try (Statement statement = getDbConnection().createStatement();
+         ResultSet rs = statement.executeQuery(query)) {
+        rs.next();
+        LocalDateTime bookDate=rs.getDate(Const.BOOKING_DATE).toLocalDate().atTime(
+                               rs.getTime(Const.BOOKING_DATE).toLocalTime());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/YYYY HH:mm");
+        LocalDateTime ValidationTime = bookDate.plusDays(1);
+        if (LocalDateTime.now().isBefore(ValidationTime)){
+            return  true;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return  false;
+    }
+    return false;
+
+}
 
 }
 
