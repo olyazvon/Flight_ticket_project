@@ -1,8 +1,9 @@
 import com.privatejgoodies.common.base.Objects;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -230,7 +231,9 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
                             seats_left("Economy") + ") s_economy" +
             " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
                     Const.FLIGHTS_ID + "=s_business.flight_id  " +
-                    "and (seats_left_business > 0 OR seats_left_economy > 0)");
+                    "and (seats_left_business > 0 OR seats_left_economy > 0)"+
+                    " AND to_char(" + Const.FLIGHTS_DEPARTURE +",'dd/mm/yyyy hh24:mi'"+
+                    ")> (SElect to_char (SYSDATE+1/24,'dd/mm/yyyy hh24:mi') from dual)");
 
     if (!((iata_from.length==1 && iata_from[0].equals("Any iata")) ||iata_from.length==0)) {
          String stIata_from = "";
@@ -261,7 +264,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
 
     if (data_from != null) {
         query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
-                + data_from.toString() + "', 'yyyy-mm-dd')";
+                + data_from.toString() + "', 'dd-mm-yyyy-hh-mm')";
     }
 
     return query;
@@ -403,7 +406,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
                 Const.FLIGHTS_FROM, Const.FLIGHTS_TO,
                 Const.FLIGHT_TABLE,
                 Const.FLIGHTS_ID, flight);
-        System.out.println(query);
+        //System.out.println(query);
         String result = "";
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -457,6 +460,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
                      " FROM "+Const.SEAT_TABLE+
                      " WHERE "+Const.FLIGHTS_ID+" = '"+ flight+
                      "' AND "+ Const.SEAT+" = '"+seat+"'" ;
+        //System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -539,7 +543,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         String query=" UPDATE "+Const.SEAT_TABLE+
                 " SET "+Const.SEATS_BOOKED + " = "+null+
                 " WHERE "+Const.SEATS_BOOKED+" = " + BookingNumber;
-        System.out.println(query);
+        //System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -564,7 +568,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
                 Const.SEAT_TABLE, Const.FLIGHT_TABLE,
                 Const.SEAT_TABLE, Const.SEATS_FLIGHT_ID, Const.FLIGHT_TABLE, Const.FLIGHTS_ID,
                 Const.SEAT_TABLE, Const.SEATS_BOOKED,bookingNumber);
-        System.out.println(query);
+        //System.out.println(query);
         ArrayList arList= new ArrayList<Seat>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -585,7 +589,29 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         }
         return arList;
     }
+public boolean isBookingValid(int BookingNumber){
 
+    String query=" SELECT "+ Const.BOOKING_DATE+
+                 " FROM "+ Const.BOOKING_TABLE+
+                 " WHERE "+Const.BOOKING_NUMBER+" = '"+ BookingNumber+"'";
+    //System.out.println(query);
+    try (Statement statement = getDbConnection().createStatement();
+         ResultSet rs = statement.executeQuery(query)) {
+        rs.next();
+        LocalDateTime bookDate=rs.getDate(Const.BOOKING_DATE).toLocalDate().atTime(
+                               rs.getTime(Const.BOOKING_DATE).toLocalTime());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/YYYY HH:mm");
+        LocalDateTime ValidationTime = bookDate.plusDays(1);
+        if (LocalDateTime.now().isBefore(ValidationTime)){
+            return  true;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return  false;
+    }
+    return false;
+
+}
 
 }
 
