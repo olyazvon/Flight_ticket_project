@@ -20,6 +20,10 @@ public class SearchPanel extends JPanel {
         JPanel header = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton loginB = new JButton("Log in");
         header.add(loginB);
+        JButton signUpB = new JButton("Sign up");
+        header.add(signUpB);
+        JButton payBookingB = new JButton("Pay for booking");
+        header.add(payBookingB);
         header.setMaximumSize(new Dimension(32767, header.getPreferredSize().height));
         add(header);
 

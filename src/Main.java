@@ -8,7 +8,7 @@ import java.util.Arrays;
 import static com.sun.java.accessibility.util.AWTEventMonitor.addActionListener;
 
 public class Main {
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    public static void main(String[] args) {
         MainWindowC mainWindow = new MainWindowC();
         mainWindow.setVisible(true);
         DatabaseHandler dbhand= new DatabaseHandler();

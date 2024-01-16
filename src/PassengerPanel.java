@@ -60,7 +60,8 @@ public class PassengerPanel extends JPanel {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         footer.add(new JLabel("You can save your booking number " + bookingNumber +
                 " and complete this and subsequent steps later."));
-        footer.add(new JButton("Continue later"));
+        JButton laterB = new JButton("Continue later");
+        footer.add(laterB);
         JButton back = new JButton("Back");
         footer.add(back);
         JButton proceedB = new JButton("Next");
@@ -79,6 +80,25 @@ public class PassengerPanel extends JPanel {
                 if (ans == 0) {
                     System.out.println(dbhand.UnBook(bookingNumber));
                     ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSeats();
+                }
+            }
+        });
+
+        laterB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int ans = JOptionPane.showConfirmDialog(
+                        SwingUtilities.getWindowAncestor(laterB),
+                        "Are you sure you want to quit?\n"
+                                + "You will be able to proceed to payment\n"
+                                + "with your booking code " + bookingNumber + ".\n"
+                                + "The booking is valid for 24 hours.",
+                        "Confirmation",
+                        JOptionPane.YES_NO_OPTION);
+                if (ans == 0) {
+                    MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(back);
+                    (parent).backToSeats();
+                    (parent).backToSearch();
+
                 }
             }
         });
