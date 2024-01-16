@@ -211,6 +211,13 @@ public class SearchPanel extends JPanel {
             }
         });
 
+        payBookingB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
     }
 
     private String longestString(String[] input) {

@@ -33,6 +33,16 @@ public class MainWindowC extends JFrame {
         ((CardLayout)pages.getLayout()).next(pages);
     }
 
+    public void proceedToPayment(int bookingNumber) {
+        pages.add(new PaymentPanel(bookingNumber), 3);
+        ((CardLayout)pages.getLayout()).next(pages);
+    }
+
+    public void backFromPayment() {
+        pages.remove(3);
+        ((CardLayout)pages.getLayout()).previous(pages);
+    }
+
     public void backToSeats() {
         pages.remove(2);
         ((CardLayout)pages.getLayout()).previous(pages);

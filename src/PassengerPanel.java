@@ -102,6 +102,13 @@ public class PassengerPanel extends JPanel {
                 }
             }
         });
+
+        proceedB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((MainWindowC)SwingUtilities.getWindowAncestor(proceedB)).proceedToPayment(bookingNumber);
+            }
+        });
     }
 
     private class OnePassenger extends JPanel{
