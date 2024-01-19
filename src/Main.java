@@ -32,6 +32,8 @@ public class Main {
 //        System.out.println(dbhand.isBookingValid(2));
 //        System.out.println(dbhand.isBookingValid(3));
        // System.out.println(dbhand.SignUp("ok","123","123"));
+        //System.out.println(dbhand.DelBooking(1));
+        System.out.println(dbhand.DelUnValidBooking());
         System.out.println(dbhand.SignIp("ok","123"));
     }
 }

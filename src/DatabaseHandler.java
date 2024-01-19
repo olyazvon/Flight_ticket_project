@@ -551,11 +551,41 @@ public class  DatabaseHandler extends Configs {
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
+            DelBooking(BookingNumber);
         } catch (Exception e) {
             e.printStackTrace();
             return "не удалось отменить бронирование";
         }
         return "бронирование отменено";
+
+    }
+
+    public String DelBooking(int BookingNumber) {
+        String query = " DELETE FROM " + Const.BOOKING_TABLE +
+                             " WHERE " + Const.BOOKING_NUMBER + " = " + BookingNumber;
+        //System.out.println(query);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "не удалось удалить бронирование из Броней";
+        }
+        return "бронирование удалено из таблицы броней";
+
+    }
+    public String DelUnValidBooking() {
+        String query = " DELETE FROM " + Const.BOOKING_TABLE +
+                " WHERE " + Const.BOOKING_DATE+ " + 1 < SYSDATE " ;
+        System.out.println(query);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "не удалось удалить бронирование из Броней";
+        }
+        return "бронирование удалено из таблицы броней";
 
     }
 
