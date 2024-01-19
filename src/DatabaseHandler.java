@@ -1,11 +1,10 @@
-import com.privatejgoodies.common.base.Objects;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 public class  DatabaseHandler extends Configs {
@@ -22,7 +21,7 @@ public class  DatabaseHandler extends Configs {
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             dbConnection = DriverManager.getConnection(connectionString, dbUser, dbPass);
-        } catch (SQLException | ClassNotFoundException  e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -91,7 +90,7 @@ public class  DatabaseHandler extends Configs {
         }
         String query = String.format("SELECT DISTINCT " + column_name + " FROM %s", table_name + where_st);
         String st = "";
-        String query1=query+" order by "+column_name;
+        String query1 = query + " order by " + column_name;
         int i = 0;
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query1)) {
@@ -185,12 +184,11 @@ public class  DatabaseHandler extends Configs {
 
     String cityByIATA(String iata) {
         return read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
-                (Const.AIRPORTS_ID + "=\'" + iata + "\'" ))[1];
+                (Const.AIRPORTS_ID + "=\'" + iata + "\'"))[1];
     }
 
 
-
-//    public String q_search_flights (String iata_from, String iata_to, LocalDate data_from) {
+    //    public String q_search_flights (String iata_from, String iata_to, LocalDate data_from) {
 //        String query = String.format(
 //                "SELECT fl.flight_id, airport_from, airport_to, " +
 //                        "to_char(departure, 'dd.mm.yy hh:mi'), " +
@@ -219,72 +217,73 @@ public class  DatabaseHandler extends Configs {
 //        return query;
 //
 //    }
-public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate data_from) {
-    String query = String.format(
-            "SELECT fl."+ Const.FLIGHTS_ID+","+Const.FLIGHTS_FROM +","+
-                    Const.FLIGHTS_TO+", to_char("+Const.FLIGHTS_DEPARTURE+", 'dd.mm.yy hh:mi'), " +
-                    "to_char("+Const.FLIGHTS_ARRIVAL+", 'dd.mm.yy hh:mi'), " +
-                    Const.FLIGHTS_PRICE_ECONOM+","+Const.FLIGHTS_PRICE_BUSINESS+
-                    ", s_economy.seats_left_economy, " +"s_business.seats_left_business " +
-            " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
-                            seats_left("Business") + ") s_business,(" +
-                            seats_left("Economy") + ") s_economy" +
-            " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
-                    Const.FLIGHTS_ID + "=s_business.flight_id  " +
-                    "and (seats_left_business > 0 OR seats_left_economy > 0)"+
-                    " AND to_char(" + Const.FLIGHTS_DEPARTURE +",'dd/mm/yyyy hh24:mi'"+
-                    ")> (SElect to_char (SYSDATE+1/24,'dd/mm/yyyy hh24:mi') from dual)");
+    public String q_search_flights(String[] iata_from, String[] iata_to, LocalDate data_from) {
+        String query = String.format(
+                "SELECT fl." + Const.FLIGHTS_ID + "," + Const.FLIGHTS_FROM + "," +
+                        Const.FLIGHTS_TO + ", to_char(" + Const.FLIGHTS_DEPARTURE + ", 'dd.mm.yy hh:mi'), " +
+                        "to_char(" + Const.FLIGHTS_ARRIVAL + ", 'dd.mm.yy hh:mi'), " +
+                        Const.FLIGHTS_PRICE_ECONOM + "," + Const.FLIGHTS_PRICE_BUSINESS +
+                        ", s_economy.seats_left_economy, " + "s_business.seats_left_business " +
+                        " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
+                        seats_left("Business") + ") s_business,(" +
+                        seats_left("Economy") + ") s_economy" +
+                        " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
+                        Const.FLIGHTS_ID + "=s_business.flight_id  " +
+                        "and (seats_left_business > 0 OR seats_left_economy > 0)") +
+                " AND " + Const.FLIGHTS_DEPARTURE +
+                " > (SElect SYSDATE + 1/24 from dual)";
 
-    if (!((iata_from.length==1 && iata_from[0].equals("Any iata")) ||iata_from.length==0)) {
-         String stIata_from = "";
+        if (!((iata_from.length == 1 && iata_from[0].equals("Any iata")) || iata_from.length == 0)) {
+            String stIata_from = "";
 
-        for (String i : iata_from) {
-            stIata_from += "'"+i +"'"+ ",";
+            for (String i : iata_from) {
+                stIata_from += "'" + i + "'" + ",";
+            }
+            System.out.println(Arrays.toString(iata_from));
+            if ((iata_from.length != 1 || iata_from[0].equals("Any iata"))) {
+                stIata_from = "(" + stIata_from.substring(iata_from[0].length() + 3, stIata_from.length() - 1) + ")";
+            } else {
+                stIata_from = "(" + stIata_from.substring(0, stIata_from.length() - 1) + ")";
+            }
+            query += " AND " + Const.FLIGHTS_FROM + " in " + stIata_from;
         }
-        System.out.println(Arrays.toString(iata_from));
-        if ((iata_from.length!=1 || iata_from[0].equals("Any iata"))) {
-            stIata_from = "(" + stIata_from.substring(iata_from[0].length() + 3, stIata_from.length() - 1) + ")";
+
+        if (!((iata_to.length == 1 && iata_to[0].equals("Any iata")) || iata_to.length == 0)) {
+            String stIata_to = "";
+
+            for (String i : iata_to) {
+                stIata_to += "'" + i + "'" + ",";
+            }
+            if ((iata_to.length != 1 || iata_to[0].equals("Any iata"))) {
+                stIata_to = "(" + stIata_to.substring(iata_to[0].length() + 3, stIata_to.length() - 1) + ")";
+            } else {
+                stIata_to = "(" + stIata_to.substring(0, stIata_to.length() - 1) + ")";
+            }
+            query += " AND " + Const.FLIGHTS_TO + " in " + stIata_to;
         }
-        else{stIata_from = "(" + stIata_from.substring(0,stIata_from.length()-1)+")";}
-        query += " AND " + Const.FLIGHTS_FROM + " in " + stIata_from;
+
+        if (data_from != null) {
+            query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
+                    + data_from.toString() + "', 'dd-mm-yyyy-hh-mm')";
+        }
+        System.out.println(query);
+        return query;
+
     }
-
-    if (!((iata_to.length==1 && iata_to[0].equals("Any iata")) ||iata_to.length==0)) {
-        String stIata_to="";
-
-        for (String i:iata_to) {
-            stIata_to+= "'"+i+"'"+",";
-        }
-        if ((iata_to.length!=1 || iata_to[0].equals("Any iata"))) {
-            stIata_to = "(" + stIata_to.substring(iata_to[0].length() + 3, stIata_to.length() - 1) + ")";
-        }
-        else{stIata_to = "(" + stIata_to.substring(0,stIata_to.length()-1)+")";}
-               query += " AND " + Const.FLIGHTS_TO + " in " + stIata_to;
-    }
-
-    if (data_from != null) {
-        query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
-                + data_from.toString() + "', 'dd-mm-yyyy-hh-mm')";
-    }
-
-    return query;
-
-}
-
-
 
 
     public ArrayList[] search_flights(String query) {
         try (Statement statement = getDbConnection().createStatement();
-            ResultSet rs = statement.executeQuery(query)){
+             ResultSet rs = statement.executeQuery(query)) {
             int columns = rs.getMetaData().getColumnCount();
             ArrayList[] searchResult = new ArrayList[columns];
             for (int i = 0; i < columns; i++) {
                 searchResult[i] = new ArrayList();
-            };
+            }
+            ;
             while (rs.next()) {
                 for (int i = 1; i <= columns; i++) {
-                    searchResult[i-1].add(rs.getString(i));
+                    searchResult[i - 1].add(rs.getString(i));
                 }
             }
             return searchResult;
@@ -295,16 +294,17 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
     }
 
     //возращает запрос свободных сидений по классу
-     public String seats_left(String TicketClass) {
+    public String seats_left(String TicketClass) {
         String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID + ", " +
                 "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
                 " FROM " + Const.SEAT_TABLE + " WHERE " + Const.SEATS_class + "= '" + TicketClass + "'" + " GROUP BY " + Const.SEATS_FLIGHT_ID);
-        return(query);
+        return (query);
     }
+
     //Seat Panel functions
     //ввыводит в arrayList значения столбца, упорядоченый по  столбцу
-    public String q_read_column_for_flight(String table_name,String column_name,String flightNumber,String OrderBy,
-                                 Boolean Desc) {
+    public String q_read_column_for_flight(String table_name, String column_name, String flightNumber, String OrderBy,
+                                           Boolean Desc) {
         String HowOrd = "";
         String OrdBy = "";
 
@@ -315,32 +315,19 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
             OrdBy = " ORDER BY LENGTH(" + OrderBy + "), " + OrderBy;
         }
         String query = String.format("SELECT " + column_name +
-                " FROM "+ table_name +
-                " WHERE "+ Const.SEATS_FLIGHT_ID+ " = "+"'"+flightNumber +
-                "' "+ OrdBy + HowOrd);
+                " FROM " + table_name +
+                " WHERE " + Const.SEATS_FLIGHT_ID + " = " + "'" + flightNumber +
+                "' " + OrdBy + HowOrd);
         return query;
     }
-    public ArrayList<String> read_seats_for_flight(String flight){
-        String query=q_read_column_for_flight(Const.SEAT_TABLE,Const.SEAT,flight,Const.SEAT,false);
-        ArrayList arList= new ArrayList<>();
-        try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-             while (rs.next()) {
-                arList.add(rs.getString(Const.SEAT) );
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return arList;
-    }
-    public ArrayList<String> read_typeClass_for_flight(String flight){
-        String query=q_read_column_for_flight(Const.SEAT_TABLE,Const.SEATS_class,
-                                        flight,Const.SEAT,false);
-        ArrayList arList= new ArrayList<>();
+
+    public ArrayList<String> read_seats_for_flight(String flight) {
+        String query = q_read_column_for_flight(Const.SEAT_TABLE, Const.SEAT, flight, Const.SEAT, false);
+        ArrayList arList = new ArrayList<>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             while (rs.next()) {
-                arList.add(rs.getString(Const.SEATS_class) );
+                arList.add(rs.getString(Const.SEAT));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -348,14 +335,29 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         return arList;
     }
 
-    public ArrayList<Double> prices_for_flight(String flight){
+    public ArrayList<String> read_typeClass_for_flight(String flight) {
+        String query = q_read_column_for_flight(Const.SEAT_TABLE, Const.SEATS_class,
+                flight, Const.SEAT, false);
+        ArrayList arList = new ArrayList<>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            while (rs.next()) {
+                arList.add(rs.getString(Const.SEATS_class));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arList;
+    }
+
+    public ArrayList<Double> prices_for_flight(String flight) {
         String query = String.format(
                 "SELECT %1$s.%2$s, %3$s, " +
-                "CASE %4$s WHEN 'Economy' THEN %5$s ELSE %6$s END price " +
-                "FROM %7$s, %8$s " +
-                "WHERE %9$s.%10$s = %11$s.%12$s " +
-                "AND %13$s.%14$s = '%15$s' " +
-                "ORDER BY LENGTH(%16$s), %17$s",
+                        "CASE %4$s WHEN 'Economy' THEN %5$s ELSE %6$s END price " +
+                        "FROM %7$s, %8$s " +
+                        "WHERE %9$s.%10$s = %11$s.%12$s " +
+                        "AND %13$s.%14$s = '%15$s' " +
+                        "ORDER BY LENGTH(%16$s), %17$s",
                 Const.SEAT_TABLE, Const.SEATS_FLIGHT_ID, Const.SEAT,
                 Const.SEATS_class, Const.FLIGHTS_PRICE_ECONOM, Const.FLIGHTS_PRICE_BUSINESS,
                 Const.SEAT_TABLE, Const.FLIGHT_TABLE,
@@ -367,7 +369,7 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             while (rs.next()) {
-                arList.add(rs.getDouble("price") );
+                arList.add(rs.getDouble("price"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -375,12 +377,13 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         return arList;
 
     }
-    public ArrayList<Boolean> occupied(String flight){
+
+    public ArrayList<Boolean> occupied(String flight) {
         String query = String.format(
                 "SELECT (CASE WHEN %1$s IS NULL AND %2$s IS NULL THEN 0 ELSE 1 END) oc " +
-                "FROM %3$s " +
-                "WHERE %4$s = '%5$s' " +
-                "ORDER BY LENGTH(%6$s), %7$s",
+                        "FROM %3$s " +
+                        "WHERE %4$s = '%5$s' " +
+                        "ORDER BY LENGTH(%6$s), %7$s",
                 Const.SEATS_BOOKED,
                 Const.SEATS_BOUGHT,
                 Const.SEAT_TABLE,
@@ -398,11 +401,11 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         return arList;
     }
 
-    public String qFromTo(String flight){
+    public String qFromTo(String flight) {
         String query = String.format(
                 "SELECT %1$s, %2$s " +
-                "FROM %3$s " +
-                "WHERE %4$s = '%5$s'",
+                        "FROM %3$s " +
+                        "WHERE %4$s = '%5$s'",
                 Const.FLIGHTS_FROM, Const.FLIGHTS_TO,
                 Const.FLIGHT_TABLE,
                 Const.FLIGHTS_ID, flight);
@@ -416,14 +419,14 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result.substring(0, result.length()-1);
+        return result.substring(0, result.length() - 1);
     }
 
     public Date getArrival(String flight) {
         String query = String.format(
                 "SELECT %1$s " +
-                "FROM %2$s " +
-                "WHERE %3$s = '%4$s'",
+                        "FROM %2$s " +
+                        "WHERE %3$s = '%4$s'",
                 Const.FLIGHTS_ARRIVAL,
                 Const.FLIGHT_TABLE,
                 Const.FLIGHTS_ID, flight);
@@ -440,8 +443,8 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
     public Date getDeparture(String flight) {
         String query = String.format(
                 "SELECT %1$s " +
-                "FROM %2$s " +
-                "WHERE %3$s = '%4$s'",
+                        "FROM %2$s " +
+                        "WHERE %3$s = '%4$s'",
                 Const.FLIGHTS_DEPARTURE,
                 Const.FLIGHT_TABLE,
                 Const.FLIGHTS_ID, flight);
@@ -455,38 +458,38 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         }
     }
 
-    public boolean isFree(String flight, String seat){
-        String query=" SELECT "+Const.SEATS_BOOKED+
-                     " FROM "+Const.SEAT_TABLE+
-                     " WHERE "+Const.FLIGHTS_ID+" = '"+ flight+
-                     "' AND "+ Const.SEAT+" = '"+seat+"'" ;
+    public boolean isFree(String flight, String seat) {
+        String query = " SELECT " + Const.SEATS_BOOKED +
+                " FROM " + Const.SEAT_TABLE +
+                " WHERE " + Const.FLIGHTS_ID + " = '" + flight +
+                "' AND " + Const.SEAT + " = '" + seat + "'";
         //System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
-            String  bookNumber=rs.getString(1);
+            String bookNumber = rs.getString(1);
             return bookNumber == null;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return  false;
+            return false;
         }
     }
 
     //max номер брони, если ошибка в запросе выводит -2
-    public int maxBookedNumber(){
-        int Max=0;
-        String query=" SELECT  MAX("+Const.SEATS_BOOKED+")"+
-                " FROM "+Const.SEAT_TABLE ;
+    public int maxBookedNumber() {
+        int Max = 0;
+        String query = " SELECT  MAX(" + Const.SEATS_BOOKED + ")" +
+                " FROM " + Const.SEAT_TABLE;
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
-            Max=rs.getInt(1);
+            Max = rs.getInt(1);
             return Max;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return  -2;
+            return -2;
         }
     }
     //забронировать место UPdate booked in bd,
@@ -511,77 +514,108 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
 //
 //}
 
-//    забронировать местa UPdate booked in bd,
+    //    забронировать местa UPdate booked in bd,
 //     если место занято-1, если ошибка -2, если забронировано выводит № брони
-    public int Book(ArrayList<Seat>SeatsToBook){
-        int BookingNumber=maxBookedNumber()+1;
-        String stFlightToBook="";
-        String stSeatToBook="";
+    public int Book(ArrayList<Seat> SeatsToBook) {
+        int BookingNumber = maxBookedNumber() + 1;
+        String stFlightToBook = "";
+        String stSeatToBook = "";
 
-        for (Seat i:SeatsToBook) {
-            stFlightToBook="'"+i.flight+"'";
-            stSeatToBook="'"+i.getText()+"'";
-            if (!isFree(i.flight,i.getText()))
-                {return -1;}
-            else{
-                String query=" UPDATE "+Const.SEAT_TABLE+
-                            " SET "+Const.SEATS_BOOKED + " = "+BookingNumber+
-                            " WHERE "+Const.FLIGHTS_ID + " = "+ stFlightToBook+
-                            " AND "+ Const.SEAT+" = "+stSeatToBook;
+        for (Seat i : SeatsToBook) {
+            stFlightToBook = "'" + i.flight + "'";
+            stSeatToBook = "'" + i.getText() + "'";
+            if (!isFree(i.flight, i.getText())) {
+                return -1;
+            } else {
+                String query = " UPDATE " + Const.SEAT_TABLE +
+                        " SET " + Const.SEATS_BOOKED + " = " + BookingNumber +
+                        " WHERE " + Const.FLIGHTS_ID + " = " + stFlightToBook +
+                        " AND " + Const.SEAT + " = " + stSeatToBook;
                 try (Statement statement = getDbConnection().createStatement();
                      ResultSet rs = statement.executeQuery(query)) {
                     rs.next();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return  -2;
+                    return -2;
                 }
             }
         }
-      return BookingNumber;
+        return BookingNumber;
     }
-    public String UnBook(int BookingNumber){
-        String query=" UPDATE "+Const.SEAT_TABLE+
-                " SET "+Const.SEATS_BOOKED + " = "+null+
-                " WHERE "+Const.SEATS_BOOKED+" = " + BookingNumber;
+
+    public String UnBook(int BookingNumber) {
+        String query = " UPDATE " + Const.SEAT_TABLE +
+                " SET " + Const.SEATS_BOOKED + " = " + null +
+                " WHERE " + Const.SEATS_BOOKED + " = " + BookingNumber;
+        //System.out.println(query);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            DelBooking(BookingNumber);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "не удалось отменить бронирование";
+        }
+        return "бронирование отменено";
+
+    }
+
+    public String DelBooking(int BookingNumber) {
+        String query = " DELETE FROM " + Const.BOOKING_TABLE +
+                             " WHERE " + Const.BOOKING_NUMBER + " = " + BookingNumber;
         //System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
         } catch (Exception e) {
             e.printStackTrace();
-            return  "не удалось отменить бронирование";
+            return "не удалось удалить бронирование из Броней";
         }
-        return "бронирование отменено";
+        return "бронирование удалено из таблицы броней";
+
+    }
+    public String DelUnValidBooking() {
+        String query = " DELETE FROM " + Const.BOOKING_TABLE +
+                " WHERE " + Const.BOOKING_DATE+ " + 1 < SYSDATE " ;
+        System.out.println(query);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "не удалось удалить бронирование из Броней";
+        }
+        return "бронирование удалено из таблицы броней";
 
     }
 
 
     public ArrayList<Seat> seatsInBooking(int bookingNumber) {
-        String query= String.format(
-                "SELECT %1$s.*,"+
-                "CASE %2$s WHEN 'Economy' THEN %3$s ELSE %4$s END price " +
-                "FROM %5$s, %6$s " +
-                "WHERE %7$s.%8$s = %9$s.%10$s " +
-                "AND %11$s.%12$s = %13$s ",
+        String query = String.format(
+                "SELECT %1$s.*," +
+                        "CASE %2$s WHEN 'Economy' THEN %3$s ELSE %4$s END price " +
+                        "FROM %5$s, %6$s " +
+                        "WHERE %7$s.%8$s = %9$s.%10$s " +
+                        "AND %11$s.%12$s = %13$s ",
                 Const.SEAT_TABLE,
                 Const.SEATS_class, Const.FLIGHTS_PRICE_ECONOM, Const.FLIGHTS_PRICE_BUSINESS,
                 Const.SEAT_TABLE, Const.FLIGHT_TABLE,
                 Const.SEAT_TABLE, Const.SEATS_FLIGHT_ID, Const.FLIGHT_TABLE, Const.FLIGHTS_ID,
-                Const.SEAT_TABLE, Const.SEATS_BOOKED,bookingNumber);
+                Const.SEAT_TABLE, Const.SEATS_BOOKED, bookingNumber);
         //System.out.println(query);
-        ArrayList arList= new ArrayList<Seat>();
+        ArrayList arList = new ArrayList<Seat>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             while (rs.next()) {
-                Boolean occuppied=false;
-                if (rs.getString(Const.SEATS_BOOKED)!=null){
-                    occuppied=true;
+                Boolean occuppied = false;
+                if (rs.getString(Const.SEATS_BOOKED) != null) {
+                    occuppied = true;
                 }
-                Seat seat= new Seat(rs.getString(Const.SEAT),
-                                    rs.getDouble("price"),
-                                    occuppied,
-                                    rs.getString(Const.SEATS_class),
-                                    rs.getString(Const.SEATS_FLIGHT_ID),null);
+                Seat seat = new Seat(rs.getString(Const.SEAT),
+                        rs.getDouble("price"),
+                        occuppied,
+                        rs.getString(Const.SEATS_class),
+                        rs.getString(Const.SEATS_FLIGHT_ID), null);
                 arList.add(seat);
             }
         } catch (Exception e) {
@@ -589,29 +623,84 @@ public String q_search_flights (String[] iata_from, String[] iata_to, LocalDate 
         }
         return arList;
     }
-public boolean isBookingValid(int BookingNumber){
 
-    String query=" SELECT "+ Const.BOOKING_DATE+
-                 " FROM "+ Const.BOOKING_TABLE+
-                 " WHERE "+Const.BOOKING_NUMBER+" = '"+ BookingNumber+"'";
-    //System.out.println(query);
-    try (Statement statement = getDbConnection().createStatement();
-         ResultSet rs = statement.executeQuery(query)) {
-        rs.next();
-        LocalDateTime bookDate=rs.getDate(Const.BOOKING_DATE).toLocalDate().atTime(
-                               rs.getTime(Const.BOOKING_DATE).toLocalTime());
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/YYYY HH:mm");
-        LocalDateTime ValidationTime = bookDate.plusDays(1);
-        if (LocalDateTime.now().isBefore(ValidationTime)){
-            return  true;
+    public boolean isBookingValid(int BookingNumber) {
+
+        String query = " SELECT " + Const.BOOKING_DATE +
+                " FROM " + Const.BOOKING_TABLE +
+                " WHERE " + Const.BOOKING_NUMBER + " = '" + BookingNumber + "'";
+        //System.out.println(query);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            LocalDateTime bookDate = rs.getDate(Const.BOOKING_DATE).toLocalDate().atTime(
+                    rs.getTime(Const.BOOKING_DATE).toLocalTime());
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/YYYY HH:mm");
+            LocalDateTime ValidationTime = bookDate.plusDays(1);
+            if (LocalDateTime.now().isBefore(ValidationTime)) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        return  false;
+        return false;
     }
-    return false;
 
-}
+    public String SignUp(String login, String password, String passTocheck){
+        if (!Objects.equals(password, passTocheck)) {
+            return " Password doesn't match";
+        } else {
+            String query = " INSERT INTO " + Const.USER_TABLE +
+                    "(" + Const.USER_LOGIN + "," + Const.USER_PASS + ")" +
+                    "VALUES ('" + login + "','" + password + "')";
+            System.out.println(query);
+            try (Statement statement = getDbConnection().createStatement();
+                 ResultSet rs = statement.executeQuery(query)) {
+                rs.next();
+            } catch (java.sql.SQLIntegrityConstraintViolationException e) {
+                throw new RuntimeException("login is not unique",e);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return "User created successfully";
+    }
 
-}
+    //returns booking number
+    public int SignIp(String login, String password) {
+        String query = " SELECT COUNT(*) FROM " + Const.USER_TABLE +
+                " WHERE " + Const.USER_LOGIN + "='" + login + "'";
+        //System.out.println(query);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            rs.next();
+            int isLogin = rs.getInt(1);
+            if (isLogin == 0) {
+                return -1;
+            } else {
+                String query1 = " SELECT " + Const.USER_BOOKING_NUMBER +
+                        " FROM " + Const.USER_TABLE +
+                        " WHERE " + Const.USER_LOGIN + "='" + login + "'" +
+                        " AND " + Const.USER_PASS + "='" + password + "'";
+                //System.out.println(query1);
+                try (Statement statement1 = getDbConnection().createStatement();
+                     ResultSet rs1 = statement1.executeQuery(query1)) {
+                    rs1.next();
+                    int isBooking = rs1.getInt(1);
+                    return isBooking;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    }
+
+
 
