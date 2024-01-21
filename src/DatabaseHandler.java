@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -217,11 +218,11 @@ public class  DatabaseHandler extends Configs {
 //        return query;
 //
 //    }
-    public String q_search_flights(String[] iata_from, String[] iata_to, LocalDate data_from) {
+    public String q_search_flights(String[] iata_from, String[] iata_to, LocalDate date_from, LocalTime time_from) {
         String query = String.format(
                 "SELECT fl." + Const.FLIGHTS_ID + "," + Const.FLIGHTS_FROM + "," +
-                        Const.FLIGHTS_TO + ", to_char(" + Const.FLIGHTS_DEPARTURE + ", 'dd.mm.yy hh:mi'), " +
-                        "to_char(" + Const.FLIGHTS_ARRIVAL + ", 'dd.mm.yy hh:mi'), " +
+                        Const.FLIGHTS_TO + ", to_char(" + Const.FLIGHTS_DEPARTURE + ", 'dd.mm.yy hh24:mi'), " +
+                        "to_char(" + Const.FLIGHTS_ARRIVAL + ", 'dd.mm.yy hh24:mi'), " +
                         Const.FLIGHTS_PRICE_ECONOM + "," + Const.FLIGHTS_PRICE_BUSINESS +
                         ", s_economy.seats_left_economy, " + "s_business.seats_left_business " +
                         " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
@@ -262,9 +263,22 @@ public class  DatabaseHandler extends Configs {
             query += " AND " + Const.FLIGHTS_TO + " in " + stIata_to;
         }
 
-        if (data_from != null) {
+        if (date_from != null) {
             query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
-                    + data_from.toString() + "', 'dd-mm-yyyy-hh-mm')";
+                    + date_from.toString() + "', 'yyyy-mm-dd')";
+
+            if (time_from != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+                LocalDateTime departureDateTime= LocalDateTime.of(date_from, time_from);
+
+                query += " AND (" + Const.FLIGHTS_DEPARTURE + ") >= to_date('"
+                        + departureDateTime.minusHours(2).format(formatter) +
+                        "', 'yyyy-mm-dd hh24:mi')" +
+                        " AND (" + Const.FLIGHTS_DEPARTURE + ") <= to_date('"
+                        + departureDateTime.plusHours(2).format(formatter) +
+                        "', 'yyyy-mm-dd hh24:mi')";
+            }
         }
         System.out.println(query);
         return query;
