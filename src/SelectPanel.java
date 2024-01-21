@@ -39,7 +39,7 @@ public class SelectPanel extends JPanel {
 
         dateSettings.setFormatForDatesCommonEra("dd.MM.yyyy");
         dateSettings.setFormatForDatesBeforeCommonEra("dd.MM.uuuu");
-        FlightTableModel tabMod = new FlightTableModel(dbhand.search_flights(dbhand.q_search_flights(new String[]{"Any iata"},new String[]{"Any iata"},null)));
+        FlightTableModel tabMod = new FlightTableModel(dbhand.search_flights(dbhand.q_search_flights(new String[]{"Any iata"},new String[]{"Any iata"},null,null)));
         table = new JTable(tabMod);
         //table.setDefaultEditor(Object.class, null);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -171,7 +171,7 @@ public class SelectPanel extends JPanel {
                     arrayTo = new String[] {(String) iataTo.getSelectedItem()};
                 }
                 System.out.println(Arrays.toString(arrayFrom));
-                tabMod.data = dbhand.search_flights(dbhand.q_search_flights(arrayFrom, arrayTo, dateP.getDate()));
+                tabMod.data = dbhand.search_flights(dbhand.q_search_flights(arrayFrom, arrayTo, dateP.getDate(),timeP.getTime()));
                 tabMod.fireTableDataChanged();
             }
         });
