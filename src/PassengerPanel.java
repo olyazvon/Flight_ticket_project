@@ -21,14 +21,6 @@ public class PassengerPanel extends JPanel {
         nameL.setAlignmentX(CENTER_ALIGNMENT);
         add(nameL);
         add(Box.createRigidArea(new Dimension(0, 15)));
-        JLabel bookingL = new JLabel(
-                "Your seats are successfully booked. Your booking number is "
-                        + bookingNumber);
-        bookingL.setFont(new Font(null, Font.PLAIN, 14));
-        bookingL.setAlignmentX(CENTER_ALIGNMENT);
-        add(bookingL);
-
-        add(Box.createRigidArea(new Dimension(0, 10)));
 
         JPanel listP = new JPanel();
         listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
@@ -58,10 +50,6 @@ public class PassengerPanel extends JPanel {
         add(scroll);
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        footer.add(new JLabel("You can save your booking number " + bookingNumber +
-                " and complete this and subsequent steps later."));
-        JButton laterB = new JButton("Continue later");
-        footer.add(laterB);
         JButton back = new JButton("Back");
         footer.add(back);
         JButton proceedB = new JButton("Next");
@@ -80,25 +68,6 @@ public class PassengerPanel extends JPanel {
                 if (ans == 0) {
                     System.out.println(dbhand.UnBook(bookingNumber));
                     ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backFromPassengers();
-                }
-            }
-        });
-
-        laterB.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int ans = JOptionPane.showConfirmDialog(
-                        SwingUtilities.getWindowAncestor(laterB),
-                        "Are you sure you want to quit?\n"
-                                + "You will be able to proceed to payment\n"
-                                + "with your booking code " + bookingNumber + ".\n"
-                                + "The booking is valid for 24 hours.",
-                        "Confirmation",
-                        JOptionPane.YES_NO_OPTION);
-                if (ans == 0) {
-                    MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(back);
-                    (parent).backFromPassengers();
-                    (parent).backToSearch();
-
                 }
             }
         });

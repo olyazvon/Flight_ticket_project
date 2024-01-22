@@ -97,14 +97,30 @@ public class SeatPanel extends JPanel {
         proceedB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(proceedB);
                 if (!total.ok()) {
-                    Window parent = SwingUtilities.getWindowAncestor(proceedB);
                     JOptionPane.showMessageDialog(parent, "Seats not selected!",
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 int bookNum = dbhand.Book(total.seats);
-                ((MainWindowC) SwingUtilities.getWindowAncestor(back)).proceedToPassengers(bookNum);
+                if (parent.loggedIn) {
+                    int ans = JOptionPane.showConfirmDialog(parent,
+                            "Your seats are successfully booked. Do you want to continue now?\n" +
+                                    "If you press No, you will be able to continue anytime later.",
+                            "Success",
+                            JOptionPane.YES_NO_OPTION);
+                    if (ans == 0) {
+                        parent.proceedToPassengers(bookNum);
+                    } else {
+                        parent.backToSearch();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(parent, "Your seats are successfully booked.\n" +
+                                    "Your booking number is " + bookNum,
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
+                    parent.proceedToPassengers(bookNum);
+                }
             }
         });
         back.addActionListener(new ActionListener() {
