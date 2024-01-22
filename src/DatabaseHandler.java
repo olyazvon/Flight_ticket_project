@@ -394,7 +394,7 @@ public class  DatabaseHandler extends Configs {
 
     public ArrayList<Boolean> occupied(String flight) {
         String query = String.format(
-                "SELECT (CASE WHEN %1$s IS NULL AND %2$s IS NULL THEN 0 ELSE 1 END) oc " +
+                "SELECT (CASE WHEN %1$s IS NULL AND %2$s = 0 THEN 0 ELSE 1 END) oc " +
                         "FROM %3$s " +
                         "WHERE %4$s = '%5$s' " +
                         "ORDER BY LENGTH(%6$s), %7$s",
