@@ -20,6 +20,8 @@ public class Const {
 
 
     public static final String  USER_TABLE="USERS";
+    public static final String  USER_LOGIN="Login";
+    public static final String  USER_PASS="Password";
     public static final String  USER_ID="User_id";
     public static final String  USER_NAME="CardHolderName";
     public static final String  USER_CARD_DATE="CardDate";
