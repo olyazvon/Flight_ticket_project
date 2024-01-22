@@ -1,8 +1,6 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 
 public class MainWindowC extends JFrame {
@@ -34,17 +32,35 @@ public class MainWindowC extends JFrame {
     }
 
     public void proceedToPayment(int bookingNumber) {
-        pages.add(new PaymentPanel(bookingNumber), 3);
+        try {
+            pages.add(new PaymentPanel(bookingNumber), 3);
+        } catch (IllegalArgumentException e) {
+            pages.add(new PaymentPanel(bookingNumber), 2);
+        }
+        ((CardLayout)pages.getLayout()).next(pages);
+    }
+
+    public void jumpToPassengers(int bookingNumber) {
+        pages.add(new PassengerPanel(bookingNumber), 1);
         ((CardLayout)pages.getLayout()).next(pages);
     }
 
     public void backFromPayment() {
-        pages.remove(3);
+        try {
+            pages.remove(3);
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            pages.remove(2);
+        }
         ((CardLayout)pages.getLayout()).previous(pages);
     }
 
-    public void backToSeats() {
-        pages.remove(2);
+    public void backFromPassengers() {
+        try {
+            pages.remove(2);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            pages.remove(1);
+        }
         ((CardLayout)pages.getLayout()).previous(pages);
     }
 

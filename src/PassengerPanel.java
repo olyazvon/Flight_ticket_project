@@ -79,7 +79,7 @@ public class PassengerPanel extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (ans == 0) {
                     System.out.println(dbhand.UnBook(bookingNumber));
-                    ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSeats();
+                    ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backFromPassengers();
                 }
             }
         });
@@ -96,7 +96,7 @@ public class PassengerPanel extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (ans == 0) {
                     MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(back);
-                    (parent).backToSeats();
+                    (parent).backFromPassengers();
                     (parent).backToSearch();
 
                 }

@@ -214,7 +214,14 @@ public class SearchPanel extends JPanel {
         payBookingB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String s = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(payBookingB),
+                        "Enter your booking number",
+                        "Pay for Booking",
+                        JOptionPane.PLAIN_MESSAGE);
+                if (s != null && !s.isEmpty()) {
+                    ((MainWindowC)SwingUtilities.getWindowAncestor(payBookingB)).jumpToPassengers(Integer.parseInt(s));
 
+                }
             }
         });
 
