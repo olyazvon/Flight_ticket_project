@@ -216,18 +216,31 @@ public class SearchPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(loginB);
-                String s = JOptionPane.showInputDialog(parent,
-                        "Enter your login",
-                        "tmp login window",
-                        JOptionPane.PLAIN_MESSAGE);
-                if (s != null && !s.isEmpty()) {
-                    parent.loggedIn = s;
-                    header.removeAll();
-                    usernameL.setText(parent.loggedIn);
-                    header.add(usernameL);
-                    header.add(logoutB);
-                    header.revalidate();
-                    header.repaint();
+                LoginDialog lid = new LoginDialog(parent);
+                if (lid.resultLogin == null) {return;}
+                parent.loggedIn = lid.resultLogin;
+                System.out.println(lid.resultBooking);
+                header.removeAll();
+                usernameL.setText(parent.loggedIn);
+                header.add(usernameL);
+                header.add(logoutB);
+                header.revalidate();
+                header.repaint();
+                JOptionPane.showMessageDialog(parent, "You are logged in!",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                if (lid.resultBooking != 0) {
+                    Object[] options = {"Pay for booking", "Clear booking", "Log out"};
+                    int res = JOptionPane.showOptionDialog(parent,
+                            "You have a booking.\n" +
+                                    "According to our rules, it's only possible " +
+                                    "to have one active booking.\n" +
+                                    "Do you want to pay for it now?",
+                            "Your booking",
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,  //the titles of buttons
+                            options[0]); //default button title
                 }
             }
         });
@@ -243,6 +256,7 @@ public class SearchPanel extends JPanel {
                 header.add(signUpB);
                 header.revalidate();
                 header.repaint();
+                parent.transferFocus();
             }
         });
 

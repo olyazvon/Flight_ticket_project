@@ -688,14 +688,15 @@ public class  DatabaseHandler extends Configs {
     //returns booking number
     public int SignIn(String login, String password) {
         String query = " SELECT COUNT(*) FROM " + Const.USER_TABLE +
-                " WHERE " + Const.USER_LOGIN + "='" + login + "'";
+                " WHERE " + Const.USER_LOGIN + "='" + login + "'" +
+                " AND " + Const.USER_PASS + "='" + password + "'";
         //System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
             int isLogin = rs.getInt(1);
             if (isLogin == 0) {
-                return -1;
+                throw new RuntimeException("Incorrect login or password!");
             } else {
                 String query1 = " SELECT " + Const.USER_BOOKING_NUMBER +
                         " FROM " + Const.USER_TABLE +
@@ -708,7 +709,7 @@ public class  DatabaseHandler extends Configs {
                     int isBooking = rs1.getInt(1);
                     return isBooking;
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Unknown error, please try again later!");
                 }
             }
 
