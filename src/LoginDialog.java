@@ -9,15 +9,20 @@ public class LoginDialog extends JDialog {
     //private static final long serialVersionUID = 1L;
 
     public JTextField tfLogin, tfPassword;
-    public JButton btnOk, btnCancel;
+    public JButton btnOk;
+    public String resultLogin;
+    public int resultBooking;
+    DatabaseHandler dbhand;
+    public JFrame parent;
 
     public LoginDialog(JFrame parent) {
         super(parent, "Log In");
-        // При выходе из диалогового окна работа заканчивается
+        this.parent = parent;
+        dbhand = new DatabaseHandler();
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 dispose();
-                System.exit(0);
+                resultLogin = null;
             }
         });
         // добавляем расположение в центр окна
@@ -25,6 +30,9 @@ public class LoginDialog extends JDialog {
         setResizable(false);
         // задаем предпочтительный размер
         pack();
+        setSize(getSize());
+        setLocationRelativeTo(parent);
+        setModal(true);
         // выводим окно на экран
         setVisible(true);
     }
@@ -63,10 +71,21 @@ public class LoginDialog extends JDialog {
         btnOk = new JButton("Log in");
         //btnCancel = new JButton("Cancel");
         flow.add(btnOk);
-        //JLabel spacer = new JLabel("");
-        //spacer.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        //flow.add(spacer);
-        //flow.add(btnCancel);
+
+        btnOk.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    resultBooking = dbhand.SignIn(
+                            tfLogin.getText(), tfPassword.getText());
+                    resultLogin = tfLogin.getText();
+                    dispose();
+                } catch (RuntimeException exception) {
+                    JOptionPane.showMessageDialog(parent, exception.getMessage(),
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
 
         // Определение размеров надписей к текстовым полям
 
