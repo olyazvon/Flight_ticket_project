@@ -83,9 +83,11 @@ public class LoginDialog extends JDialog {
         return panel;
     }
 
+
     // тестовый метод для проверки диалогового окна
     public static void main(String[] args) {
-        new LoginDialog(new JFrame());
+        JDialog a = new LoginDialog(new JFrame());
+        a.getContentPane();
     }
 
 

@@ -11,7 +11,7 @@ public class SignUpDialog extends JDialog {
     public JButton btnOk, btnCancel;
 
     public SignUpDialog(JFrame parent) {
-        super(parent, "Log In");
+        super(parent, "Sign up");
         // При выходе из диалогового окна работа заканчивается
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
@@ -59,7 +59,7 @@ public class SignUpDialog extends JDialog {
         password.add(tfPassword);
         JPanel passwordToCheck = new JPanel();
         passwordToCheck.setLayout(new BoxLayout(passwordToCheck, BoxLayout.X_AXIS));
-        JLabel passwrdToCheckLabel = new JLabel("Password :", SwingConstants.RIGHT);
+        JLabel passwrdToCheckLabel = new JLabel("Repeat:", SwingConstants.RIGHT);
         passwordToCheck.add(passwrdToCheckLabel);
         passwordToCheck.add(Box.createHorizontalStrut(12));
         tfPassword = new JPasswordField(15);
@@ -69,7 +69,7 @@ public class SignUpDialog extends JDialog {
 
         // Создание панели для размещения кнопок управления
         JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        btnOk = new JButton("Sign in");
+        btnOk = new JButton("Sign up");
         //btnCancel = new JButton("Cancel");
         flow.add(btnOk);
         //JLabel spacer = new JLabel("");
