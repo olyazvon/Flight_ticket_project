@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -232,15 +233,29 @@ public class SearchPanel extends JPanel {
                     Object[] options = {"Pay for booking", "Clear booking", "Log out"};
                     int res = JOptionPane.showOptionDialog(parent,
                             "You have a booking.\n" +
-                                    "According to our rules, it's only possible " +
+                                    "According to our rules, it's only possible\n" +
                                     "to have one active booking.\n" +
                                     "Do you want to pay for it now?",
                             "Your booking",
                             JOptionPane.YES_NO_CANCEL_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
                             null,
-                            options,  //the titles of buttons
-                            options[0]); //default button title
+                            options,
+                            options[0]);
+                    if (res == 0) {
+                        parent.jumpToPassengers(lid.resultBooking);
+                    } else if (res == 1) {
+                        try {
+                            dbhand.removeBookingTotally(lid.resultBooking);
+                            JOptionPane.showMessageDialog(parent, "Booking removed!",
+                                    "Success", JOptionPane.INFORMATION_MESSAGE);
+                        } catch (SQLException exception) {
+                            JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
+                                    "Fail", JOptionPane.WARNING_MESSAGE);
+                        }
+                    } else {
+                        logoutB.getActionListeners()[0].actionPerformed(new ActionEvent(this, 0, ""));
+                    }
                 }
             }
         });

@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PassengerPanel extends JPanel {
@@ -66,8 +67,16 @@ public class PassengerPanel extends JPanel {
                         "Confirmation",
                         JOptionPane.YES_NO_OPTION);
                 if (ans == 0) {
-                    System.out.println(dbhand.UnBook(bookingNumber));
-                    ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backFromPassengers();
+                    MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(back);
+                    try {
+                        dbhand.removeBookingTotally(bookingNumber);
+                        JOptionPane.showMessageDialog(parent, "Booking cancelled!",
+                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                        parent.backFromPassengers();
+                    } catch (SQLException exception) {
+                        JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
+                                "Fail", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             }
         });
