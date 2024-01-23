@@ -751,8 +751,27 @@ public class  DatabaseHandler extends Configs {
            } catch (SQLException e) {
                throw new RuntimeException(e);
            }
-
-
+       }
+       public  void  bought(int bookingNumber){
+           String query = " UPDATE " + Const.SEAT_TABLE +
+                   " SET "+Const.SEATS_BOUGHT+"= 1"+
+                   " WHERE " + Const.SEATS_BOOKED + " = " + bookingNumber;
+           try (Statement statement = getDbConnection().createStatement();
+                ResultSet rs = statement.executeQuery(query)) {
+               rs.next();
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+           String query1 = " UPDATE " + Const.USER_TABLE +
+                   " SET "+Const.USER_BOOKING_NUMBER+"= null"+
+                   " WHERE " + Const.USER_BOOKING_NUMBER + " = " + bookingNumber;
+           System.out.println(query);
+           try (Statement statement1 = getDbConnection().createStatement();
+                ResultSet rs1 = statement1.executeQuery(query1)) {
+               rs1.next();
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
        }
 }
 
