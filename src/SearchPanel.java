@@ -250,20 +250,18 @@ public class SearchPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(signUpB);
-                String s = JOptionPane.showInputDialog(parent,
-                        "Enter new login",
-                        "tmp signup window",
-                        JOptionPane.PLAIN_MESSAGE);
-                if (s != null && !s.isEmpty()) {
-                    dbhand.SignUp(s, "1234", "1234");
-                    parent.loggedIn = s;
-                    header.removeAll();
-                    usernameL.setText(parent.loggedIn);
-                    header.add(usernameL);
-                    header.add(logoutB);
-                    header.revalidate();
-                    header.repaint();
-                }
+                SignUpDialog sud = new SignUpDialog(parent);
+                String result = sud.result;
+                if (result == null) {return;}
+                parent.loggedIn = result;
+                header.removeAll();
+                usernameL.setText(parent.loggedIn);
+                header.add(usernameL);
+                header.add(logoutB);
+                header.revalidate();
+                header.repaint();
+                JOptionPane.showMessageDialog(parent, "You are signed up!",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 

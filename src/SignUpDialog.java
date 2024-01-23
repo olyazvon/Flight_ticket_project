@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -7,16 +9,21 @@ public class SignUpDialog extends JDialog {
 
     //private static final long serialVersionUID = 1L;
 
-    public JTextField tfLogin, tfPassword;
-    public JButton btnOk, btnCancel;
+    public JTextField tfLogin, tfPassword, tfRepeat;
+    public JButton btnOk;
+    public String result;
+    public DatabaseHandler dbhand;
+
+    public JFrame parent;
 
     public SignUpDialog(JFrame parent) {
-        super(parent, "Log In");
-        // При выходе из диалогового окна работа заканчивается
+        super(parent, "Sign Up");
+        this.parent = parent;
+        dbhand = new DatabaseHandler();
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 dispose();
-                System.exit(0);
+                result = null;
             }
         });
         // добавляем расположение в центр окна
@@ -24,6 +31,9 @@ public class SignUpDialog extends JDialog {
         setResizable(false);
         // задаем предпочтительный размер
         pack();
+        setSize(getSize());
+        setLocationRelativeTo(parent);
+        setModal(true);
         // выводим окно на экран
         setVisible(true);
     }
@@ -59,23 +69,32 @@ public class SignUpDialog extends JDialog {
         password.add(tfPassword);
         JPanel passwordToCheck = new JPanel();
         passwordToCheck.setLayout(new BoxLayout(passwordToCheck, BoxLayout.X_AXIS));
-        JLabel passwrdToCheckLabel = new JLabel("Password :", SwingConstants.RIGHT);
+        JLabel passwrdToCheckLabel = new JLabel("Repeat:", SwingConstants.RIGHT);
         passwordToCheck.add(passwrdToCheckLabel);
         passwordToCheck.add(Box.createHorizontalStrut(12));
-        tfPassword = new JPasswordField(15);
-        tfPassword.setFont(new Font(null, Font.PLAIN, 14));
-        tfPassword.setBorder(BorderFactory.createLoweredBevelBorder());
-        passwordToCheck.add(tfPassword);
+        tfRepeat = new JPasswordField(15);
+        tfRepeat.setFont(new Font(null, Font.PLAIN, 14));
+        tfRepeat.setBorder(BorderFactory.createLoweredBevelBorder());
+        passwordToCheck.add(tfRepeat);
 
         // Создание панели для размещения кнопок управления
         JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        btnOk = new JButton("Sign in");
+        btnOk = new JButton("Sign up");
         //btnCancel = new JButton("Cancel");
         flow.add(btnOk);
-        //JLabel spacer = new JLabel("");
-        //spacer.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        //flow.add(spacer);
-        //flow.add(btnCancel);
+        btnOk.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    result = dbhand.SignUp(tfLogin.getText(),
+                            tfPassword.getText(), tfRepeat.getText());
+                    dispose();
+                } catch (RuntimeException exception) {
+                    JOptionPane.showMessageDialog(parent, exception.getMessage(),
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
 
         // Определение размеров надписей к текстовым полям
 
@@ -96,7 +115,8 @@ public class SignUpDialog extends JDialog {
 
     // тестовый метод для проверки диалогового окна
     public static void main(String[] args) {
-        new SignUpDialog(new JFrame());
+        SignUpDialog a = new SignUpDialog(new JFrame());
+        System.out.println(a.tfLogin);
     }
 
 

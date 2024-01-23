@@ -661,9 +661,13 @@ public class  DatabaseHandler extends Configs {
         return false;
     }
 
-    public String SignUp(String login, String password, String passTocheck){
+    public String SignUp(String login, String password, String passTocheck) throws RuntimeException{
         if (!Objects.equals(password, passTocheck)) {
-            return " Password doesn't match";
+            throw new RuntimeException("Passwords don't match!");
+        } else if (password.length() < 4){
+            throw new RuntimeException("Password is too short!");
+        } else if (login.length() < 3){
+            throw new RuntimeException("Login is too short!");
         } else {
             String query = " INSERT INTO " + Const.USER_TABLE +
                     "(" + Const.USER_LOGIN + "," + Const.USER_PASS + ")" +
@@ -672,13 +676,13 @@ public class  DatabaseHandler extends Configs {
             try (Statement statement = getDbConnection().createStatement();
                  ResultSet rs = statement.executeQuery(query)) {
                 rs.next();
+                return login;
             } catch (java.sql.SQLIntegrityConstraintViolationException e) {
-                throw new RuntimeException("login is not unique",e);
+                throw new RuntimeException("Login is not unique!");
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Unknown error, please try later!");
             }
         }
-        return "User created successfully";
     }
 
     //returns booking number
