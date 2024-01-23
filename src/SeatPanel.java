@@ -103,23 +103,46 @@ public class SeatPanel extends JPanel {
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                int bookNum = dbhand.Book(total.seats);
+
                 if (parent.loggedIn != null) {
-                    int ans = JOptionPane.showConfirmDialog(parent,
-                            "Your seats are successfully booked. Do you want to continue now?\n" +
-                                    "If you press No, you will be able to continue anytime later.",
-                            "Success",
-                            JOptionPane.YES_NO_OPTION);
-                    if (ans == 0) {
-                        parent.proceedToPassengers(bookNum);
-                    } else {
-                        parent.backToSearch();
+
+                    int bookNum = 0;
+                    try {
+                        bookNum = dbhand.book(total.seats, total.sum);
+                        dbhand.addBookingToUser(bookNum, parent.loggedIn);
+                        int ans = JOptionPane.showConfirmDialog(parent,
+                                "Your seats are successfully booked. " +
+                                        "Do you want to continue now?\n" +
+                                        "If you press No, you will be able to " +
+                                        "continue anytime later.",
+                                "Success",
+                                JOptionPane.YES_NO_OPTION);
+                        if (ans == 0) {
+                            parent.proceedToPassengers(bookNum);
+                        } else {
+                            parent.backToSearch();
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(parent,
+                                "Error occured. " + ex.getMessage(),
+                                "Fail", JOptionPane.WARNING_MESSAGE);
                     }
+
                 } else {
-                    JOptionPane.showMessageDialog(parent, "Your seats are successfully booked.\n" +
-                                    "Your booking number is " + bookNum,
-                            "Success", JOptionPane.INFORMATION_MESSAGE);
-                    parent.proceedToPassengers(bookNum);
+                    int bookNum = 0;
+                    try {
+                        bookNum = dbhand.book(total.seats, total.sum);
+                        JOptionPane.showMessageDialog(parent,
+                                "Your seats are successfully booked.\n" +
+                                        "Your booking number is " + bookNum,
+                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                        parent.proceedToPassengers(bookNum);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(parent,
+                                "Error occured. " + ex.getMessage(),
+                                "Fail", JOptionPane.WARNING_MESSAGE);
+                    }
+
                 }
             }
         });

@@ -92,7 +92,6 @@ public class  DatabaseHandler extends Configs {
         String query = String.format("SELECT DISTINCT " + column_name + " FROM %s", table_name + where_st);
         String st = "";
         String query1 = query + " order by " + column_name;
-        int i = 0;
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query1)) {
 
@@ -145,13 +144,13 @@ public class  DatabaseHandler extends Configs {
         String whereString = "";
 
         if (!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")) {
-            whereString += Const.AIRPORTS_COUNTRY + "= \'" + selectedCountry + "\'";
+            whereString += Const.AIRPORTS_COUNTRY + "= '" + selectedCountry + "'";
         }
         if (!excludedCity.isEmpty() && !excludedCity.equals("Any city")) {
             if (whereString != "") {
                 whereString += " AND ";
             }
-            whereString += Const.AIRPORTS_CITY + " Not like \'" + excludedCity + "\'";
+            whereString += Const.AIRPORTS_CITY + " Not like '" + excludedCity + "'";
         }
 
         String[] Cities = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
@@ -163,19 +162,19 @@ public class  DatabaseHandler extends Configs {
         String whereString = "";
 
         if (!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")) {
-            whereString += Const.AIRPORTS_COUNTRY + "= \'" + selectedCountry + "\'";
+            whereString += Const.AIRPORTS_COUNTRY + "= '" + selectedCountry + "'";
         }
         if (!selectedCity.isEmpty() && !selectedCity.equals("Any city")) {
             if (whereString != "") {
                 whereString += " AND ";
             }
-            whereString += Const.AIRPORTS_CITY + "= \'" + selectedCity + "\'";
+            whereString += Const.AIRPORTS_CITY + "= '" + selectedCity + "'";
         }
         if (!excludedCity.isEmpty() && !excludedCity.equals("Any iata")) {
             if (whereString != "") {
                 whereString += " AND ";
             }
-            whereString += Const.AIRPORTS_CITY + " Not like \'" + excludedCity + "\'";
+            whereString += Const.AIRPORTS_CITY + " Not like '" + excludedCity + "'";
         }
 
         String[] IATAs = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_ID,
@@ -185,7 +184,7 @@ public class  DatabaseHandler extends Configs {
 
     String cityByIATA(String iata) {
         return read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_CITY,
-                (Const.AIRPORTS_ID + "=\'" + iata + "\'"))[1];
+                (Const.AIRPORTS_ID + "='" + iata + "'"))[1];
     }
 
 
@@ -255,7 +254,7 @@ public class  DatabaseHandler extends Configs {
             for (String i : iata_to) {
                 stIata_to += "'" + i + "'" + ",";
             }
-            if ((iata_to.length != 1 || iata_to[0].equals("Any iata"))) {
+            if (iata_to.length != 1) {
                 stIata_to = "(" + stIata_to.substring(iata_to[0].length() + 3, stIata_to.length() - 1) + ")";
             } else {
                 stIata_to = "(" + stIata_to.substring(0, stIata_to.length() - 1) + ")";
@@ -530,64 +529,86 @@ public class  DatabaseHandler extends Configs {
 
     //    забронировать местa UPdate booked in bd,
 //     если место занято-1, если ошибка -2, если забронировано выводит № брони
-    public int Book(ArrayList<Seat> SeatsToBook) {
-        int BookingNumber = maxBookedNumber() + 1;
-        String stFlightToBook = "";
-        String stSeatToBook = "";
+    public int book(ArrayList<Seat> seatsToBook, double total) throws Exception {
 
-        for (Seat i : SeatsToBook) {
-            stFlightToBook = "'" + i.flight + "'";
-            stSeatToBook = "'" + i.getText() + "'";
+        for (Seat i : seatsToBook) {
             if (!isFree(i.flight, i.getText())) {
-                return -1;
-            } else {
-                String query = " UPDATE " + Const.SEAT_TABLE +
-                        " SET " + Const.SEATS_BOOKED + " = " + BookingNumber +
-                        " WHERE " + Const.FLIGHTS_ID + " = " + stFlightToBook +
-                        " AND " + Const.SEAT + " = " + stSeatToBook;
-                try (Statement statement = getDbConnection().createStatement();
-                     ResultSet rs = statement.executeQuery(query)) {
-                    rs.next();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return -2;
-                }
+                throw new RuntimeException("Selected seat is occupied!");
             }
         }
-        return BookingNumber;
+
+        int bookingNumber = maxBookedNumber() + 1;
+        String stFlightToBook;
+        String stSeatToBook;
+        Statement statement;
+        ResultSet rs;
+        String query;
+
+        for (Seat i : seatsToBook) {
+            stFlightToBook = "'" + i.flight + "'";
+            stSeatToBook = "'" + i.getText() + "'";
+            query = " UPDATE " + Const.SEAT_TABLE +
+                    " SET " + Const.SEATS_BOOKED + " = " + bookingNumber +
+                    " WHERE " + Const.FLIGHTS_ID + " = " + stFlightToBook +
+                    " AND " + Const.SEAT + " = " + stSeatToBook;
+            statement = getDbConnection().createStatement();
+            rs = statement.executeQuery(query);
+            rs.next();
+        }
+
+        query = " INSERT INTO " + Const.BOOKING_TABLE +
+                " VALUES ("+bookingNumber+", "+total+
+                ", TO_DATE('"+LocalDate.now()+"', 'YYYY-MM-DD'"+"))";
+        System.out.println(query);
+        statement = getDbConnection().createStatement();
+        rs = statement.executeQuery(query);
+        rs.next();
+
+        return bookingNumber;
     }
 
-    public String UnBook(int BookingNumber) {
+    public void addBookingToUser(int booking, String login) throws SQLException {
+        String query = " UPDATE " + Const.USER_TABLE +
+                " SET " + Const.USER_BOOKING_NUMBER + " = " + booking +
+                " WHERE " + Const.USER_LOGIN + " = '" + login + "'";
+        Statement statement = getDbConnection().createStatement();
+        ResultSet rs = statement.executeQuery(query);
+        rs.next();
+    }
+
+    public void unBookSeats(int BookingNumber) throws SQLException {
         String query = " UPDATE " + Const.SEAT_TABLE +
-                " SET " + Const.SEATS_BOOKED + " = " + null +
+                " SET " + Const.SEATS_BOOKED + " = " + "null" +
                 " WHERE " + Const.SEATS_BOOKED + " = " + BookingNumber;
         //System.out.println(query);
-        try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-            rs.next();
-            DelBooking(BookingNumber);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "не удалось отменить бронирование";
-        }
-        return "бронирование отменено";
-
+        Statement statement = getDbConnection().createStatement();
+        ResultSet rs = statement.executeQuery(query);
+        rs.next();
     }
 
-    public String DelBooking(int BookingNumber) {
+    public void delBooking(int BookingNumber) throws SQLException {
         String query = " DELETE FROM " + Const.BOOKING_TABLE +
                              " WHERE " + Const.BOOKING_NUMBER + " = " + BookingNumber;
-        //System.out.println(query);
-        try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-            rs.next();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "не удалось удалить бронирование из Броней";
-        }
-        return "бронирование удалено из таблицы броней";
-
+        Statement statement = getDbConnection().createStatement();
+        ResultSet rs = statement.executeQuery(query);
+        rs.next();
     }
+
+    public void clearUsersBooking(int booking) throws SQLException {
+        String query = " UPDATE " + Const.USER_TABLE +
+                " SET " + Const.USER_BOOKING_NUMBER + " = " + "null" +
+                " WHERE " + Const.USER_BOOKING_NUMBER + " = " + booking;
+        Statement statement = getDbConnection().createStatement();
+        ResultSet rs = statement.executeQuery(query);
+        rs.next();
+    }
+
+    public void removeBookingTotally(int booking) throws SQLException {
+        delBooking(booking);
+        unBookSeats(booking);
+        clearUsersBooking(booking);
+    }
+
     public String DelUnValidBooking() {
         String query = " DELETE FROM " + Const.BOOKING_TABLE +
                 " WHERE " + Const.BOOKING_DATE+ " + 1 < SYSDATE " ;
