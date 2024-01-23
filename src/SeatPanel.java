@@ -104,7 +104,7 @@ public class SeatPanel extends JPanel {
                     return;
                 }
                 int bookNum = dbhand.Book(total.seats);
-                if (parent.loggedIn) {
+                if (parent.loggedIn != null) {
                     int ans = JOptionPane.showConfirmDialog(parent,
                             "Your seats are successfully booked. Do you want to continue now?\n" +
                                     "If you press No, you will be able to continue anytime later.",
@@ -192,7 +192,7 @@ public class SeatPanel extends JPanel {
 
             if (seats.size() < 100) {
                 //2+2
-                setLayout(new GridLayout(seats.size()/4, 5, 4, 4));
+                setLayout(new GridLayout((int)Math.ceil(seats.size()/4d), 5, 4, 4));
                 for (int i = 0; i < seats.size(); i++) {
                     if ((i - 2) % 4 == 0) {
                         add(new JLabel());
@@ -201,7 +201,7 @@ public class SeatPanel extends JPanel {
                 }
             } else if (seats.size() < 200) {
                 //3+3
-                setLayout(new GridLayout(seats.size()/6, 7, 5, 5));
+                setLayout(new GridLayout((int)Math.ceil(seats.size()/6d), 7, 5, 5));
                 for (int i = 0; i < seats.size(); i++) {
                     if ((i - 3) % 6 == 0) {
                         add(new JLabel());
@@ -210,7 +210,7 @@ public class SeatPanel extends JPanel {
                 }
             } else if (seats.size() < 300) {
                 //2+4+2
-                setLayout(new GridLayout(seats.size()/8, 10, 5, 5));
+                setLayout(new GridLayout((int)Math.ceil(seats.size()/8d), 10, 5, 5));
                 for (int i = 0; i < seats.size(); i++) {
                     if ((i - 2) % 8 == 0 || (i - 6) % 8 == 0) {
                         add(new JLabel());
@@ -219,7 +219,7 @@ public class SeatPanel extends JPanel {
                 }
             } else {
                 //3+3+3
-                setLayout(new GridLayout(seats.size()/9, 11, 5, 5));
+                setLayout(new GridLayout((int)Math.ceil(seats.size()/9d), 11, 5, 5));
                 for (int i = 0; i < seats.size(); i++) {
                     if ((i - 3) % 9 == 0 || (i - 6) % 9 == 0) {
                         add(new JLabel());

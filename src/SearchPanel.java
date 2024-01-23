@@ -16,15 +16,16 @@ public class SearchPanel extends JPanel {
 
 //INTERFACE
 
-//Log In button
+//Header
         JPanel header = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton loginB = new JButton("Log in");
-        header.add(loginB);
         JButton signUpB = new JButton("Sign up");
+        JButton logoutB = new JButton("Log out");
+        JLabel usernameL = new JLabel("");
+        usernameL.setBorder(BorderFactory.createEmptyBorder(1,10,1,10));
+        header.add(loginB);
         header.add(signUpB);
-        JButton payBookingB = new JButton("Pay for booking");
-        header.add(payBookingB);
-        header.setMaximumSize(new Dimension(32767, header.getPreferredSize().height));
+        header.setMaximumSize(new Dimension(Short.MAX_VALUE, header.getPreferredSize().height));
         add(header);
 
 //Caption
@@ -211,16 +212,57 @@ public class SearchPanel extends JPanel {
             }
         });
 
-        payBookingB.addActionListener(new ActionListener() {
+        loginB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String s = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(payBookingB),
-                        "Enter your booking number",
-                        "Pay for Booking",
+                MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(loginB);
+                String s = JOptionPane.showInputDialog(parent,
+                        "Enter your login",
+                        "tmp login window",
                         JOptionPane.PLAIN_MESSAGE);
                 if (s != null && !s.isEmpty()) {
-                    ((MainWindowC)SwingUtilities.getWindowAncestor(payBookingB)).jumpToPassengers(Integer.parseInt(s));
+                    parent.loggedIn = s;
+                    header.removeAll();
+                    usernameL.setText(parent.loggedIn);
+                    header.add(usernameL);
+                    header.add(logoutB);
+                    header.revalidate();
+                    header.repaint();
+                }
+            }
+        });
 
+        logoutB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(logoutB);
+                parent.loggedIn="";
+                header.removeAll();
+                usernameL.setText(parent.loggedIn);
+                header.add(loginB);
+                header.add(signUpB);
+                header.revalidate();
+                header.repaint();
+            }
+        });
+
+        signUpB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(signUpB);
+                String s = JOptionPane.showInputDialog(parent,
+                        "Enter new login",
+                        "tmp signup window",
+                        JOptionPane.PLAIN_MESSAGE);
+                if (s != null && !s.isEmpty()) {
+                    dbhand.SignUp(s, "1234", "1234");
+                    parent.loggedIn = s;
+                    header.removeAll();
+                    usernameL.setText(parent.loggedIn);
+                    header.add(usernameL);
+                    header.add(logoutB);
+                    header.revalidate();
+                    header.repaint();
                 }
             }
         });

@@ -264,10 +264,10 @@ public class  DatabaseHandler extends Configs {
         }
 
         if (date_from != null) {
-            query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
-                    + date_from.toString() + "', 'yyyy-mm-dd')";
-
-            if (time_from != null) {
+            if (time_from == null) {
+                query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
+                        + date_from.toString() + "', 'yyyy-mm-dd')";
+            } else {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
                 LocalDateTime departureDateTime= LocalDateTime.of(date_from, time_from);
@@ -682,7 +682,7 @@ public class  DatabaseHandler extends Configs {
     }
 
     //returns booking number
-    public int SignIp(String login, String password) {
+    public int SignIn(String login, String password) {
         String query = " SELECT COUNT(*) FROM " + Const.USER_TABLE +
                 " WHERE " + Const.USER_LOGIN + "='" + login + "'";
         //System.out.println(query);
@@ -714,7 +714,7 @@ public class  DatabaseHandler extends Configs {
     }
 
 
-    }
+}
 
 
 

@@ -5,7 +5,7 @@ import java.awt.CardLayout;
 
 public class MainWindowC extends JFrame {
     JPanel pages;
-    boolean loggedIn = false;
+    String loggedIn = null;
 
     public MainWindowC() {
         super("Search");
