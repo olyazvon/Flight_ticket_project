@@ -718,7 +718,42 @@ public class  DatabaseHandler extends Configs {
         }
     }
 
+    public double TotalSum(int BookingNumber){
 
+            String query = " SELECT " + Const.BOOKING_Total +
+                    " FROM " + Const.BOOKING_TABLE +
+                    " WHERE " + Const.BOOKING_NUMBER + " = '" + BookingNumber + "'";
+            //System.out.println(query);
+            try (Statement statement = getDbConnection().createStatement();
+                 ResultSet rs = statement.executeQuery(query)) {
+                rs.next();
+                Double Total= rs.getDouble(1);
+                return Total;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -2;
+            }
+
+    }
+
+       public void SaveCardDetails(String login,String cardnumer,
+                                  int cardcvv,LocalDate carddate,int bookingnumber) {
+           String query = " INSERT INTO " + Const.USER_TABLE +
+                   "(" + Const.USER_CARD_NUMBER + "," + Const.USER_CARD_CVV + ","
+                   + Const.USER_CARD_DATE + "," + Const.USER_BOOKING_NUMBER + ")" +
+                   "VALUES ('" + login + "','" + cardnumer + "'," + cardcvv + "," + carddate +
+                   "," + bookingnumber + ")";
+           System.out.println(query);
+           try (Statement statement = getDbConnection().createStatement();
+                ResultSet rs = statement.executeQuery(query)) {
+               rs.next();
+
+           } catch (SQLException e) {
+               throw new RuntimeException(e);
+           }
+
+
+       }
 }
 
 

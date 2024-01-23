@@ -17,9 +17,11 @@ public class SignUpDialog extends JDialog {
     public JFrame parent;
 
     public SignUpDialog(JFrame parent) {
+
         super(parent, "Sign Up");
         this.parent = parent;
         dbhand = new DatabaseHandler();
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 dispose();
