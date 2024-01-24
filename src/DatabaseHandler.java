@@ -794,6 +794,49 @@ public class  DatabaseHandler extends Configs {
                e.printStackTrace();
            }
        }
+
+       public void addPassengersToDB(ArrayList<PassengerPanel.OnePassenger> Passengers){
+           for (PassengerPanel.OnePassenger passenger:Passengers) {
+               String Passport=passenger.getPassport();
+               String LastName= passenger.getLastName();
+               String FirstName= passenger.getFirstName();
+               String Seat= passenger.seat.getText();
+               String Flight=passenger.seat.flight;
+               String query=String.format("INSERT INTO "+Const.PASSENGER_TABLE+
+                       " VALUES ("+"'%1$s','%2$s','%3$s','%4$s','%5$s')",
+                       Passport,LastName,FirstName,Seat,Flight);
+               System.out.println(query);
+               try (Statement statement = getDbConnection().createStatement();
+                    ResultSet rs = statement.executeQuery(query)) {
+                   rs.next();
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+           }
+       }
+       public  void removePassengersFromDB(int BookingNumber){
+        String query= String.format(
+                      "DELETE FROM "+Const.PASSENGER_TABLE+
+                           " WHERE "+Const.PASSENGER_SEAT+ " in("+
+                                    " SELECT "+Const.SEAT +
+                                      " FROM "+Const.SEAT_TABLE+
+                                     " WHERE "+ Const.SEATS_BOOKED+" = " +BookingNumber+
+                                     ")"+ " AND "+Const.PASSENGER_FLIGHT+" in("+
+                                    " SELECT "+Const.FLIGHTS_ID +
+                                    " FROM "+Const.SEAT_TABLE+
+                                    " WHERE "+ Const.SEATS_BOOKED+" = " +BookingNumber+
+                                    ")");
+
+        System.out.println(query);
+           try (Statement statement = getDbConnection().createStatement();
+                ResultSet rs = statement.executeQuery(query)) {
+               rs.next();
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+
+
+    }
 }
 
 
