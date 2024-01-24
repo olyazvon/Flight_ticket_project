@@ -32,6 +32,15 @@ public class  DatabaseHandler extends Configs {
     }
 
 
+    public void addShema() throws SQLException {
+        String query = "ALTER SESSION SET CURRENT_SCHEMA = administrator";
+        Statement statement = getDbConnection().createStatement();
+        ResultSet rs = statement.executeQuery(query);
+        rs.next();
+    }
+
+
+
 //    // ввыводит на экран, перечисленные поля таблицы,
 //    // если массив пустой, выводит всю таблицу
 //    public void read_data(String table_name, String[] column_names) {
