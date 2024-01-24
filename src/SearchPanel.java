@@ -3,8 +3,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -138,7 +136,7 @@ public class SearchPanel extends JPanel {
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                ((MainWindowC)parent).proceedToSeats(
+                ((MainWindowC)parent).searchToSeats(
                         selectP1.getFlight(),
                         twoWaysCB.isSelected() ? selectP2.getFlight() : ""
                 );
@@ -338,7 +336,7 @@ public class SearchPanel extends JPanel {
                 options,
                 options[0]);
         if (res == 0) {
-            parent.jumpToPassengers(booking);
+            parent.searchToPassengers(booking);
         } else if (res == 1) {
             try {
                 dbhand.removeBookingTotally(booking);

@@ -1,11 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.plaf.metal.MetalToggleButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -118,9 +116,9 @@ public class SeatPanel extends JPanel {
                                 "Success",
                                 JOptionPane.YES_NO_OPTION);
                         if (ans == 0) {
-                            parent.proceedToPassengers(bookNum);
+                            parent.seatsToPassengers(bookNum);
                         } else {
-                            parent.backToSearch();
+                            parent.seatsToSearch();
                             ((SearchPanel)parent.pages.getComponents()[0]).haveBooking(bookNum, parent);
                         }
                     } catch (Exception ex) {
@@ -137,7 +135,7 @@ public class SeatPanel extends JPanel {
                                 "Your seats are successfully booked.\n" +
                                         "Your booking number is " + bookNum,
                                 "Success", JOptionPane.INFORMATION_MESSAGE);
-                        parent.proceedToPassengers(bookNum);
+                        parent.seatsToPassengers(bookNum);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(parent,
                                 "Error occured. " + ex.getMessage(),
@@ -149,7 +147,7 @@ public class SeatPanel extends JPanel {
         });
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backToSearch();
+                ((MainWindowC)SwingUtilities.getWindowAncestor(back)).seatsToSearch();
             }
         });
     }

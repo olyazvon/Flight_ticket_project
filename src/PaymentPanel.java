@@ -207,7 +207,7 @@ public class PaymentPanel extends JPanel {
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ((MainWindowC)SwingUtilities.getWindowAncestor(back)).backFromPayment();
+                ((MainWindowC)SwingUtilities.getWindowAncestor(back)).paymentToPassengers();
                 dbhand.removePassengersFromDB(bookingNumber);
             }
         });

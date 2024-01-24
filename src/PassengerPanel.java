@@ -9,7 +9,7 @@ public class PassengerPanel extends JPanel {
     ArrayList<Seat> seats;
     ArrayList<OnePassenger> passengers = new ArrayList<>();
     DatabaseHandler dbhand;
-    public PassengerPanel(int bookingNumber) {
+    public PassengerPanel(int bookingNumber, boolean saveBooking) {
         dbhand = new DatabaseHandler();
         this.seats = dbhand.seatsInBooking(bookingNumber);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -61,18 +61,23 @@ public class PassengerPanel extends JPanel {
 //LISTENERS
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(back);
+                if (saveBooking) {
+                    parent.passengersToSeats();
+                    ((SearchPanel)parent.pages.getComponents()[0]).haveBooking(bookingNumber, parent);
+                    return;
+                }
                 int ans = JOptionPane.showConfirmDialog(
                         SwingUtilities.getWindowAncestor(back),
                         "Are you sure?\nYour booking will be canceled.",
                         "Confirmation",
                         JOptionPane.YES_NO_OPTION);
                 if (ans == 0) {
-                    MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(back);
                     try {
                         dbhand.removeBookingTotally(bookingNumber);
                         JOptionPane.showMessageDialog(parent, "Booking cancelled!",
                                 "Success", JOptionPane.INFORMATION_MESSAGE);
-                        parent.backFromPassengers();
+                        parent.passengersToSeats();
                     } catch (SQLException exception) {
                         JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
                                 "Fail", JOptionPane.WARNING_MESSAGE);
@@ -92,7 +97,7 @@ public class PassengerPanel extends JPanel {
                 }
                 else{
                     dbhand.addPassengersToDB(passengers);
-                    Parent.proceedToPayment(bookingNumber);
+                    Parent.passengersToPayment(bookingNumber);
                 }
             }
         });
