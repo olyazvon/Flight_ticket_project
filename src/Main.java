@@ -37,5 +37,6 @@ public class Main {
         //System.out.println(dbhand.DelUnValidBooking());
         //System.out.println(dbhand.SignIn("ok","123"));
         System.out.println(dbhand.SelectCardDetails("o"));
+        System.out.println(dbhand.MyFlight("1235"));
     }
 }
