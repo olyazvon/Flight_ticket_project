@@ -422,7 +422,7 @@ public class  DatabaseHandler extends Configs {
                 Const.FLIGHTS_FROM, Const.FLIGHTS_TO,
                 Const.FLIGHT_TABLE,
                 Const.FLIGHTS_ID, flight);
-        //System.out.println(query);
+        System.out.println(query);
         String result = "";
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -825,15 +825,11 @@ public class  DatabaseHandler extends Configs {
        public  void removePassengersFromDB(int BookingNumber){
         String query= String.format(
                       "DELETE FROM "+Const.PASSENGER_TABLE+
-                           " WHERE "+Const.PASSENGER_SEAT+ " in("+
-                                    " SELECT "+Const.SEAT +
+                           " WHERE ("+Const.PASSENGER_SEAT+ " , " +Const.PASSENGER_FLIGHT+") in("+
+                                    " SELECT "+Const.SEAT + " , " +Const.SEATS_FLIGHT_ID+
                                       " FROM "+Const.SEAT_TABLE+
                                      " WHERE "+ Const.SEATS_BOOKED+" = " +BookingNumber+
-                                     ")"+ " AND "+Const.PASSENGER_FLIGHT+" in("+
-                                    " SELECT "+Const.FLIGHTS_ID +
-                                    " FROM "+Const.SEAT_TABLE+
-                                    " WHERE "+ Const.SEATS_BOOKED+" = " +BookingNumber+
-                                    ")");
+                                     ")");
 
         System.out.println(query);
            try (Statement statement = getDbConnection().createStatement();
@@ -864,6 +860,38 @@ public class  DatabaseHandler extends Configs {
             throw new RuntimeException(e);
         }
         return arList;
+    }
+    public String qFromToCities(String flight) {
+
+        String queryFrom= String.format(
+                "SELECT a."+ Const.AIRPORTS_CITY+ "  , " +Const.FLIGHTS_FROM +
+                " FROM "+     Const.FLIGHT_TABLE + " , " + Const.AIRPORT_TABLE+
+                " a WHERE a."+Const.AIRPORTS_ID+" = "+Const.FLIGHTS_FROM+
+                        " AND "+Const.FLIGHTS_ID+" = '"+ flight+"'");
+
+        System.out.println(queryFrom);
+        String result = "";
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(queryFrom)) {
+            rs.next();
+            result = rs.getString(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String queryTo= String.format(
+                "SELECT a."+ Const.AIRPORTS_CITY+ " , " +Const.FLIGHTS_TO +
+                        " FROM "+     Const.FLIGHT_TABLE + " , " + Const.AIRPORT_TABLE+
+                        " a WHERE a."+Const.AIRPORTS_ID+" = "+Const.FLIGHTS_TO+
+                        " AND "+Const.FLIGHTS_ID+" = '"+ flight+"'");
+        System.out.println(queryTo);
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs1 = statement.executeQuery(queryTo)) {
+            rs1.next();
+            result += " - " + rs1.getString(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+            return result;
     }
 }
 
