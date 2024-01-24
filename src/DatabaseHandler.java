@@ -834,8 +834,28 @@ public class  DatabaseHandler extends Configs {
            } catch (Exception e) {
                e.printStackTrace();
            }
+    }
 
-
+    public ArrayList<String> SelectCardDetails(String login) {
+        String query = " SELECT "+
+                 Const.USER_CARD_NUMBER + "," + Const.USER_CARD_CVV + ","
+                + Const.USER_CARD_DATE + "," + Const.USER_BOOKING_NUMBER +
+                " FROM " + Const.USER_TABLE +
+                " WHERE " +Const.USER_LOGIN + "= '" + login +"'";
+        System.out.println(query);
+        ArrayList arList= new ArrayList<String>();
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            while (rs.next()) {
+                arList.add(rs.getString(Const.USER_CARD_NUMBER));
+                arList.add(rs.getString(Const.USER_CARD_CVV ));
+                arList.add(rs.getString(Const.USER_CARD_DATE));
+                arList.add(rs.getString(Const.USER_BOOKING_NUMBER));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return arList;
     }
 }
 
