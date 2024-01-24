@@ -9,9 +9,10 @@ import java.util.ArrayList;
 
 public class PaymentPanel extends JPanel {
     ArrayList<Seat> seats;
+    DatabaseHandler dbhand;
 
     public PaymentPanel(int bookingNumber, String loggedIn) {
-        DatabaseHandler dbhand = new DatabaseHandler();
+        dbhand = new DatabaseHandler();
         this.seats = dbhand.seatsInBooking(bookingNumber);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -253,13 +254,46 @@ public class PaymentPanel extends JPanel {
                     return;
                 }
                 parent.loggedIn = resultLogin;
-                logInB.setVisible(false);
-                registerCB.setVisible(false);
-                registerL.setVisible(false);
-                JOptionPane.showMessageDialog(parent, "You are signed up!",
+                JOptionPane.showMessageDialog(parent, "You are logged in!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
+                if (lid.resultBooking != 0) {
+                    haveBooking(lid.resultBooking, parent);
+                }
+                if (parent.loggedIn != null) {
+                    logInB.setVisible(false);
+                    registerCB.setVisible(false);
+                    registerL.setVisible(false);
+                }
             }
         });
 
     }
+
+    public void haveBooking(int booking, MainWindowC parent) {
+        Object[] options = {"Cancel booking", "Log out"};
+        int res = JOptionPane.showOptionDialog(parent,
+                "You already have a booking.\n" +
+                        "According to our rules, it's only possible\n" +
+                        "to have one active booking.\n" +
+                        "Do you want to cancel it now?",
+                "Your booking",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        if (res == 0) {
+            try {
+                dbhand.removeBookingTotally(booking);
+                JOptionPane.showMessageDialog(parent, "Booking removed!",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (SQLException exception) {
+                JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
+                        "Fail", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            parent.loggedIn = null;
+        }
+    }
+
 }
