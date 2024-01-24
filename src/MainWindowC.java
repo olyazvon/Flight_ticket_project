@@ -25,6 +25,7 @@ public class MainWindowC extends JFrame {
     public void seatsToSearch() {
         ((CardLayout)pages.getLayout()).previous(pages);
         pages.remove(1);
+        ((SearchPanel)pages.getComponents()[0]).headerLoggedIn(loggedIn);
     }
 
     public void seatsToPassengers(int bookingNumber) {
@@ -42,7 +43,7 @@ public class MainWindowC extends JFrame {
     }
 
     public void passengersToPayment(int bookingNumber) {
-        pages.add(new PaymentPanel(bookingNumber), 3);
+        pages.add(new PaymentPanel(bookingNumber, loggedIn), 3);
         ((CardLayout)pages.getLayout()).next(pages);
     }
 

@@ -11,6 +11,7 @@ public class SearchPanel extends JPanel {
     public JPanel header;
     public JLabel usernameL;
     public JButton loginB;
+    public JButton logoutB;
     public JButton signUpB;
     public DatabaseHandler dbhand;
 
@@ -25,7 +26,7 @@ public class SearchPanel extends JPanel {
         header = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         loginB = new JButton("Log in");
         signUpB = new JButton("Sign up");
-        JButton logoutB = new JButton("Log out");
+        logoutB = new JButton("Log out");
         usernameL = new JLabel("");
         usernameL.setBorder(BorderFactory.createEmptyBorder(1,10,1,10));
         header.add(loginB);
@@ -224,18 +225,12 @@ public class SearchPanel extends JPanel {
                 LoginDialog lid = new LoginDialog(parent);
                 if (lid.resultLogin == null) {return;}
                 parent.loggedIn = lid.resultLogin;
-                System.out.println(lid.resultBooking);
-                header.removeAll();
-                usernameL.setText(parent.loggedIn);
-                header.add(usernameL);
-                header.add(logoutB);
-                header.revalidate();
-                header.repaint();
                 JOptionPane.showMessageDialog(parent, "You are logged in!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
-                if (lid.resultBooking != 0) {
-                    haveBooking(lid.resultBooking, parent);
-                }
+                headerLoggedIn(lid.resultLogin);
+//                if (lid.resultBooking != 0) {
+//                    haveBooking(lid.resultBooking, parent);
+//                }
             }
         });
 
@@ -243,13 +238,8 @@ public class SearchPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(logoutB);
-                parent.loggedIn="";
-                header.removeAll();
-                usernameL.setText(parent.loggedIn);
-                header.add(loginB);
-                header.add(signUpB);
-                header.revalidate();
-                header.repaint();
+                parent.loggedIn = null;
+                headerLoggedIn(null);
                 parent.transferFocus();
             }
         });
@@ -262,12 +252,7 @@ public class SearchPanel extends JPanel {
                 String result = sud.result;
                 if (result == null) {return;}
                 parent.loggedIn = result;
-                header.removeAll();
-                usernameL.setText(parent.loggedIn);
-                header.add(usernameL);
-                header.add(logoutB);
-                header.revalidate();
-                header.repaint();
+                headerLoggedIn(result);
                 JOptionPane.showMessageDialog(parent, "You are signed up!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -347,13 +332,32 @@ public class SearchPanel extends JPanel {
                         "Fail", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-            parent.loggedIn="";
+            parent.loggedIn = null;
+            headerLoggedIn(null);
+            parent.transferFocus();
+        }
+    }
+
+    public void headerLoggedIn(String login) {
+        if (login != null) {
             header.removeAll();
-            usernameL.setText(parent.loggedIn);
+            usernameL.setText(login);
+            header.add(usernameL);
+            header.add(logoutB);
+            header.revalidate();
+            header.repaint();
+            MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(this);
+            if (dbhand.getUsersBooking(login) != 0) {
+                haveBooking(dbhand.getUsersBooking(login), parent);
+            }
+        } else {
+            header.removeAll();
+            usernameL.setText("");
             header.add(loginB);
             header.add(signUpB);
             header.revalidate();
             header.repaint();
-            parent.transferFocus();        }
+        }
     }
+
 }

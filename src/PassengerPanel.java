@@ -64,7 +64,7 @@ public class PassengerPanel extends JPanel {
                 MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(back);
                 if (saveBooking) {
                     parent.passengersToSeats();
-                    ((SearchPanel)parent.pages.getComponents()[0]).haveBooking(bookingNumber, parent);
+                    //((SearchPanel)parent.pages.getComponents()[0]).haveBooking(bookingNumber, parent);
                     return;
                 }
                 int ans = JOptionPane.showConfirmDialog(

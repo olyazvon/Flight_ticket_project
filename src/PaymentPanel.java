@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class PaymentPanel extends JPanel {
     ArrayList<Seat> seats;
 
-    public PaymentPanel(int bookingNumber) {
+    public PaymentPanel(int bookingNumber, String loggedIn) {
         DatabaseHandler dbhand = new DatabaseHandler();
         this.seats = dbhand.seatsInBooking(bookingNumber);
 
@@ -89,7 +89,7 @@ public class PaymentPanel extends JPanel {
         yearF.setFont(inpFont);
 
         JCheckBox registerCB = new JCheckBox();
-        registerCB.setBorder(BorderFactory.createEmptyBorder());
+        registerCB.setBorder(BorderFactory.createEmptyBorder(8, 0, 6, 0));
         JLabel registerL = new JLabel("Save my data:");
         JButton logInB = new JButton("I have an account");
 
@@ -104,7 +104,7 @@ public class PaymentPanel extends JPanel {
         lo.setAutoCreateGaps(true);
         lo.setAutoCreateContainerGaps(true);
 
-        if (false) {
+        if (loggedIn != null) {
             // For users who are logged in.
             lo.setHorizontalGroup(lo.createSequentialGroup()
                     .addGroup(lo.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -198,7 +198,6 @@ public class PaymentPanel extends JPanel {
             );
         }
 
-
         twoSections.add(rightP);
 
         twoSections.add(Box.createHorizontalGlue());
@@ -213,11 +212,52 @@ public class PaymentPanel extends JPanel {
         footer.setMaximumSize(new Dimension(32767, footer.getPreferredSize().height));
         add(footer);
 
+
+//LISTENERS
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ((MainWindowC)SwingUtilities.getWindowAncestor(back)).paymentToPassengers();
                 dbhand.removePassengersFromDB(bookingNumber);
+            }
+        });
+
+        registerCB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (registerCB.isSelected()) {
+                    MainWindowC parent = (MainWindowC)(SwingUtilities.getWindowAncestor(registerCB));
+                    SignUpDialog sud = new SignUpDialog(parent);
+                    String result = sud.result;
+                    if (result == null) {
+                        registerCB.setSelected(false);
+                        return;
+                    }
+                    parent.loggedIn = result;
+                    logInB.setVisible(false);
+                    registerCB.setEnabled(false);
+                    parent.loggedIn = result;
+                    JOptionPane.showMessageDialog(parent, "You are signed up!",
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
+        logInB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainWindowC parent = (MainWindowC)(SwingUtilities.getWindowAncestor(registerCB));
+                LoginDialog lid = new LoginDialog(parent);
+                String resultLogin = lid.resultLogin;
+                if (resultLogin == null) {
+                    return;
+                }
+                parent.loggedIn = resultLogin;
+                logInB.setVisible(false);
+                registerCB.setVisible(false);
+                registerL.setVisible(false);
+                JOptionPane.showMessageDialog(parent, "You are signed up!",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 

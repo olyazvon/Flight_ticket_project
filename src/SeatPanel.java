@@ -119,7 +119,7 @@ public class SeatPanel extends JPanel {
                             parent.seatsToPassengers(bookNum);
                         } else {
                             parent.seatsToSearch();
-                            ((SearchPanel)parent.pages.getComponents()[0]).haveBooking(bookNum, parent);
+                            //((SearchPanel)parent.pages.getComponents()[0]).haveBooking(bookNum, parent);
                         }
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(parent,

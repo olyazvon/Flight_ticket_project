@@ -739,6 +739,21 @@ public class  DatabaseHandler extends Configs {
         }
     }
 
+    public int getUsersBooking(String login) {
+        String query1 = " SELECT " + Const.USER_BOOKING_NUMBER +
+                " FROM " + Const.USER_TABLE +
+                " WHERE " + Const.USER_LOGIN + "='" + login + "'";
+        //System.out.println(query1);
+        try (Statement statement1 = getDbConnection().createStatement();
+             ResultSet rs1 = statement1.executeQuery(query1)) {
+            rs1.next();
+            int isBooking = rs1.getInt(1);
+            return isBooking;
+        } catch (SQLException e) {
+            throw new RuntimeException("Unknown error, please try again later!");
+        }
+    }
+
     public double totalSum(int BookingNumber) throws SQLException {
         String query = " SELECT " + Const.BOOKING_Total +
                 " FROM " + Const.BOOKING_TABLE +
