@@ -84,12 +84,21 @@ public class PassengerPanel extends JPanel {
         proceedB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ((MainWindowC)SwingUtilities.getWindowAncestor(proceedB)).proceedToPayment(bookingNumber);
+                MainWindowC Parent=((MainWindowC)SwingUtilities.getWindowAncestor(proceedB));
+                if (!ok(passengers)) {
+                    JOptionPane.showMessageDialog(Parent, " No passengers!",
+                            "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                else{
+                    dbhand.addPassengersToDB(passengers);
+                    Parent.proceedToPayment(bookingNumber);
+                }
             }
         });
     }
 
-    private class OnePassenger extends JPanel{
+     class OnePassenger extends JPanel{
         Seat seat;
         private JTextField nameField;
         private JTextField surnameField;
@@ -138,6 +147,10 @@ public class PassengerPanel extends JPanel {
             return b;
         }
 
+
+
+
+
         public String getFirstName() {
             return nameField.getText();
         }
@@ -148,4 +161,19 @@ public class PassengerPanel extends JPanel {
             return passportField.getText();
         }
     }
-}
+
+    public boolean ok(ArrayList<PassengerPanel.OnePassenger> Passengers){
+            for (PassengerPanel.OnePassenger passenger:Passengers) {
+                String Passport=passenger.getPassport();
+                String LastName= passenger.getLastName();
+                String FirstName= passenger.getFirstName();
+                if (Passport.isEmpty()|LastName.isEmpty()|FirstName.isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+    }
+
+    }
+
+
