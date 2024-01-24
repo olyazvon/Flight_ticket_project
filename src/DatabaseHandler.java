@@ -817,15 +817,11 @@ public class  DatabaseHandler extends Configs {
        public  void removePassengersFromDB(int BookingNumber){
         String query= String.format(
                       "DELETE FROM "+Const.PASSENGER_TABLE+
-                           " WHERE "+Const.PASSENGER_SEAT+ " in("+
-                                    " SELECT "+Const.SEAT +
+                           " WHERE ("+Const.PASSENGER_SEAT+ " , " +Const.PASSENGER_FLIGHT+") in("+
+                                    " SELECT "+Const.SEAT + " , " +Const.SEATS_FLIGHT_ID+
                                       " FROM "+Const.SEAT_TABLE+
                                      " WHERE "+ Const.SEATS_BOOKED+" = " +BookingNumber+
-                                     ")"+ " AND "+Const.PASSENGER_FLIGHT+" in("+
-                                    " SELECT "+Const.FLIGHTS_ID +
-                                    " FROM "+Const.SEAT_TABLE+
-                                    " WHERE "+ Const.SEATS_BOOKED+" = " +BookingNumber+
-                                    ")");
+                                     ")");
 
         System.out.println(query);
            try (Statement statement = getDbConnection().createStatement();
