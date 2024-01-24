@@ -10,19 +10,25 @@ import java.util.Objects;
 
 public class SearchPanel extends JPanel {
 
+    public JPanel header;
+    public JLabel usernameL;
+    public JButton loginB;
+    public JButton signUpB;
+    public DatabaseHandler dbhand;
+
     public SearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        DatabaseHandler dbhand = new DatabaseHandler();
+        dbhand = new DatabaseHandler();
 
 //INTERFACE
 
 //Header
-        JPanel header = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton loginB = new JButton("Log in");
-        JButton signUpB = new JButton("Sign up");
+        header = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        loginB = new JButton("Log in");
+        signUpB = new JButton("Sign up");
         JButton logoutB = new JButton("Log out");
-        JLabel usernameL = new JLabel("");
+        usernameL = new JLabel("");
         usernameL.setBorder(BorderFactory.createEmptyBorder(1,10,1,10));
         header.add(loginB);
         header.add(signUpB);
@@ -230,32 +236,7 @@ public class SearchPanel extends JPanel {
                 JOptionPane.showMessageDialog(parent, "You are logged in!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 if (lid.resultBooking != 0) {
-                    Object[] options = {"Pay for booking", "Clear booking", "Log out"};
-                    int res = JOptionPane.showOptionDialog(parent,
-                            "You have a booking.\n" +
-                                    "According to our rules, it's only possible\n" +
-                                    "to have one active booking.\n" +
-                                    "Do you want to pay for it now?",
-                            "Your booking",
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            options,
-                            options[0]);
-                    if (res == 0) {
-                        parent.jumpToPassengers(lid.resultBooking);
-                    } else if (res == 1) {
-                        try {
-                            dbhand.removeBookingTotally(lid.resultBooking);
-                            JOptionPane.showMessageDialog(parent, "Booking removed!",
-                                    "Success", JOptionPane.INFORMATION_MESSAGE);
-                        } catch (SQLException exception) {
-                            JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
-                                    "Fail", JOptionPane.WARNING_MESSAGE);
-                        }
-                    } else {
-                        logoutB.getActionListeners()[0].actionPerformed(new ActionEvent(this, 0, ""));
-                    }
+                    haveBooking(lid.resultBooking, parent);
                 }
             }
         });
@@ -341,5 +322,40 @@ public class SearchPanel extends JPanel {
             cities.addItem(i);
         }
         cities.setSelectedItem(selectedElement);
+    }
+
+    public void haveBooking(int booking, MainWindowC parent) {
+        Object[] options = {"Pay for booking", "Clear booking", "Log out"};
+        int res = JOptionPane.showOptionDialog(parent,
+                "You have a booking.\n" +
+                        "According to our rules, it's only possible\n" +
+                        "to have one active booking.\n" +
+                        "Do you want to pay for it now?",
+                "Your booking",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        if (res == 0) {
+            parent.jumpToPassengers(booking);
+        } else if (res == 1) {
+            try {
+                dbhand.removeBookingTotally(booking);
+                JOptionPane.showMessageDialog(parent, "Booking removed!",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (SQLException exception) {
+                JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
+                        "Fail", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            parent.loggedIn="";
+            header.removeAll();
+            usernameL.setText(parent.loggedIn);
+            header.add(loginB);
+            header.add(signUpB);
+            header.revalidate();
+            header.repaint();
+            parent.transferFocus();        }
     }
 }
