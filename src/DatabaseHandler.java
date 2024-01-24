@@ -739,22 +739,15 @@ public class  DatabaseHandler extends Configs {
         }
     }
 
-    public double TotalSum(int BookingNumber){
-
-            String query = " SELECT " + Const.BOOKING_Total +
-                    " FROM " + Const.BOOKING_TABLE +
-                    " WHERE " + Const.BOOKING_NUMBER + " = '" + BookingNumber + "'";
-            //System.out.println(query);
-            try (Statement statement = getDbConnection().createStatement();
-                 ResultSet rs = statement.executeQuery(query)) {
-                rs.next();
-                Double Total= rs.getDouble(1);
-                return Total;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return -2;
-            }
-
+    public double totalSum(int BookingNumber) throws SQLException {
+        String query = " SELECT " + Const.BOOKING_Total +
+                " FROM " + Const.BOOKING_TABLE +
+                " WHERE " + Const.BOOKING_NUMBER + " = '" + BookingNumber + "'";
+        //System.out.println(query);
+        Statement statement = getDbConnection().createStatement();
+        ResultSet rs = statement.executeQuery(query);
+        rs.next();
+        return rs.getDouble(1);
     }
 
        public void SaveCardDetails(String login,String cardnumer,

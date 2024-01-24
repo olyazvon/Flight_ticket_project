@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 //import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -43,15 +44,23 @@ public class PaymentPanel extends JPanel {
 
         leftP.add(new JLabel("Booking "+bookingNumber));
         leftP.add(Box.createRigidArea(new Dimension(0, 5)));
-        double sum = 0;
+
         for (Seat i : seats) {
             leftP.add(new JLabel(i.flight + "  " +i.getText() + "  " + i.price));
             leftP.add(Box.createRigidArea(new Dimension(0, 5)));
-            sum += i.price;
         }
-        JLabel total = new JLabel("Total: %.2f".formatted(sum));
-        total.setFont(new Font(null, Font.BOLD, 14));
-        leftP.add(total);
+
+        try {
+            JLabel total = new JLabel("Total: %.2f".formatted(dbhand.totalSum(bookingNumber)));
+            total.setFont(new Font(null, Font.BOLD, 14));
+            leftP.add(total);
+        } catch (SQLException e) {
+            MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(this);
+            parent.paymentToPassengers();
+            dbhand.removePassengersFromDB(bookingNumber);
+            JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
+                    "Fail", JOptionPane.WARNING_MESSAGE);
+        }
 
         twoSections.add(leftP);
 
