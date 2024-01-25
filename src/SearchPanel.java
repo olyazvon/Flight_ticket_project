@@ -13,6 +13,7 @@ public class SearchPanel extends JPanel {
     public JButton loginB;
     public JButton logoutB;
     public JButton signUpB;
+    public JButton myFlightB;
     public DatabaseHandler dbhand;
 
     public SearchPanel() {
@@ -29,6 +30,8 @@ public class SearchPanel extends JPanel {
         logoutB = new JButton("Log out");
         usernameL = new JLabel("");
         usernameL.setBorder(BorderFactory.createEmptyBorder(1,10,1,10));
+        myFlightB = new JButton("My flight");
+        header.add(myFlightB);
         header.add(loginB);
         header.add(signUpB);
         header.setMaximumSize(new Dimension(Short.MAX_VALUE, header.getPreferredSize().height));
@@ -258,6 +261,17 @@ public class SearchPanel extends JPanel {
             }
         });
 
+        myFlightB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(myFlightB);
+                String res = JOptionPane.showInputDialog(parent,
+                        "Please enter your passport");
+                if (res.isEmpty()) {return;}
+                parent.searchToSummary(res);
+            }
+        });
+
     }
 
     private String longestString(String[] input) {
@@ -343,6 +357,7 @@ public class SearchPanel extends JPanel {
             header.removeAll();
             usernameL.setText(login);
             header.add(usernameL);
+            header.add(myFlightB);
             header.add(logoutB);
             header.revalidate();
             header.repaint();
@@ -353,6 +368,7 @@ public class SearchPanel extends JPanel {
         } else {
             header.removeAll();
             usernameL.setText("");
+            header.add(myFlightB);
             header.add(loginB);
             header.add(signUpB);
             header.revalidate();

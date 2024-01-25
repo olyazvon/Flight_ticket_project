@@ -324,6 +324,7 @@ public class PaymentPanel extends JPanel {
                 try {
                     dbhand.buy(bookingNumber);
                     JOptionPane.showMessageDialog(parent, "Bought");
+                    parent.paymentToSummary(bookingNumber);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(parent, "Error occurred, try later!",
                             "Error", JOptionPane.WARNING_MESSAGE);
