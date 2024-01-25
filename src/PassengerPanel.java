@@ -90,8 +90,8 @@ public class PassengerPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainWindowC Parent=((MainWindowC)SwingUtilities.getWindowAncestor(proceedB));
-                if (!ok(passengers)) {
-                    JOptionPane.showMessageDialog(Parent, " No passengers!",
+                if (notOk(passengers)) {
+                    JOptionPane.showMessageDialog(Parent, " Check passengers information!",
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -167,16 +167,21 @@ public class PassengerPanel extends JPanel {
         }
     }
 
-    public boolean ok(ArrayList<PassengerPanel.OnePassenger> Passengers){
+    public boolean notOk(ArrayList<PassengerPanel.OnePassenger> Passengers){
             for (PassengerPanel.OnePassenger passenger:Passengers) {
                 String Passport=passenger.getPassport();
                 String LastName= passenger.getLastName();
                 String FirstName= passenger.getFirstName();
-                if (Passport.isEmpty()|LastName.isEmpty()|FirstName.isEmpty()) {
-                    return false;
+                if (!( Passport.length() >= 5 &&
+                        !LastName.isEmpty() &&
+                        !FirstName.isEmpty()&&
+                        Main.noNumbersInString(FirstName) &&
+                        Main.noNumbersInString(LastName))) {
+                    return true;
                 }
             }
-            return true;
+            return false;
+
     }
 
     }
