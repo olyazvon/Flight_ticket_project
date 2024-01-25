@@ -888,32 +888,6 @@ public class  DatabaseHandler extends Configs {
         }
             return result;
     }
-
-    public String MyFlight(String passport){
-        String query="SELECT * FROM "+Const.PASSENGER_TABLE+
-                   " WHERE "+Const.PASSENGER_ID+"= '"+passport+"'";
-        String MyFlight="";
-        try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-            rs.next();
-                MyFlight+="This amazing person: "+ rs.getString(Const.PASSENGER_FIRST_NAME)+
-                                              " "+rs.getString(Const.PASSENGER_LAST_NAME)+'\n';
-                MyFlight+="Will flight on comfortable chair number "+rs.getString(Const.PASSENGER_SEAT)+'\n';
-                String Flight= rs.getString(Const.PASSENGER_FLIGHT);
-                MyFlight+="On flight number "+Flight+'\n';
-                MyFlight+="To wonderful journey:"+qFromToCities(Flight)+"("+
-                                                    qFromTo(Flight)+")"+'\n';
-                MyFlight+= "Which starts at "+getDeparture(Flight).toString()+'\n';
-                MyFlight+= "And will arrive to destination at "+getArrival(Flight)+'\n';
-                MyFlight+= "Have a nice flight!";
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return MyFlight;
-
-    }
 }
 
 
