@@ -286,7 +286,9 @@ public class PaymentPanel extends JPanel {
                         cvvF.getText().length() == 3 &&
                         !holderNameF.getText().isEmpty() &&
                         yearF.getText().length() == 2 &&
-                        monthF.getText().length() == 2)) {
+                        monthF.getText().length() == 2 &&
+                        Main.onlyNumbersInString(cardF.getText())  &&
+                        Main.noNumbersInString(holderNameF.getText()) )) {
                     JOptionPane.showMessageDialog(parent, "Please check your data!");
                     return;
                 }

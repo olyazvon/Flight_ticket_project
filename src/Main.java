@@ -36,6 +36,23 @@ public class Main {
         //System.out.println(dbhand.DelBooking(1));
         //System.out.println(dbhand.DelUnValidBooking());
         //System.out.println(dbhand.SignIn("ok","123"));
-        System.out.println(Arrays.toString(dbhand.selectCardDetails("misha")));
+        //System.out.println(Arrays.toString(dbhand.selectCardDetails("misha")));
     }
+    public static  boolean  noNumbersInString(String st){
+        for (int i = 0; i <= st.length()-1; i++) {
+            if (Character.isDigit(st.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public static  boolean  onlyNumbersInString(String st){
+        for (int i = 0; i <= st.length()-1; i++) {
+            if (!(Character.isDigit(st.charAt(i)))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
