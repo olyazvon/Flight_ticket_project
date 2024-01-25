@@ -914,6 +914,82 @@ public class  DatabaseHandler extends Configs {
         return MyFlight;
 
     }
+ public String getClass(String seat,String flight) {
+     String query = "SELECT " + Const.SEATS_class +
+             " FROM " + Const.SEAT_TABLE +
+             " WHERE " + Const.SEAT + "= '" + seat + "' AND" +
+             Const.SEATS_FLIGHT_ID + "= '" + flight + "'";
+     System.out.println(query);
+     String Class;
+     try (Statement statement = getDbConnection().createStatement();
+          ResultSet rs = statement.executeQuery(query)) {
+         rs.next();
+         Class = rs.getString(1);
+     } catch (SQLException e) {
+         throw new RuntimeException(e);
+     }
+     return Class;
+ }
+
+    public ArrayList<String> getPassengersPasports(int BookingNumber) {
+        String query = String.format(
+                "SELECT " + Const.PASSENGER_ID +
+                        " FROM " + Const.PASSENGER_TABLE +
+                        " WHERE (" + Const.PASSENGER_SEAT + " , " + Const.PASSENGER_FLIGHT + ") in(" +
+                        " SELECT " + Const.SEAT + " , " + Const.SEATS_FLIGHT_ID +
+                        " FROM " + Const.SEAT_TABLE +
+                        " WHERE " + Const.SEATS_BOOKED + " = " + BookingNumber +
+                        ")");
+        System.out.println(query);
+        ArrayList arrList = null;
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            arrList = new ArrayList<>();
+            while (rs.next()) {
+                arrList.add(rs.getString(1));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arrList;
+    }
+    public ArrayList<String[]> myNextFlights(String passport){
+        String query="SELECT * FROM "+Const.PASSENGER_TABLE+
+                " WHERE "+Const.PASSENGER_ID+"= '"+passport+"'";
+        String[] MyFlight= new String[7];
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            ArrayList arrList= new ArrayList<>();
+            while (rs.next()){
+                MyFlight[0] = rs.getString(Const.PASSENGER_FIRST_NAME) +
+                        " " + rs.getString(Const.PASSENGER_LAST_NAME) ;
+                MyFlight [1]= rs.getString(Const.PASSENGER_SEAT);
+                String Flight = rs.getString(Const.PASSENGER_FLIGHT);
+                MyFlight [2] = Flight;
+                MyFlight [3] = qFromToCities(Flight) + "(" +
+                               qFromTo(Flight) + ")" + " ";
+                MyFlight [4] = getDeparture(Flight).toString();
+                MyFlight [5] =  getArrival(Flight).toString();
+                MyFlight[6] = getClass(rs.getString(Const.PASSENGER_SEAT),Flight);
+                if (getDeparture(Flight).after(new java.util.Date())) {
+                    arrList.add(MyFlight);
+                }
+            }
+            return arrList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public ArrayList<ArrayList<String[]>> myNextFlights(int bookingNumber) {
+        ArrayList Passengers=getPassengersPasports(bookingNumber);
+        ArrayList<ArrayList<String[]>> BookingFlights= new ArrayList();
+        for (int i=0;i<Passengers.size();i++) {
+            BookingFlights.add(myNextFlights((String) Passengers.get(i)));
+        }
+       return BookingFlights;
+    }
+
+
 }
 
 

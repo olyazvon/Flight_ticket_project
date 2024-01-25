@@ -37,6 +37,7 @@ public class Main {
         //System.out.println(dbhand.DelUnValidBooking());
         //System.out.println(dbhand.SignIn("ok","123"));
         //System.out.println(Arrays.toString(dbhand.selectCardDetails("misha")));
+        System.out.println(dbhand.myNextFlights("8888").size());
     }
     public static  boolean  noNumbersInString(String st){
         for (int i = 0; i <= st.length()-1; i++) {
