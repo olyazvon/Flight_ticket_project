@@ -36,6 +36,6 @@ public class Main {
         //System.out.println(dbhand.DelBooking(1));
         //System.out.println(dbhand.DelUnValidBooking());
         //System.out.println(dbhand.SignIn("ok","123"));
-        System.out.println(dbhand.SelectCardDetails("o"));
+        System.out.println(Arrays.toString(dbhand.selectCardDetails("misha")));
     }
 }

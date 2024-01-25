@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 //import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -10,6 +11,14 @@ import java.util.ArrayList;
 public class PaymentPanel extends JPanel {
     ArrayList<Seat> seats;
     DatabaseHandler dbhand;
+
+    private JTextField cardF;
+    private JTextField holderNameF;
+    private JTextField cvvF;
+    private JTextField monthF;
+    private JTextField yearF;
+    private String[] storedData;
+
 
     public PaymentPanel(int bookingNumber, String loggedIn) {
         dbhand = new DatabaseHandler();
@@ -69,23 +78,23 @@ public class PaymentPanel extends JPanel {
 
         Font inpFont = new Font(null, Font.PLAIN, 14);
         JLabel cardL = new JLabel("Card number:");
-        JTextField cardF = new JTextField(15);
+        cardF = new JTextField(15);
         cardF.setFont(inpFont);
         cardF.setBorder(BorderFactory.createLoweredBevelBorder());
         JLabel holderNameL = new JLabel("Name on card:");
-        JTextField holderNameF = new JTextField(15);
+        holderNameF = new JTextField(15);
         holderNameF.setBorder(BorderFactory.createLoweredBevelBorder());
         holderNameF.setFont(inpFont);
         JLabel cvvL = new JLabel("CVV:");
-        JTextField cvvF = new JTextField(3);
+        cvvF = new JTextField(3);
         cvvF.setBorder(BorderFactory.createLoweredBevelBorder());
         cvvF.setFont(inpFont);
         JLabel dateL = new JLabel("Expires:");
         JLabel separatorL = new JLabel("/ ");
-        JTextField monthF = new JTextField(2);
+        monthF = new JTextField(2);
         monthF.setBorder(BorderFactory.createLoweredBevelBorder());
         monthF.setFont(inpFont);
-        JTextField yearF = new JTextField(2);
+        yearF = new JTextField(2);
         yearF.setBorder(BorderFactory.createLoweredBevelBorder());
         yearF.setFont(inpFont);
 
@@ -107,6 +116,7 @@ public class PaymentPanel extends JPanel {
 
         if (loggedIn != null) {
             // For users who are logged in.
+            storedData = fillFields(loggedIn);
             lo.setHorizontalGroup(lo.createSequentialGroup()
                     .addGroup(lo.createParallelGroup(GroupLayout.Alignment.TRAILING)
                             .addComponent(cardL)
@@ -263,10 +273,78 @@ public class PaymentPanel extends JPanel {
                     logInB.setVisible(false);
                     registerCB.setVisible(false);
                     registerL.setVisible(false);
+                    storedData = fillFields(parent.loggedIn);
                 }
             }
         });
 
+        confirmB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainWindowC parent = (MainWindowC)(SwingUtilities.getWindowAncestor(confirmB));
+                if (!(cardF.getText().length() == 16 &&
+                        cvvF.getText().length() == 3 &&
+                        !holderNameF.getText().isEmpty() &&
+                        yearF.getText().length() == 2 &&
+                        monthF.getText().length() == 2)) {
+                    JOptionPane.showMessageDialog(parent, "Please check your data!");
+                    return;
+                }
+                if (parent.loggedIn != null) {
+                    if (registerCB.isSelected()) {
+                        dbhand.saveCardDetails(
+                                parent.loggedIn,
+                                cardF.getText(),
+                                cvvF.getText(),
+                                LocalDate.of(2000+Integer.parseInt(yearF.getText()),
+                                        Integer.parseInt(monthF.getText()), 1),
+                                holderNameF.getText());
+                    } else if (!(cardF.getText().equals(storedData[0]) &&
+                            cvvF.getText().equals(storedData[1]) &&
+                            holderNameF.getText().equals(storedData[2]) &&
+                            yearF.getText().equals(storedData[3]) &&
+                            monthF.getText().equals(storedData[4]))) {
+                        int res = JOptionPane.showConfirmDialog(parent,
+                                "Save your data?",
+                                "Card Data",
+                                JOptionPane.YES_NO_OPTION);
+                        if (res == 0) {
+                            dbhand.saveCardDetails(
+                                    parent.loggedIn,
+                                    cardF.getText(),
+                                    cvvF.getText(),
+                                    LocalDate.of(2000+Integer.parseInt(yearF.getText()),
+                                            Integer.parseInt(monthF.getText()), 1),
+                                    holderNameF.getText());
+                        }
+                    }
+                }
+                try {
+                    dbhand.buy(bookingNumber);
+                    JOptionPane.showMessageDialog(parent, "Bought");
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(parent, "Error occurred, try later!",
+                            "Error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+    }
+
+    private String[] fillFields(String login) {
+        String[] data = dbhand.selectCardDetails(login);
+        String[] processedData = new String[] {
+                data[0] == null ? "" : data[0],
+                data[1] == null ? "" : data[1],
+                data[3] == null ? "" : data[3],
+                data[2] == null ? "" : data[2].substring(2, 4),
+                data[2] == null ? "" : data[2].substring(5, 7)
+        };
+        cardF.setText(processedData[0]);
+        cvvF.setText(processedData[1]);
+        holderNameF.setText(processedData[2]);
+        yearF.setText(processedData[3]);
+        monthF.setText(processedData[4]);
+        return processedData;
     }
 
     public void haveBooking(int booking, MainWindowC parent) {
@@ -295,5 +373,4 @@ public class PaymentPanel extends JPanel {
             parent.loggedIn = null;
         }
     }
-
 }

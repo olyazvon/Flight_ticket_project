@@ -765,13 +765,15 @@ public class  DatabaseHandler extends Configs {
         return rs.getDouble(1);
     }
 
-       public void SaveCardDetails(String login,String cardnumer,
-                                  int cardcvv,LocalDate carddate,int bookingnumber) {
-           String query = " INSERT INTO " + Const.USER_TABLE +
-                   "(" + Const.USER_CARD_NUMBER + "," + Const.USER_CARD_CVV + ","
-                   + Const.USER_CARD_DATE + "," + Const.USER_BOOKING_NUMBER + ")" +
-                   "VALUES ('" + login + "','" + cardnumer + "'," + cardcvv + "," + carddate +
-                   "," + bookingnumber + ")";
+       public void saveCardDetails(String login, String cardnumber,
+                                  String cardcvv,LocalDate carddate, String name) {
+           String query = " UPDATE " + Const.USER_TABLE +
+                   " SET " + Const.USER_CARD_NUMBER + " = " + cardnumber + " , " +
+                   Const.USER_CARD_CVV + " = " + cardcvv + " , "
+                   + Const.USER_CARD_DATE + " = " +
+                   "TO_DATE('" + carddate + "', 'YYYY-MM-DD')" + " , " +
+                   Const.USER_NAME + " = '" + name + "'" +
+                   " WHERE " + Const.USER_LOGIN + " = '" + login + "'";
            System.out.println(query);
            try (Statement statement = getDbConnection().createStatement();
                 ResultSet rs = statement.executeQuery(query)) {
@@ -781,26 +783,20 @@ public class  DatabaseHandler extends Configs {
                throw new RuntimeException(e);
            }
        }
-       public  void  bought(int bookingNumber){
+       public void buy(int bookingNumber) throws SQLException {
            String query = " UPDATE " + Const.SEAT_TABLE +
                    " SET "+Const.SEATS_BOUGHT+"= 1"+
                    " WHERE " + Const.SEATS_BOOKED + " = " + bookingNumber;
-           try (Statement statement = getDbConnection().createStatement();
-                ResultSet rs = statement.executeQuery(query)) {
-               rs.next();
-           } catch (Exception e) {
-               e.printStackTrace();
-           }
+           Statement statement = getDbConnection().createStatement();
+           ResultSet rs = statement.executeQuery(query);
+           rs.next();
            String query1 = " UPDATE " + Const.USER_TABLE +
                    " SET "+Const.USER_BOOKING_NUMBER+"= null"+
                    " WHERE " + Const.USER_BOOKING_NUMBER + " = " + bookingNumber;
            System.out.println(query);
-           try (Statement statement1 = getDbConnection().createStatement();
-                ResultSet rs1 = statement1.executeQuery(query1)) {
-               rs1.next();
-           } catch (Exception e) {
-               e.printStackTrace();
-           }
+           Statement statement1 = getDbConnection().createStatement();
+           ResultSet rs1 = statement1.executeQuery(query1);
+           rs1.next();
        }
 
        public void addPassengersToDB(ArrayList<PassengerPanel.OnePassenger> Passengers){
@@ -840,26 +836,25 @@ public class  DatabaseHandler extends Configs {
            }
     }
 
-    public ArrayList<String> SelectCardDetails(String login) {
+    public String[] selectCardDetails(String login) {
         String query = " SELECT "+
                  Const.USER_CARD_NUMBER + "," + Const.USER_CARD_CVV + ","
-                + Const.USER_CARD_DATE + "," + Const.USER_BOOKING_NUMBER +
+                + Const.USER_CARD_DATE + "," + Const.USER_NAME +
                 " FROM " + Const.USER_TABLE +
                 " WHERE " +Const.USER_LOGIN + "= '" + login +"'";
         System.out.println(query);
-        ArrayList arList= new ArrayList<String>();
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
-            while (rs.next()) {
-                arList.add(rs.getString(Const.USER_CARD_NUMBER));
-                arList.add(rs.getString(Const.USER_CARD_CVV ));
-                arList.add(rs.getString(Const.USER_CARD_DATE));
-                arList.add(rs.getString(Const.USER_BOOKING_NUMBER));
-            }
+            rs.next();
+            return new String[] {
+                    rs.getString(Const.USER_CARD_NUMBER),
+                    rs.getString(Const.USER_CARD_CVV),
+                    rs.getString(Const.USER_CARD_DATE),
+                    rs.getString(Const.USER_NAME)
+            };
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return arList;
     }
     public String qFromToCities(String flight) {
 
