@@ -931,27 +931,26 @@ public class  DatabaseHandler extends Configs {
      return Class;
     }
 
-    public ArrayList<String> getPassengersPasports(int BookingNumber) {
+    public String[] getPassenger(String Seat, String Flight) {
         String query = String.format(
-                "SELECT " + Const.PASSENGER_ID +
+                "SELECT *" +
                         " FROM " + Const.PASSENGER_TABLE +
-                        " WHERE (" + Const.PASSENGER_SEAT + " , " + Const.PASSENGER_FLIGHT + ") in(" +
-                        " SELECT " + Const.SEAT + " , " + Const.SEATS_FLIGHT_ID +
-                        " FROM " + Const.SEAT_TABLE +
-                        " WHERE " + Const.SEATS_BOOKED + " = " + BookingNumber +
-                        ")");
+                        " WHERE " + Const.PASSENGER_SEAT + " = '" + Seat + "' AND " +
+                        Const.PASSENGER_FLIGHT + " = '" + Flight + "'");
+
         System.out.println(query);
-        ArrayList arrList = null;
+
+        String[] Passenger = new String[3];
         try (Statement statement = getDbConnection().createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-            arrList = new ArrayList<>();
-            while (rs.next()) {
-                arrList.add(rs.getString(1));
-            }
+             ResultSet rs = statement.executeQuery(query)) {;
+            rs.next();
+            Passenger[0] = rs.getString(Const.PASSENGER_ID);
+            Passenger[1] = rs.getString(Const.PASSENGER_FIRST_NAME);
+            Passenger[2] = rs.getString(Const.PASSENGER_LAST_NAME);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return arrList;
+        return Passenger;
     }
     public ArrayList<String[]> myNextFlights(String passport){
         String query="SELECT * FROM "+Const.PASSENGER_TABLE+
@@ -982,12 +981,29 @@ public class  DatabaseHandler extends Configs {
         }
     }
     public ArrayList<String[]> myNextFlights(int bookingNumber) {
-        ArrayList<String> passengers = getPassengersPasports(bookingNumber);
-        ArrayList<String[]> bookingFlights = new ArrayList<>();
-        for (String i : passengers) {
-            bookingFlights.addAll(myNextFlights(i));
+        String query="SELECT "+Const.SEAT+", "+Const.SEATS_FLIGHT_ID+", "+Const.SEATS_class+
+                " FROM "+Const.SEAT_TABLE+
+                " WHERE "+Const.SEATS_BOOKED+" = "+bookingNumber;
+        String[] MyFlight= new String[7];
+        try (Statement statement = getDbConnection().createStatement();
+             ResultSet rs = statement.executeQuery(query)) {
+            ArrayList arrList= new ArrayList<>();
+            while (rs.next()){
+                MyFlight[0] = getPassenger(rs.getString(Const.SEAT),rs.getString(Const.SEATS_FLIGHT_ID))[1]+" "+
+                              getPassenger(rs.getString(Const.SEAT),rs.getString(Const.SEATS_FLIGHT_ID))[2];
+                MyFlight [1]= rs.getString(Const.PASSENGER_SEAT);
+                String Flight = rs.getString(Const.PASSENGER_FLIGHT);
+                MyFlight [2] = Flight;
+                MyFlight [3] = qFromToCities(Flight) + " (" +
+                        qFromTo(Flight) + ")";
+                MyFlight [4] = getDeparture(Flight).toString();
+                MyFlight [5] =  getArrival(Flight).toString();
+                MyFlight[6] = rs.getString(Const.SEATS_class);
+            }
+            return arrList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-       return bookingFlights;
     }
 
 
