@@ -287,6 +287,9 @@ public class PaymentPanel extends JPanel {
                         !holderNameF.getText().isEmpty() &&
                         yearF.getText().length() == 2 &&
                         monthF.getText().length() == 2 &&
+                        Integer.parseInt(yearF.getText())>=24 &&
+                        Integer.parseInt(monthF.getText())>=1 &&
+                        Integer.parseInt(monthF.getText())<=12 &&
                         Main.onlyNumbersInString(cardF.getText())  &&
                         Main.noNumbersInString(holderNameF.getText()) )) {
                     JOptionPane.showMessageDialog(parent, "Please check your data!");
