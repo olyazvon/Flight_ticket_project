@@ -427,12 +427,12 @@ public class  DatabaseHandler extends Configs {
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
-            result = rs.getString(1);
-            result += "- " + rs.getString(2);
+            result = rs.getString(1).trim();
+            result += " - " + rs.getString(2).trim();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result.substring(0, result.length() - 1);
+        return result;
     }
 
     public Date getArrival(String flight) {
@@ -860,9 +860,9 @@ public class  DatabaseHandler extends Configs {
 
         String queryFrom= String.format(
                 "SELECT a."+ Const.AIRPORTS_CITY+ "  , " +Const.FLIGHTS_FROM +
-                " FROM "+     Const.FLIGHT_TABLE + " , " + Const.AIRPORT_TABLE+
-                " a WHERE a."+Const.AIRPORTS_ID+" = "+Const.FLIGHTS_FROM+
-                        " AND "+Const.FLIGHTS_ID+" = '"+ flight+"'");
+                " FROM "+     Const.FLIGHT_TABLE + " , " + Const.AIRPORT_TABLE +
+                " a WHERE a."+Const.AIRPORTS_ID+" = "+Const.FLIGHTS_FROM +
+                " AND "+Const.FLIGHTS_ID+" = '"+ flight+"'");
 
         System.out.println(queryFrom);
         String result = "";
@@ -914,10 +914,10 @@ public class  DatabaseHandler extends Configs {
         return MyFlight;
 
     }
- public String getClass(String seat,String flight) {
+    public String getClass(String seat,String flight) {
      String query = "SELECT " + Const.SEATS_class +
              " FROM " + Const.SEAT_TABLE +
-             " WHERE " + Const.SEAT + "= '" + seat + "' AND" +
+             " WHERE " + Const.SEAT + "= '" + seat + "' AND " +
              Const.SEATS_FLIGHT_ID + "= '" + flight + "'";
      System.out.println(query);
      String Class;
@@ -929,7 +929,7 @@ public class  DatabaseHandler extends Configs {
          throw new RuntimeException(e);
      }
      return Class;
- }
+    }
 
     public ArrayList<String> getPassengersPasports(int BookingNumber) {
         String query = String.format(
@@ -966,13 +966,14 @@ public class  DatabaseHandler extends Configs {
                 MyFlight [1]= rs.getString(Const.PASSENGER_SEAT);
                 String Flight = rs.getString(Const.PASSENGER_FLIGHT);
                 MyFlight [2] = Flight;
-                MyFlight [3] = qFromToCities(Flight) + "(" +
-                               qFromTo(Flight) + ")" + " ";
+                System.out.println(Flight);
+                MyFlight [3] = qFromToCities(Flight) + " (" +
+                               qFromTo(Flight) + ")";
                 MyFlight [4] = getDeparture(Flight).toString();
                 MyFlight [5] =  getArrival(Flight).toString();
                 MyFlight[6] = getClass(rs.getString(Const.PASSENGER_SEAT),Flight);
                 if (getDeparture(Flight).after(new java.util.Date())) {
-                    arrList.add(MyFlight);
+                    arrList.add(MyFlight.clone());
                 }
             }
             return arrList;
@@ -980,13 +981,13 @@ public class  DatabaseHandler extends Configs {
             throw new RuntimeException(e);
         }
     }
-    public ArrayList<ArrayList<String[]>> myNextFlights(int bookingNumber) {
-        ArrayList Passengers=getPassengersPasports(bookingNumber);
-        ArrayList<ArrayList<String[]>> BookingFlights= new ArrayList();
-        for (int i=0;i<Passengers.size();i++) {
-            BookingFlights.add(myNextFlights((String) Passengers.get(i)));
+    public ArrayList<String[]> myNextFlights(int bookingNumber) {
+        ArrayList<String> passengers = getPassengersPasports(bookingNumber);
+        ArrayList<String[]> bookingFlights = new ArrayList<>();
+        for (String i : passengers) {
+            bookingFlights.addAll(myNextFlights(i));
         }
-       return BookingFlights;
+       return bookingFlights;
     }
 
 

@@ -2,11 +2,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SummaryPanel extends JPanel {
     public SummaryPanel(int booking, String passport) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         DatabaseHandler dbhand = new DatabaseHandler();
+
+        ArrayList<String[]> data;
+        if (passport == null) {
+            data = dbhand.myNextFlights(booking);
+        } else {
+            data = dbhand.myNextFlights(passport);
+        }
 
         add(Box.createRigidArea(new Dimension(0, 15)));
         JLabel nameL = new JLabel("Summary");
@@ -20,22 +29,24 @@ public class SummaryPanel extends JPanel {
         listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
 
         listP.add(Box.createVerticalGlue());
-
+        System.out.println(Arrays.toString(data.get(0))+Arrays.toString(data.get(1)));
         String currentFlight = "";
-//        for (Seat seat : this.seats) {
-//            if (!seat.flight.equals(currentFlight)) {
-//                JLabel flightL = new JLabel(seat.flight+"  "+dbhand.qFromTo(seat.flight));
-//                flightL.setFont(new Font(null, Font.PLAIN, 18));
-//                flightL.setAlignmentX(CENTER_ALIGNMENT);
-//                listP.add(flightL);
-//                listP.add(Box.createRigidArea(new Dimension(0, 15)));
-//                currentFlight = seat.flight;
-//            }
-//            PassengerPanel.OnePassenger pss = new PassengerPanel.OnePassenger(seat);
-//            this.passengers.add(pss);
-//            listP.add(pss);
-//            listP.add(Box.createRigidArea(new Dimension(0, 15)));
-//        }
+        for (String[] i : data) {
+            if (!i[2].equals(currentFlight)) {
+                JLabel flightL = new JLabel(
+                        "<html><b>Flight:</b> " + i[2]+" &emsp "+i[3]+" &emsp "+i[4]+" - "+i[5]+"</html>", JLabel.CENTER);
+                flightL.setFont(new Font(null, Font.PLAIN, 18));
+                flightL.setAlignmentX(CENTER_ALIGNMENT);
+                listP.add(flightL);
+                listP.add(Box.createRigidArea(new Dimension(0, 15)));
+                currentFlight = i[2];
+            }
+            JLabel seatData = new JLabel("<html><b>Passenger:</b> " + i[0] + " &emsp <b>Seat:</b> " + i[1] + " &emsp <b>Class:</b> " + i[6] + "</html>", JLabel.CENTER);
+            seatData.setFont(new Font(null, Font.PLAIN, 18));
+            seatData.setAlignmentX(CENTER_ALIGNMENT);
+            listP.add(seatData);
+            listP.add(Box.createRigidArea(new Dimension(0, 15)));
+        }
 
         listP.add(Box.createVerticalGlue());
 
