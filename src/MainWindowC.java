@@ -69,11 +69,18 @@ public class MainWindowC extends JFrame {
         pages.add(new JPanel(), 2);
         pages.add(new JPanel(), 3);
         pages.add(new SummaryPanel(0, passport), 4);
-        ((CardLayout)pages.getLayout()).last(pages);
+        ((CardLayout)pages.getLayout()).next(pages);
+        ((CardLayout)pages.getLayout()).next(pages);
+        ((CardLayout)pages.getLayout()).next(pages);
+        ((CardLayout)pages.getLayout()).next(pages);
+
     }
 
     public void summaryToSearch() {
-        ((CardLayout)pages.getLayout()).first(pages);
+        ((CardLayout)pages.getLayout()).previous(pages);
+        ((CardLayout)pages.getLayout()).previous(pages);
+        ((CardLayout)pages.getLayout()).previous(pages);
+        ((CardLayout)pages.getLayout()).previous(pages);
         pages.remove(4);
         pages.remove(3);
         pages.remove(2);

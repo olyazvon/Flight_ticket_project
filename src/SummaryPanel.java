@@ -37,15 +37,16 @@ public class SummaryPanel extends JPanel {
                         "<html><b>Flight:</b> " + i[2]+" &emsp "+i[3]+" &emsp "+i[4]+" - "+i[5]+"</html>", JLabel.CENTER);
                 flightL.setFont(new Font(null, Font.PLAIN, 18));
                 flightL.setAlignmentX(CENTER_ALIGNMENT);
+                listP.add(Box.createRigidArea(new Dimension(0, 20)));
                 listP.add(flightL);
-                listP.add(Box.createRigidArea(new Dimension(0, 15)));
+                listP.add(Box.createRigidArea(new Dimension(0, 10)));
                 currentFlight = i[2];
             }
             JLabel seatData = new JLabel("<html><b>Passenger:</b> " + i[0] + " &emsp <b>Seat:</b> " + i[1] + " &emsp <b>Class:</b> " + i[6] + "</html>", JLabel.CENTER);
             seatData.setFont(new Font(null, Font.PLAIN, 18));
             seatData.setAlignmentX(CENTER_ALIGNMENT);
             listP.add(seatData);
-            listP.add(Box.createRigidArea(new Dimension(0, 15)));
+            listP.add(Box.createRigidArea(new Dimension(0, 10)));
         }
 
         listP.add(Box.createVerticalGlue());
