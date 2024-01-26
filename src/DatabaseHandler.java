@@ -535,11 +535,11 @@ public class  DatabaseHandler extends Configs {
 
     //    забронировать местa UPdate booked in bd,
 //     если место занято-1, если ошибка -2, если забронировано выводит № брони
-    public int book(ArrayList<Seat> seatsToBook, double total) throws Exception {
+    public int book(ArrayList<Seat> seatsToBook, double total) throws RuntimeException, SQLException {
 
         for (Seat i : seatsToBook) {
             if (!isFree(i.flight, i.getText())) {
-                throw new RuntimeException("Selected seat is occupied!");
+                throw new RuntimeException("Selected seat is already occupied!");
             }
         }
 

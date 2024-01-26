@@ -3,6 +3,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Objects;
@@ -64,6 +65,7 @@ public class SeatPanel extends JPanel {
         threeSections.add(Box.createHorizontalGlue());
 
         Accountant total = new Accountant(!flightBack.isEmpty());
+//SeatMapFrames and Accountant
         SeatMapFrame a = new SeatMapFrame(flightThere, total);
         threeSections.add(a);
 
@@ -121,10 +123,16 @@ public class SeatPanel extends JPanel {
                             parent.seatsToSearch();
                             //((SearchPanel)parent.pages.getComponents()[0]).haveBooking(bookNum, parent);
                         }
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(parent,
-                                "Error occured. " + ex.getMessage(),
+                                "Error occurred. " + ex.getMessage(),
                                 "Fail", JOptionPane.WARNING_MESSAGE);
+
+                    } catch (RuntimeException ex) {
+                        JOptionPane.showMessageDialog(parent, ex.getMessage(),
+                                "Fail", JOptionPane.WARNING_MESSAGE);
+                        parent.seatsToSearch();
+                        parent.searchToSeats(flightThere, flightBack);
                     }
 
                 } else {
@@ -136,10 +144,16 @@ public class SeatPanel extends JPanel {
                                         "Your booking number is " + bookNum,
                                 "Success", JOptionPane.INFORMATION_MESSAGE);
                         parent.seatsToPassengers(bookNum);
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(parent,
-                                "Error occured. " + ex.getMessage(),
+                                "Error occurred. " + ex.getMessage(),
                                 "Fail", JOptionPane.WARNING_MESSAGE);
+
+                    } catch (RuntimeException ex) {
+                        JOptionPane.showMessageDialog(parent, ex.getMessage(),
+                                "Fail", JOptionPane.WARNING_MESSAGE);
+                        parent.seatsToSearch();
+                        parent.searchToSeats(flightThere, flightBack);
                     }
 
                 }
