@@ -6,16 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SummaryPanel extends JPanel {
-    public SummaryPanel(int booking, String passport) {
+    public SummaryPanel(ArrayList<String[]> data) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         DatabaseHandler dbhand = new DatabaseHandler();
-
-        ArrayList<String[]> data;
-        if (passport == null) {
-            data = dbhand.myNextFlights(booking);
-        } else {
-            data = dbhand.myNextFlights(passport);
-        }
 
         add(Box.createRigidArea(new Dimension(0, 15)));
         JLabel nameL = new JLabel("Summary");

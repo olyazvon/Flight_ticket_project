@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -276,8 +277,14 @@ public class SearchPanel extends JPanel {
                 MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(myFlightB);
                 String res = JOptionPane.showInputDialog(parent,
                         "Please enter your passport");
-                if (res.isEmpty()) {return;}
-                parent.searchToSummary(res);
+                if (res == null || res.isEmpty()) {return;}
+                ArrayList<String[]> data = dbhand.myNextFlights(res);
+                if (data.isEmpty()) {
+                    JOptionPane.showMessageDialog(parent, "No relevant flights found",
+                            "Flights Info", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    parent.searchToSummary(data);
+                }
             }
         });
 

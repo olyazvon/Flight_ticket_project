@@ -1,6 +1,7 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
+import java.util.ArrayList;
 
 
 public class MainWindowC extends JFrame {
@@ -59,16 +60,16 @@ public class MainWindowC extends JFrame {
         ((CardLayout)pages.getLayout()).next(pages);
     }
 
-    public void paymentToSummary(int booking) {
-        pages.add(new SummaryPanel(booking, null), 4);
+    public void paymentToSummary(ArrayList<String[]> data) {
+        pages.add(new SummaryPanel(data), 4);
         ((CardLayout)pages.getLayout()).next(pages);
     }
 
-    public void  searchToSummary(String passport) {
+    public void  searchToSummary(ArrayList<String[]> data) {
         pages.add(new JPanel(), 1);
         pages.add(new JPanel(), 2);
         pages.add(new JPanel(), 3);
-        pages.add(new SummaryPanel(0, passport), 4);
+        pages.add(new SummaryPanel(data), 4);
         ((CardLayout)pages.getLayout()).next(pages);
         ((CardLayout)pages.getLayout()).next(pages);
         ((CardLayout)pages.getLayout()).next(pages);
