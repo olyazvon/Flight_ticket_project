@@ -80,11 +80,10 @@ public class MainWindowC extends JFrame {
         ((CardLayout)pages.getLayout()).previous(pages);
         ((CardLayout)pages.getLayout()).previous(pages);
         ((CardLayout)pages.getLayout()).previous(pages);
-        ((CardLayout)pages.getLayout()).previous(pages);
         pages.remove(4);
         pages.remove(3);
         pages.remove(2);
-        pages.remove(1);
+        seatsToSearch();
     }
 
 

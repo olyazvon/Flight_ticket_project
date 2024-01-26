@@ -998,8 +998,9 @@ public class  DatabaseHandler extends Configs {
                 MyFlight [2] = Flight;
                 MyFlight [3] = qFromToCities(Flight) + " (" +
                         qFromTo(Flight) + ")";
-                MyFlight [4] = getDeparture(Flight).format(DateTimeFormatter.ISO_DATE);
-                MyFlight [5] =  getArrival(Flight).toString();
+                MyFlight [4] = getDeparture(Flight).format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm"));
+                Duration duration = Duration.between(getDeparture(Flight), getArrival(Flight));
+                MyFlight [5] = duration.toHoursPart()+":"+duration.toMinutesPart()%60;
                 MyFlight[6] = rs.getString(Const.SEATS_class);
                 arrList.add(MyFlight.clone());
             }
