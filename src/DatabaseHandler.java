@@ -1,8 +1,10 @@
 import java.sql.*;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -435,7 +437,7 @@ public class  DatabaseHandler extends Configs {
         return result;
     }
 
-    public Date getArrival(String flight) {
+    public LocalDateTime getArrival(String flight) {
         String query = String.format(
                 "SELECT %1$s " +
                         "FROM %2$s " +
@@ -446,14 +448,16 @@ public class  DatabaseHandler extends Configs {
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
-            return rs.getDate(1);
+            Date d = rs.getDate(1);
+            Time t = rs.getTime(1);
+            return LocalDateTime.of(d.toLocalDate(), t.toLocalTime());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Date getDeparture(String flight) {
+    public LocalDateTime getDeparture(String flight) {
         String query = String.format(
                 "SELECT %1$s " +
                         "FROM %2$s " +
@@ -464,7 +468,9 @@ public class  DatabaseHandler extends Configs {
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
-            return rs.getDate(1);
+            Date d = rs.getDate(1);
+            Time t = rs.getTime(1);
+            return LocalDateTime.of(d.toLocalDate(), t.toLocalTime());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -969,10 +975,11 @@ public class  DatabaseHandler extends Configs {
                 System.out.println(Flight);
                 MyFlight [3] = qFromToCities(Flight) + " (" +
                                qFromTo(Flight) + ")";
-                MyFlight [4] = getDeparture(Flight).toString();
-                MyFlight [5] =  getArrival(Flight).toString();
+                MyFlight [4] = getDeparture(Flight).format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm"));
+                Duration duration = Duration.between(getDeparture(Flight), getArrival(Flight));
+                MyFlight [5] = duration.toHoursPart()+":"+duration.toMinutesPart()%60;
                 MyFlight[6] = getClass(rs.getString(Const.PASSENGER_SEAT),Flight);
-                if (getDeparture(Flight).after(new java.util.Date())) {
+                if (getDeparture(Flight).isAfter(LocalDateTime.now())) {
                     arrList.add(MyFlight.clone());
                 }
             }
@@ -997,7 +1004,7 @@ public class  DatabaseHandler extends Configs {
                 MyFlight [2] = Flight;
                 MyFlight [3] = qFromToCities(Flight) + " (" +
                         qFromTo(Flight) + ")";
-                MyFlight [4] = getDeparture(Flight).toString();
+                MyFlight [4] = getDeparture(Flight).format(DateTimeFormatter.ISO_DATE);
                 MyFlight [5] =  getArrival(Flight).toString();
                 MyFlight[6] = rs.getString(Const.SEATS_class);
                 arrList.add(MyFlight.clone());

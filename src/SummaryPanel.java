@@ -29,12 +29,11 @@ public class SummaryPanel extends JPanel {
         listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
 
         listP.add(Box.createVerticalGlue());
-        System.out.println(Arrays.toString(data.get(0))+Arrays.toString(data.get(1)));
         String currentFlight = "";
         for (String[] i : data) {
             if (!i[2].equals(currentFlight)) {
                 JLabel flightL = new JLabel(
-                        "<html><b>Flight:</b> " + i[2]+" &emsp "+i[3]+" &emsp "+i[4]+" - "+i[5]+"</html>", JLabel.CENTER);
+                        "<html><b>Flight:</b> " + i[2]+" &emsp "+i[3]+" &emsp <b>Departure:</b> "+i[4]+" &emsp <b>Duration:</b> "+i[5]+"</html>", JLabel.CENTER);
                 flightL.setFont(new Font(null, Font.PLAIN, 18));
                 flightL.setAlignmentX(CENTER_ALIGNMENT);
                 listP.add(Box.createRigidArea(new Dimension(0, 20)));

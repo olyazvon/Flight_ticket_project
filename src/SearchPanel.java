@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -127,18 +128,26 @@ public class SearchPanel extends JPanel {
                             "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                if (twoWaysCB.isSelected() &&
-                        !matchFromTo(dbhand.qFromTo(selectP1.getFlight()),
-                                dbhand.qFromTo(selectP2.getFlight()))) {
-                    JOptionPane.showMessageDialog(parent, "Airports do not match!",
-                            "Warning", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                if (twoWaysCB.isSelected() && dbhand.getArrival(selectP1.getFlight())
-                        .after(dbhand.getDeparture(selectP2.getFlight()))) {
-                    JOptionPane.showMessageDialog(parent, "Back before there!",
-                            "Warning", JOptionPane.WARNING_MESSAGE);
-                    return;
+                if (twoWaysCB.isSelected()) {
+                    if (!matchFromTo(dbhand.qFromTo(selectP1.getFlight()),
+                            dbhand.qFromTo(selectP2.getFlight()))) {
+                        JOptionPane.showMessageDialog(parent, "Airports do not match!",
+                                "Warning", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    LocalDateTime arrThere = dbhand.getArrival(selectP1.getFlight());
+                    LocalDateTime depBack = dbhand.getDeparture(selectP2.getFlight());
+                    if (arrThere.isAfter(depBack)) {
+                        JOptionPane.showMessageDialog(parent, "Back before there!",
+                                "Warning", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    if (arrThere.plusHours(3).isAfter(depBack)) {
+                        JOptionPane.showMessageDialog(parent, "Not enough time between\n" +
+                                        "departure there and arrival back!",
+                                "Warning", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
                 }
                 ((MainWindowC)parent).searchToSeats(
                         selectP1.getFlight(),
