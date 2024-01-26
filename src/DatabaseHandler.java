@@ -933,7 +933,7 @@ public class  DatabaseHandler extends Configs {
 
     public String[] getPassenger(String Seat, String Flight) {
         String query = String.format(
-                "SELECT *" +
+                      "SELECT *" +
                         " FROM " + Const.PASSENGER_TABLE +
                         " WHERE " + Const.PASSENGER_SEAT + " = '" + Seat + "' AND " +
                         Const.PASSENGER_FLIGHT + " = '" + Flight + "'");
@@ -943,10 +943,11 @@ public class  DatabaseHandler extends Configs {
         String[] Passenger = new String[3];
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {;
-            rs.next();
-            Passenger[0] = rs.getString(Const.PASSENGER_ID);
-            Passenger[1] = rs.getString(Const.PASSENGER_FIRST_NAME);
-            Passenger[2] = rs.getString(Const.PASSENGER_LAST_NAME);
+            while(rs.next()) {
+                Passenger[0] = rs.getString(Const.PASSENGER_ID);
+                Passenger[1] = rs.getString(Const.PASSENGER_FIRST_NAME);
+                Passenger[2] = rs.getString(Const.PASSENGER_LAST_NAME);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -991,14 +992,15 @@ public class  DatabaseHandler extends Configs {
             while (rs.next()){
                 MyFlight[0] = getPassenger(rs.getString(Const.SEAT),rs.getString(Const.SEATS_FLIGHT_ID))[1]+" "+
                               getPassenger(rs.getString(Const.SEAT),rs.getString(Const.SEATS_FLIGHT_ID))[2];
-                MyFlight [1]= rs.getString(Const.PASSENGER_SEAT);
-                String Flight = rs.getString(Const.PASSENGER_FLIGHT);
+                MyFlight [1]= rs.getString(Const.SEAT);
+                String Flight = rs.getString(Const.SEATS_FLIGHT_ID);
                 MyFlight [2] = Flight;
                 MyFlight [3] = qFromToCities(Flight) + " (" +
                         qFromTo(Flight) + ")";
                 MyFlight [4] = getDeparture(Flight).toString();
                 MyFlight [5] =  getArrival(Flight).toString();
                 MyFlight[6] = rs.getString(Const.SEATS_class);
+                arrList.add(MyFlight.clone());
             }
             return arrList;
         } catch (SQLException e) {
