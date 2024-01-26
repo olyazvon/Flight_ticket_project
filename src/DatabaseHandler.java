@@ -561,8 +561,7 @@ public class  DatabaseHandler extends Configs {
                 ", TO_DATE('"+LocalDate.now()+"', 'YYYY-MM-DD'"+"))";
         System.out.println(query);
         statement = getDbConnection().createStatement();
-        rs = statement.executeQuery(query);
-        rs.next();
+        statement.executeUpdate(query);
 
         return bookingNumber;
     }
@@ -572,8 +571,7 @@ public class  DatabaseHandler extends Configs {
                 " SET " + Const.USER_BOOKING_NUMBER + " = " + booking +
                 " WHERE " + Const.USER_LOGIN + " = '" + login + "'";
         Statement statement = getDbConnection().createStatement();
-        ResultSet rs = statement.executeQuery(query);
-        rs.next();
+        statement.executeUpdate(query);
     }
 
     public void unBookSeats(int BookingNumber) throws SQLException {
@@ -582,16 +580,14 @@ public class  DatabaseHandler extends Configs {
                 " WHERE " + Const.SEATS_BOOKED + " = " + BookingNumber;
         //System.out.println(query);
         Statement statement = getDbConnection().createStatement();
-        ResultSet rs = statement.executeQuery(query);
-        rs.next();
+        statement.executeUpdate(query);
     }
 
     public void delBooking(int BookingNumber) throws SQLException {
         String query = " DELETE FROM " + Const.BOOKING_TABLE +
                              " WHERE " + Const.BOOKING_NUMBER + " = " + BookingNumber;
         Statement statement = getDbConnection().createStatement();
-        ResultSet rs = statement.executeQuery(query);
-        rs.next();
+        statement.executeUpdate(query);
     }
 
     public void clearUsersBooking(int booking) throws SQLException {
@@ -599,8 +595,7 @@ public class  DatabaseHandler extends Configs {
                 " SET " + Const.USER_BOOKING_NUMBER + " = " + "null" +
                 " WHERE " + Const.USER_BOOKING_NUMBER + " = " + booking;
         Statement statement = getDbConnection().createStatement();
-        ResultSet rs = statement.executeQuery(query);
-        rs.next();
+        statement.executeUpdate(query);
     }
 
     public void removeBookingTotally(int booking) throws SQLException {
@@ -615,7 +610,7 @@ public class  DatabaseHandler extends Configs {
         System.out.println(query);
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {
-            rs.next();
+            statement.executeUpdate(query);
         } catch (Exception e) {
             e.printStackTrace();
             return "не удалось удалить бронирование из Броней";
@@ -696,7 +691,7 @@ public class  DatabaseHandler extends Configs {
             System.out.println(query);
             try (Statement statement = getDbConnection().createStatement();
                  ResultSet rs = statement.executeQuery(query)) {
-                rs.next();
+
                 return login;
             } catch (java.sql.SQLIntegrityConstraintViolationException e) {
                 throw new RuntimeException("Login is not unique!");
@@ -828,9 +823,8 @@ public class  DatabaseHandler extends Configs {
                                      ")");
 
         System.out.println(query);
-           try (Statement statement = getDbConnection().createStatement();
-                ResultSet rs = statement.executeQuery(query)) {
-               rs.next();
+           try (Statement statement = getDbConnection().createStatement()){
+               statement.executeUpdate(query);
            } catch (Exception e) {
                e.printStackTrace();
            }
@@ -943,11 +937,11 @@ public class  DatabaseHandler extends Configs {
         String[] Passenger = new String[3];
         try (Statement statement = getDbConnection().createStatement();
              ResultSet rs = statement.executeQuery(query)) {;
-            while(rs.next()) {
+           rs.next();
                 Passenger[0] = rs.getString(Const.PASSENGER_ID);
                 Passenger[1] = rs.getString(Const.PASSENGER_FIRST_NAME);
                 Passenger[2] = rs.getString(Const.PASSENGER_LAST_NAME);
-            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

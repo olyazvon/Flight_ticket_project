@@ -29,7 +29,6 @@ public class SummaryPanel extends JPanel {
         listP.setLayout(new BoxLayout(listP, BoxLayout.Y_AXIS));
 
         listP.add(Box.createVerticalGlue());
-        System.out.println(Arrays.toString(data.get(0))+Arrays.toString(data.get(1)));
         String currentFlight = "";
         for (String[] i : data) {
             if (!i[2].equals(currentFlight)) {
