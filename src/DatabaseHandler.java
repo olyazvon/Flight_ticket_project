@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -295,10 +296,13 @@ public class  DatabaseHandler extends Configs {
             for (int i = 0; i < columns; i++) {
                 searchResult[i] = new ArrayList();
             }
-            ;
             while (rs.next()) {
-                for (int i = 1; i <= columns; i++) {
-                    searchResult[i - 1].add(rs.getString(i));
+                for (int i = 0; i < columns; i++) {
+                    if (i == 5 || i == 6) {
+                        searchResult[i].add(String.format(new Locale("en", "US"),"%.2f", rs.getDouble(i+1)));
+                    } else {
+                        searchResult[i].add(rs.getString(i+1));
+                    }
                 }
             }
             return searchResult;

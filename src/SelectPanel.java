@@ -82,27 +82,12 @@ public class SelectPanel extends JPanel {
         table.setRowSorter(sorter);
 
         table.setRowHeight(30);
-        TableColumn column;
-        for (int i = 0; i < 5; i++) {
-            column = table.getColumnModel().getColumn(i);
-            switch (i) {
-                case (0):
-                    column.setPreferredWidth(64);
-                    break;
-                case (1):
-                    column.setPreferredWidth(90);
-                    break;
-                case (2):
-                    column.setPreferredWidth(105);
-                    break;
-                case (3):
-                    column.setPreferredWidth(105);
-                    break;
-                case (4):
-                    column.setPreferredWidth(100);
-                    break;
-            }
-        }
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(80);
+        table.getColumnModel().getColumn(1).setPreferredWidth(90);
+        table.getColumnModel().getColumn(2).setPreferredWidth(105);
+        table.getColumnModel().getColumn(3).setPreferredWidth(105);
+        table.getColumnModel().getColumn(4).setPreferredWidth(115);
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setHorizontalScrollBarPolicy(
