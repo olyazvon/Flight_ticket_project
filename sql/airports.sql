@@ -1,14 +1,13 @@
-select*from airports;
 DROP TABLE AIRPORTS;
 CREATE TABLE AIRPORTS(
-    IATA        CHAR(3) PRIMARY KEY,
-    City        VARCHAR2(20) not NULL,
-    Country     VARCHAR2(30) not NULL);
-
-INSERT INTO AIRPORTS VALUES ('TLV', 'Tel Aviv','Israel');
-INSERT INTO AIRPORTS VALUES ('DME', 'Moscow','Russia');
-INSERT INTO AIRPORTS VALUES ('SVO', 'Moscow','Russia');
-INSERT INTO AIRPORTS VALUES ('LED', 'Saint Petersburg','Russia');
+ IATA             CHAR(3) PRIMARY KEY,
+ City             VARCHAR2(20) not NULL,
+ Country          VARCHAR2(30) not NULL);
+ 
+ INSERT INTO AIRPORTS VALUES ('TLV', 'Tel Aviv','Israel');
+ INSERT INTO AIRPORTS VALUES ('DME', 'Moscow','Russia');
+ INSERT INTO AIRPORTS VALUES ('SVO', 'Moscow','Russia');
+ INSERT INTO AIRPORTS VALUES ('LED', 'Saint Petersburg','Russia');
 INSERT INTO AIRPORTS VALUES ('YWG' ,'Winnipeg' ,'Canada');
 INSERT INTO AIRPORTS VALUES ('XIY' ,'Xian' ,'China');
 INSERT INTO AIRPORTS VALUES ('JNB' ,'Johannesburg' ,'South Africa');
@@ -114,4 +113,5 @@ INSERT INTO AIRPORTS VALUES ('SDF' ,'Louisville' ,'USA');
 INSERT INTO AIRPORTS VALUES ('GSO' ,'Greensboro' ,'USA');
 INSERT INTO AIRPORTS VALUES ('BCN' ,'Barcelona' ,'Spain');
 INSERT INTO AIRPORTS VALUES ('FWA' ,'Fort Wayne' ,'USA');
-INSERT INTO AIRPORTS VALUES ('TUL' ,'Tulsa' ,'USA');
+INSERT INTO AIRPORTS VALUES ('TUL' ,'Tulsa' ,'USA'); 
+select COUNT(*) from airports;
