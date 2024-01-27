@@ -9,11 +9,15 @@ import java.time.LocalDate;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class SelectPanel extends JPanel {
     Dimension normalSize;
@@ -43,6 +47,40 @@ public class SelectPanel extends JPanel {
         table = new JTable(tabMod);
         //table.setDefaultEditor(Object.class, null);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        TableRowSorter<FlightTableModel> sorter = new TableRowSorter<>(tabMod);
+        Comparator<String> comparePrices = new Comparator<>() {
+            @Override
+            public int compare(String s1, String s2) {
+                double n1 = Double.parseDouble(s1.split("-")[0]);
+                double n2 = Double.parseDouble((s2.split("-")[0]));
+                return (int) (n1-n2);
+            }
+        };
+        Comparator<String> compareDates = new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+                LocalDateTime d1 = LocalDateTime.parse(s1, formatter);
+                LocalDateTime d2 = LocalDateTime.parse(s2, formatter);
+                return d1.compareTo(d2);
+            }
+        };
+        sorter.setSortable(0, false);
+        sorter.setSortable(1, false);
+        sorter.setComparator(2, compareDates);
+        sorter.setComparator(3, compareDates);
+        sorter.setComparator(4, comparePrices);
+        sorter.setSortable(5, false);
+        sorter.setSortable(6, false);
+        ArrayList<RowSorter.SortKey> sortKeys
+                = new ArrayList<>(1);
+        sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        sorter.setSortsOnUpdates(true);
+
+        table.setRowSorter(sorter);
+
         table.setRowHeight(30);
         TableColumn column;
         for (int i = 0; i < 5; i++) {
