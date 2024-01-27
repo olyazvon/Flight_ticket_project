@@ -12,7 +12,6 @@ public class SignUpDialog extends JDialog {
     public JTextField tfLogin, tfPassword, tfRepeat;
     public JButton btnOk;
     public String result;
-    public DatabaseHandler dbhand;
 
     public JFrame parent;
 
@@ -20,7 +19,6 @@ public class SignUpDialog extends JDialog {
 
         super(parent, "Sign Up");
         this.parent = parent;
-        dbhand = new DatabaseHandler();
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
@@ -88,7 +86,7 @@ public class SignUpDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    result = dbhand.SignUp(tfLogin.getText(),
+                    result = DatabaseHandler.SignUp(tfLogin.getText(),
                             tfPassword.getText(), tfRepeat.getText());
                     dispose();
                 } catch (RuntimeException exception) {

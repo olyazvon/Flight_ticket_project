@@ -35,7 +35,6 @@ public class SelectPanel extends JPanel {
     public SelectPanel(String name, JComboBox<String> iataFromSource, JComboBox<String> iataToSource) {
         iataFrom = iataFromSource;
         iataTo = iataToSource;
-        DatabaseHandler dbhand = new DatabaseHandler();
         GroupLayout lo = new GroupLayout(this);
         setLayout(lo);
         lo.setAutoCreateGaps(true);
@@ -43,7 +42,7 @@ public class SelectPanel extends JPanel {
 
         dateSettings.setFormatForDatesCommonEra("dd.MM.yyyy");
         dateSettings.setFormatForDatesBeforeCommonEra("dd.MM.uuuu");
-        FlightTableModel tabMod = new FlightTableModel(dbhand.search_flights(dbhand.q_search_flights(new String[]{"Any iata"},new String[]{"Any iata"},null,null)));
+        FlightTableModel tabMod = new FlightTableModel(DatabaseHandler.search_flights(DatabaseHandler.q_search_flights(new String[]{"Any iata"},new String[]{"Any iata"},null,null)));
         table = new JTable(tabMod);
         //table.setDefaultEditor(Object.class, null);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -194,7 +193,7 @@ public class SelectPanel extends JPanel {
                     arrayTo = new String[] {(String) iataTo.getSelectedItem()};
                 }
                 System.out.println(Arrays.toString(arrayFrom));
-                tabMod.data = dbhand.search_flights(dbhand.q_search_flights(arrayFrom, arrayTo, dateP.getDate(),timeP.getTime()));
+                tabMod.data = DatabaseHandler.search_flights(DatabaseHandler.q_search_flights(arrayFrom, arrayTo, dateP.getDate(),timeP.getTime()));
                 tabMod.fireTableDataChanged();
             }
         });

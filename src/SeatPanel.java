@@ -9,11 +9,8 @@ import java.util.Comparator;
 import java.util.Objects;
 
 public class SeatPanel extends JPanel {
-
-    DatabaseHandler dbhand;
     public SeatPanel(String flightThere, String flightBack) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        dbhand = new DatabaseHandler();
 
 //INTERFACE
         add(Box.createRigidArea(new Dimension(0, 15)));
@@ -108,8 +105,8 @@ public class SeatPanel extends JPanel {
 
                     int bookNum = 0;
                     try {
-                        bookNum = dbhand.book(total.seats, total.sum);
-                        dbhand.addBookingToUser(bookNum, parent.loggedIn);
+                        bookNum = DatabaseHandler.book(total.seats, total.sum);
+                        DatabaseHandler.addBookingToUser(bookNum, parent.loggedIn);
                         int ans = JOptionPane.showConfirmDialog(parent,
                                 "Your seats are successfully booked. " +
                                         "Do you want to continue now?\n" +
@@ -138,7 +135,7 @@ public class SeatPanel extends JPanel {
                 } else {
                     int bookNum = 0;
                     try {
-                        bookNum = dbhand.book(total.seats, total.sum);
+                        bookNum = DatabaseHandler.book(total.seats, total.sum);
                         JOptionPane.showMessageDialog(parent,
                                 "Your seats are successfully booked.\n" +
                                         "Your booking number is " + bookNum,
@@ -200,7 +197,7 @@ public class SeatPanel extends JPanel {
             seats.sort(Comparator.comparing(s -> s.flight));
             setText("<html>Your selection:<br>");
             for (Seat i : seats) {
-                setText(getText()+i.flight+" "+dbhand.qFromTo(i.flight)+" "+i.getText()+"<br>");
+                setText(getText()+i.flight+" "+DatabaseHandler.qFromTo(i.flight)+" "+i.getText()+"<br>");
             }
             setText(getText()+"Total: %.2f</html>".formatted(sum));
             setPreferredSize(null);
@@ -273,15 +270,15 @@ public class SeatPanel extends JPanel {
 
             super();
             this.seatMap = new SeatMap(
-                    dbhand.read_seats_for_flight(flight),
-                    dbhand.prices_for_flight(flight),
-                    dbhand.occupied(flight),
-                    dbhand.read_typeClass_for_flight(flight),
+                    DatabaseHandler.read_seats_for_flight(flight),
+                    DatabaseHandler.prices_for_flight(flight),
+                    DatabaseHandler.occupied(flight),
+                    DatabaseHandler.read_typeClass_for_flight(flight),
                     flight,
                     total);
             setViewportView(seatMap);
 
-            JLabel fromToL = new JLabel(dbhand.qFromTo(flight));
+            JLabel fromToL = new JLabel(DatabaseHandler.qFromTo(flight));
             fromToL.setHorizontalAlignment(SwingConstants.CENTER);
             fromToL.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             setColumnHeaderView(fromToL);

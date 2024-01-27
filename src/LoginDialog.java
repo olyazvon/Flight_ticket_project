@@ -12,13 +12,11 @@ public class LoginDialog extends JDialog {
     public JButton btnOk;
     public String resultLogin;
     public int resultBooking;
-    DatabaseHandler dbhand;
     public JFrame parent;
 
     public LoginDialog(JFrame parent) {
         super(parent, "Log In");
         this.parent = parent;
-        dbhand = new DatabaseHandler();
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 dispose();
@@ -76,7 +74,7 @@ public class LoginDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    resultBooking = dbhand.SignIn(
+                    resultBooking = DatabaseHandler.SignIn(
                             tfLogin.getText(), tfPassword.getText());
                     resultLogin = tfLogin.getText();
                     dispose();

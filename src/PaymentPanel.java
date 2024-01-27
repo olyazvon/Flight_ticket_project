@@ -10,8 +10,6 @@ import java.util.ArrayList;
 
 public class PaymentPanel extends JPanel {
     ArrayList<Seat> seats;
-    DatabaseHandler dbhand;
-
     private JTextField cardF;
     private JTextField holderNameF;
     private JTextField cvvF;
@@ -21,8 +19,7 @@ public class PaymentPanel extends JPanel {
 
 
     public PaymentPanel(int bookingNumber, String loggedIn) {
-        dbhand = new DatabaseHandler();
-        this.seats = dbhand.seatsInBooking(bookingNumber);
+        this.seats = DatabaseHandler.seatsInBooking(bookingNumber);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(Box.createRigidArea(new Dimension(0, 15)));
@@ -61,13 +58,13 @@ public class PaymentPanel extends JPanel {
         }
 
         try {
-            JLabel total = new JLabel("Total: %.2f".formatted(dbhand.totalSum(bookingNumber)));
+            JLabel total = new JLabel("Total: %.2f".formatted(DatabaseHandler.totalSum(bookingNumber)));
             total.setFont(new Font(null, Font.BOLD, 14));
             leftP.add(total);
         } catch (SQLException e) {
             MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(this);
             parent.paymentToPassengers();
-            dbhand.removePassengersFromDB(bookingNumber);
+            DatabaseHandler.removePassengersFromDB(bookingNumber);
             JOptionPane.showMessageDialog(parent, "Unexpected error, please try later!",
                     "Fail", JOptionPane.WARNING_MESSAGE);
         }
@@ -229,7 +226,7 @@ public class PaymentPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ((MainWindowC)SwingUtilities.getWindowAncestor(back)).paymentToPassengers();
-                dbhand.removePassengersFromDB(bookingNumber);
+                DatabaseHandler.removePassengersFromDB(bookingNumber);
             }
         });
 
@@ -297,7 +294,7 @@ public class PaymentPanel extends JPanel {
                 }
                 if (parent.loggedIn != null) {
                     if (registerCB.isSelected()) {
-                        dbhand.saveCardDetails(
+                        DatabaseHandler.saveCardDetails(
                                 parent.loggedIn,
                                 cardF.getText(),
                                 cvvF.getText(),
@@ -314,7 +311,7 @@ public class PaymentPanel extends JPanel {
                                 "Card Data",
                                 JOptionPane.YES_NO_OPTION);
                         if (res == 0) {
-                            dbhand.saveCardDetails(
+                            DatabaseHandler.saveCardDetails(
                                     parent.loggedIn,
                                     cardF.getText(),
                                     cvvF.getText(),
@@ -325,9 +322,9 @@ public class PaymentPanel extends JPanel {
                     }
                 }
                 try {
-                    dbhand.buy(bookingNumber);
+                    DatabaseHandler.buy(bookingNumber);
                     JOptionPane.showMessageDialog(parent, "Bought");
-                    parent.paymentToSummary(dbhand.myNextFlights(bookingNumber));
+                    parent.paymentToSummary(DatabaseHandler.myNextFlights(bookingNumber));
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(parent, "Error occurred, try later!",
                             "Error", JOptionPane.WARNING_MESSAGE);
@@ -337,7 +334,7 @@ public class PaymentPanel extends JPanel {
     }
 
     private String[] fillFields(String login) {
-        String[] data = dbhand.selectCardDetails(login);
+        String[] data = DatabaseHandler.selectCardDetails(login);
         String[] processedData = new String[] {
                 data[0] == null ? "" : data[0],
                 data[1] == null ? "" : data[1],
@@ -368,7 +365,7 @@ public class PaymentPanel extends JPanel {
                 options[0]);
         if (res == 0) {
             try {
-                dbhand.removeBookingTotally(booking);
+                DatabaseHandler.removeBookingTotally(booking);
                 JOptionPane.showMessageDialog(parent, "Booking removed!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException exception) {

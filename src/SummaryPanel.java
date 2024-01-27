@@ -8,7 +8,6 @@ import java.util.Arrays;
 public class SummaryPanel extends JPanel {
     public SummaryPanel(ArrayList<String[]> data) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        DatabaseHandler dbhand = new DatabaseHandler();
 
         add(Box.createRigidArea(new Dimension(0, 15)));
         JLabel nameL = new JLabel("Summary");

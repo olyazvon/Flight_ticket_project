@@ -16,12 +16,9 @@ public class SearchPanel extends JPanel {
     public JButton logoutB;
     public JButton signUpB;
     public JButton myFlightB;
-    public DatabaseHandler dbhand;
 
     public SearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        dbhand = new DatabaseHandler();
 
 //INTERFACE
 
@@ -51,28 +48,28 @@ public class SearchPanel extends JPanel {
         JPanel fromToP = new JPanel();
         fromToP.add(new JLabel("From:"));
 
-        JComboBox<String> Countries_from = new JComboBox<>(dbhand.Allcountries());
+        JComboBox<String> Countries_from = new JComboBox<>(DatabaseHandler.Allcountries());
         fromToP.add(Countries_from);
 
-        String[] cities = dbhand.Cities("","");
+        String[] cities = DatabaseHandler.Cities("","");
         JComboBox<String> Cities_from = new JComboBox<>(cities);
         Cities_from.setPrototypeDisplayValue(longestString(cities));
         fromToP.add(Cities_from);
 
-        JComboBox<String> IATA_from = new JComboBox<>(dbhand.IATAs("","",""));
+        JComboBox<String> IATA_from = new JComboBox<>(DatabaseHandler.IATAs("","",""));
         fromToP.add(IATA_from);
 
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
 
         fromToP.add(new JLabel("To:"));
-        JComboBox<String> Countries_to = new JComboBox<>(dbhand.Allcountries());
+        JComboBox<String> Countries_to = new JComboBox<>(DatabaseHandler.Allcountries());
         fromToP.add(Countries_to);
 
         JComboBox<String> Cities_to = new JComboBox<>(cities);
         Cities_to.setPrototypeDisplayValue(longestString(cities));
         fromToP.add(Cities_to);
 
-        JComboBox<String> IATA_to = new JComboBox<>(dbhand.IATAs("","",""));
+        JComboBox<String> IATA_to = new JComboBox<>(DatabaseHandler.IATAs("","",""));
         fromToP.add(IATA_to);
 
         fromToP.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -130,14 +127,14 @@ public class SearchPanel extends JPanel {
                     return;
                 }
                 if (twoWaysCB.isSelected()) {
-                    if (!matchFromTo(dbhand.qFromTo(selectP1.getFlight()),
-                            dbhand.qFromTo(selectP2.getFlight()))) {
+                    if (!matchFromTo(DatabaseHandler.qFromTo(selectP1.getFlight()),
+                            DatabaseHandler.qFromTo(selectP2.getFlight()))) {
                         JOptionPane.showMessageDialog(parent, "Airports do not match!",
                                 "Warning", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
-                    LocalDateTime arrThere = dbhand.getArrival(selectP1.getFlight());
-                    LocalDateTime depBack = dbhand.getDeparture(selectP2.getFlight());
+                    LocalDateTime arrThere = DatabaseHandler.getArrival(selectP1.getFlight());
+                    LocalDateTime depBack = DatabaseHandler.getDeparture(selectP2.getFlight());
                     if (arrThere.isAfter(depBack)) {
                         JOptionPane.showMessageDialog(parent, "Back before there!",
                                 "Warning", JOptionPane.WARNING_MESSAGE);
@@ -160,11 +157,11 @@ public class SearchPanel extends JPanel {
         Countries_from.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateCitiesBox(Countries_from, Cities_from,
-                        (String) Cities_to.getSelectedItem(), dbhand);
+                        (String) Cities_to.getSelectedItem());
                 updateIATAbox(Countries_from, Cities_from, IATA_from,
-                        (String) Cities_to.getSelectedItem(), dbhand);
+                        (String) Cities_to.getSelectedItem());
                 updateCitiesBox(Countries_to, Cities_to,
-                        (String) Cities_from.getSelectedItem(), dbhand);
+                        (String) Cities_from.getSelectedItem());
             }
         });
 
@@ -172,11 +169,11 @@ public class SearchPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (Cities_from.hasFocus()) {
                     updateIATAbox(Countries_from, Cities_from, IATA_from,
-                            (String) Cities_to.getSelectedItem(), dbhand);
+                            (String) Cities_to.getSelectedItem());
                     updateCitiesBox(Countries_to, Cities_to,
-                            (String) Cities_from.getSelectedItem(), dbhand);
+                            (String) Cities_from.getSelectedItem());
                     updateIATAbox(Countries_to, Cities_to, IATA_to,
-                            (String) Cities_from.getSelectedItem(), dbhand);
+                            (String) Cities_from.getSelectedItem());
                 }
             }
         });
@@ -185,11 +182,11 @@ public class SearchPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (IATA_to.hasFocus()) {
                     Cities_to.setSelectedItem(
-                            dbhand.cityByIATA((String) IATA_to.getSelectedItem()));
+                            DatabaseHandler.cityByIATA((String) IATA_to.getSelectedItem()));
                     updateIATAbox(Countries_from, Cities_from, IATA_from,
-                            (String) Cities_to.getSelectedItem(), dbhand);
+                            (String) Cities_to.getSelectedItem());
                     updateCitiesBox(Countries_from, Cities_from,
-                            dbhand.cityByIATA((String) IATA_to.getSelectedItem()), dbhand);
+                            DatabaseHandler.cityByIATA((String) IATA_to.getSelectedItem()));
                 }
             }
         });
@@ -197,11 +194,11 @@ public class SearchPanel extends JPanel {
         Countries_to.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateCitiesBox(Countries_to, Cities_to,
-                        (String) Cities_from.getSelectedItem(), dbhand);
+                        (String) Cities_from.getSelectedItem());
                 updateIATAbox(Countries_to, Cities_to, IATA_to,
-                        (String) Cities_from.getSelectedItem(), dbhand);
+                        (String) Cities_from.getSelectedItem());
                 updateCitiesBox(Countries_from, Cities_from,
-                        (String) Cities_to.getSelectedItem(), dbhand);
+                        (String) Cities_to.getSelectedItem());
             }
         });
 
@@ -209,11 +206,11 @@ public class SearchPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (Cities_to.hasFocus()) {
                     updateIATAbox(Countries_to, Cities_to, IATA_to,
-                            (String) Cities_from.getSelectedItem(), dbhand);
+                            (String) Cities_from.getSelectedItem());
                     updateCitiesBox(Countries_from, Cities_from,
-                            (String) Cities_to.getSelectedItem(), dbhand);
+                            (String) Cities_to.getSelectedItem());
                     updateIATAbox(Countries_from, Cities_from, IATA_from,
-                            (String) Cities_to.getSelectedItem(), dbhand);
+                            (String) Cities_to.getSelectedItem());
                 }
             }
         });
@@ -222,11 +219,11 @@ public class SearchPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (IATA_from.hasFocus()) {
                     Cities_from.setSelectedItem(
-                            dbhand.cityByIATA((String)IATA_from.getSelectedItem()));
+                            DatabaseHandler.cityByIATA((String)IATA_from.getSelectedItem()));
                     updateIATAbox(Countries_to, Cities_to, IATA_to,
-                            (String) Cities_from.getSelectedItem(), dbhand);
+                            (String) Cities_from.getSelectedItem());
                     updateCitiesBox(Countries_to, Cities_to,
-                            dbhand.cityByIATA((String) IATA_from.getSelectedItem()), dbhand);
+                            DatabaseHandler.cityByIATA((String) IATA_from.getSelectedItem()));
                 }
             }
         });
@@ -278,7 +275,7 @@ public class SearchPanel extends JPanel {
                 String res = JOptionPane.showInputDialog(parent,
                         "Please enter your passport");
                 if (res == null || res.isEmpty()) {return;}
-                ArrayList<String[]> data = dbhand.myNextFlights(res);
+                ArrayList<String[]> data = DatabaseHandler.myNextFlights(res);
                 if (data.isEmpty()) {
                     JOptionPane.showMessageDialog(parent, "No relevant flights found",
                             "Flights Info", JOptionPane.INFORMATION_MESSAGE);
@@ -308,15 +305,14 @@ public class SearchPanel extends JPanel {
     }
 
     private void updateIATAbox(JComboBox<String> countries, JComboBox<String> cities,
-                               JComboBox<String> iatas, String cityToExclude,
-                               DatabaseHandler dbh) {
+                               JComboBox<String> iatas, String cityToExclude) {
 
         String SelectedCountry = (String) countries.getSelectedItem();
         String SelectedCity = (String) cities.getSelectedItem();
 
         Object selectedElement = iatas.getSelectedItem();
 
-        String[] IATAs = dbh.IATAs(SelectedCountry, SelectedCity, cityToExclude);
+        String[] IATAs = DatabaseHandler.IATAs(SelectedCountry, SelectedCity, cityToExclude);
 
         iatas.removeAllItems();
         for (String j : IATAs) {
@@ -326,8 +322,8 @@ public class SearchPanel extends JPanel {
     }
 
     private void updateCitiesBox(JComboBox<String> countries, JComboBox<String> cities,
-                                 String cityToExclude, DatabaseHandler dbh) {
-        String[] citiesToShow = dbh.Cities(
+                                 String cityToExclude) {
+        String[] citiesToShow = DatabaseHandler.Cities(
                 (String) countries.getSelectedItem(), cityToExclude);
         Object selectedElement = cities.getSelectedItem();
         cities.removeAllItems();
@@ -354,7 +350,7 @@ public class SearchPanel extends JPanel {
             parent.searchToPassengers(booking);
         } else if (res == 1) {
             try {
-                dbhand.removeBookingTotally(booking);
+                DatabaseHandler.removeBookingTotally(booking);
                 JOptionPane.showMessageDialog(parent, "Booking removed!",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException exception) {
@@ -378,8 +374,8 @@ public class SearchPanel extends JPanel {
             header.revalidate();
             header.repaint();
             MainWindowC parent = (MainWindowC)SwingUtilities.getWindowAncestor(this);
-            if (dbhand.getUsersBooking(login) != 0) {
-                haveBooking(dbhand.getUsersBooking(login), parent);
+            if (DatabaseHandler.getUsersBooking(login) != 0) {
+                haveBooking(DatabaseHandler.getUsersBooking(login), parent);
             }
         } else {
             header.removeAll();

@@ -8,10 +8,8 @@ import java.util.ArrayList;
 public class PassengerPanel extends JPanel {
     ArrayList<Seat> seats;
     ArrayList<OnePassenger> passengers = new ArrayList<>();
-    DatabaseHandler dbhand;
     public PassengerPanel(int bookingNumber, boolean saveBooking) {
-        dbhand = new DatabaseHandler();
-        this.seats = dbhand.seatsInBooking(bookingNumber);
+        this.seats = DatabaseHandler.seatsInBooking(bookingNumber);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 //INTERFACE
@@ -31,7 +29,7 @@ public class PassengerPanel extends JPanel {
         String currentFlight = "";
         for (Seat seat : this.seats) {
             if (!seat.flight.equals(currentFlight)) {
-                JLabel flightL = new JLabel(seat.flight+"  "+dbhand.qFromTo(seat.flight));
+                JLabel flightL = new JLabel(seat.flight+"  "+DatabaseHandler.qFromTo(seat.flight));
                 flightL.setFont(new Font(null, Font.PLAIN, 18));
                 flightL.setAlignmentX(CENTER_ALIGNMENT);
                 listP.add(flightL);
@@ -74,7 +72,7 @@ public class PassengerPanel extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (ans == 0) {
                     try {
-                        dbhand.removeBookingTotally(bookingNumber);
+                        DatabaseHandler.removeBookingTotally(bookingNumber);
                         JOptionPane.showMessageDialog(parent, "Booking cancelled!",
                                 "Success", JOptionPane.INFORMATION_MESSAGE);
                         parent.passengersToSeats();
@@ -96,7 +94,7 @@ public class PassengerPanel extends JPanel {
                     return;
                 }
                 else{
-                    dbhand.addPassengersToDB(passengers);
+                    DatabaseHandler.addPassengersToDB(passengers);
                     Parent.passengersToPayment(bookingNumber);
                 }
             }
