@@ -278,7 +278,7 @@ public class SeatPanel extends JPanel {
                     total);
             setViewportView(seatMap);
 
-            JLabel fromToL = new JLabel(DatabaseHandler.qFromTo(flight));
+            JLabel fromToL = new JLabel(DatabaseHandler.qFromToCities(flight));
             fromToL.setHorizontalAlignment(SwingConstants.CENTER);
             fromToL.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             setColumnHeaderView(fromToL);

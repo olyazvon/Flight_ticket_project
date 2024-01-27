@@ -29,9 +29,10 @@ public class PassengerPanel extends JPanel {
         String currentFlight = "";
         for (Seat seat : this.seats) {
             if (!seat.flight.equals(currentFlight)) {
-                JLabel flightL = new JLabel(seat.flight+"  "+DatabaseHandler.qFromTo(seat.flight));
+                JLabel flightL = new JLabel(seat.flight+"   "+ DatabaseHandler.qFromToCities(seat.flight)+" ("+DatabaseHandler.qFromTo(seat.flight)+")");
                 flightL.setFont(new Font(null, Font.PLAIN, 18));
                 flightL.setAlignmentX(CENTER_ALIGNMENT);
+                listP.add(Box.createRigidArea(new Dimension(0, 15)));
                 listP.add(flightL);
                 listP.add(Box.createRigidArea(new Dimension(0, 15)));
                 currentFlight = seat.flight;
