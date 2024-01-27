@@ -1,11 +1,9 @@
-alter session set nls_date_format='DD/MM/YYYY hh24:mi:ss';
-
-select Count(*) from  Airports;
-DROP TABLE FLIGHTS;
+alter session set nls_date_format='DD/MM/YYYY hh24:mi';
+DRop table flights;
  CREATE TABLE FLIGHTS(
  Flight_id        CHAR(7)PRIMARY KEY,
- Airport_from     CHAR(3) References  Airports(IATA),
- Airport_to      CHAR(3) References  Airports(IATA),
+ Airport_from     CHAR(3) References  Airports(IATA) on Delete Cascade,
+ Airport_to      CHAR(3) References  Airports(IATA) on Delete Cascade,
  Departure    DATE,
  Arrival    DATE,
  PriceEconom       NUMBER(8,2),
