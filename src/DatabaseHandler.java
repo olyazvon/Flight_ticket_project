@@ -27,56 +27,9 @@ public class DatabaseHandler extends Configs {
     }
 
 
-//    // ввыводит на экран, перечисленные поля таблицы,
-//    // если массив пустой, выводит всю таблицу
-//    public void read_data(String table_name, String[] column_names) {
-//        System.out.println("Reading " + Arrays.toString(column_names) + "from " + table_name);
-//        String columns = "";
-//        if (column_names.length == 0) {
-//            columns = "*";
-//            column_names = describe_table(dbConnection, table_name);
-//        } else {
-//            columns = column_names[0];
-//            for (int i = 1; i < column_names.length; i++) {
-//                columns = columns + "," + column_names[i];
-//            }
-//        }
-//        String query = String.format("SELECT " + columns + " FROM %s", table_name);
-//
-//        Statement statement = null;
-//        try {
-//            statement = dbConnection.createStatement();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        ResultSet rs = null;
-//        try {
-//            rs = statement.executeQuery(query);
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        while (true) {
-//            try {
-//                if (!rs.next()) break;
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//            for (int i = 0; i < column_names.length; i++) {
-//                try {
-//                    System.out.print(rs.getString(column_names[i]) + " ");
-//                } catch (SQLException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//            }
-//            System.out.println();
-//        }
-//    }
+    //displays the unique values of a column with a condition in a string array
+    //and adds the Any and the name of this column to 0 element of this array
 
-
-    //ввыводит в строковый массив уникальные значения столбца c условием
-    //и добавляет в 0 элемент Any + название этого столбца
     public static String[] read_distinct_column(String table_name,
                                                 String column_name, String Where) {
         String where_st = "";
@@ -105,37 +58,15 @@ public class DatabaseHandler extends Configs {
         return new_column;
     }
 
-
-    //записывет список столбцов в таблице в массив строк
-    public String[] describe_table(Connection conn, String table_name) {
-        String query = String.format("Select *  from " + table_name);
-
-        try (Statement statement = conn.createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-            ResultSetMetaData metaData = rs.getMetaData();
-            String[] columns = new String[metaData.getColumnCount()];
-            for (int i = 0; i < metaData.getColumnCount(); i++) {
-                columns[i] = metaData.getColumnName(i + 1);
-            }
-            return columns;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return new String[]{};
-    }
-
-
-    //String[] Allcountries() - Массив стран без повторов
+    //String[] Allcountries() - Array of inique countries
     public static String[] Allcountries() {
         String[] Countries = read_distinct_column(Const.AIRPORT_TABLE, Const.AIRPORTS_COUNTRY, "");
         return Countries;
     }
+    //Array without repeating cities for the selected country.
+    // If no country is selected or Any country, then all cities
 
-    //Массив без повторов городов для выбраной страны. Если страна не выбрана
-    //или Any country, то все города
     static String[] Cities(String selectedCountry, String excludedCity) {
-        //if (excludedCity == null) return new String[] {};
         String whereString = "";
 
         if (!selectedCountry.isEmpty() && !selectedCountry.equals("Any country")) {
@@ -183,35 +114,6 @@ public class DatabaseHandler extends Configs {
     }
 
 
-    //    public String q_search_flights (String iata_from, String iata_to, LocalDate data_from) {
-//        String query = String.format(
-//                "SELECT fl.flight_id, airport_from, airport_to, " +
-//                        "to_char(departure, 'dd.mm.yy hh:mi'), " +
-//                        "to_char(arrival, 'dd.mm.yy hh:mi')," +
-//                        " priceeconom, pricebusiness,s_economy.seats_left_economy," +
-//                        "s_business.seats_left_business " +
-//                " FROM " + Const.FLIGHT_TABLE + " fl" + ",(" +
-//                        seats_left("Business") + ") s_business,(" +
-//                        seats_left("Economy") + ") s_economy" +
-//                " WHERE fl." + Const.FLIGHTS_ID + "=s_economy.flight_id and fl." +
-//                        Const.FLIGHTS_ID + "=s_business.flight_id  " +
-//                        "and (seats_left_business>0 OR seats_left_economy>0)");
-//
-//        if (!iata_from.equals("Any iata") && !iata_from.isEmpty()) {
-//            query += " AND " + Const.FLIGHTS_FROM + "= '" + iata_from + "'";
-//        }
-//
-//        if (!iata_to.equals("Any iata") && !iata_to.isEmpty()) {
-//            query += " AND " + Const.FLIGHTS_TO + "= '" + iata_to + "'";
-//        }
-//
-//        if (data_from != null) {
-//            query += " AND trunc(" + Const.FLIGHTS_DEPARTURE + ") = to_date('"
-//                    + data_from.toString() + "', 'yyyy-mm-dd')";
-//        }
-//        return query;
-//
-//    }
     public static String q_search_flights(String[] iata_from, String[] iata_to, LocalDate date_from, LocalTime time_from) {
         String query = String.format(
                 "SELECT fl." + Const.FLIGHTS_ID + "," + Const.FLIGHTS_FROM + "," +
@@ -304,7 +206,7 @@ public class DatabaseHandler extends Configs {
         }
     }
 
-    //возращает запрос свободных сидений по классу
+    //return query: array of seats by ticket Class
     public static String seats_left(String TicketClass) {
         String query = String.format("SELECT " + Const.SEATS_FLIGHT_ID + ", " +
                 "(count(" + Const.SEAT + ") - count(" + Const.SEATS_BOOKED + ")) AS seats_left_" + TicketClass +
@@ -313,7 +215,6 @@ public class DatabaseHandler extends Configs {
     }
 
     //Seat Panel functions
-    //ввыводит в arrayList значения столбца, упорядоченый по  столбцу
     public static String q_read_column_for_flight(String table_name, String column_name, String flightNumber, String OrderBy,
                                                   Boolean Desc) {
         String HowOrd = "";
@@ -478,7 +379,7 @@ public class DatabaseHandler extends Configs {
                 " FROM " + Const.SEAT_TABLE +
                 " WHERE " + Const.FLIGHTS_ID + " = '" + flight +
                 "' AND " + Const.SEAT + " = '" + seat + "'";
-        //System.out.println(query);
+        System.out.println(query);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -491,7 +392,7 @@ public class DatabaseHandler extends Configs {
         }
     }
 
-    //max номер брони, если ошибка в запросе выводит -2
+    //max book number if bug returns -2
     public static int maxBookedNumber() {
         int Max = 0;
         String query = " SELECT  MAX(" + Const.SEATS_BOOKED + ")" +
@@ -507,30 +408,9 @@ public class DatabaseHandler extends Configs {
             return -2;
         }
     }
-    //забронировать место UPdate booked in bd,
-    // если место занято-1, если ошибка -2, если забронировано выводит № брони
-//    public int Book(String flight, String seat){
-//       int newBookedNumber=(maxBookedNumber()+1);
-//       if (isFree(flight,seat)){
-//        String query=" UPDATE "+Const.SEAT_TABLE+
-//                     " SET "+Const.SEATS_BOOKED + " = "+newBookedNumber+
-//                     " WHERE "+Const.FLIGHTS_ID + " = '"+ flight+
-//                     "' AND "+ Const.SEAT+" = '"+seat+"'";
-//        try (Statement statement = dbConnection.createStatement();
-//             ResultSet rs = statement.executeQuery(query)) {
-//            rs.next();
-//            return newBookedNumber;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return  -2;
-//        }
-//    }
-//       else{return -1;}
-//
-//}
 
-    //    забронировать местa UPdate booked in bd,
-//     если место занято-1, если ошибка -2, если забронировано выводит № брони
+
+    //     book   return array of seats
     public static int book(ArrayList<Seat> seatsToBook, double total) throws RuntimeException, SQLException {
 
         for (Seat i : seatsToBook) {
@@ -553,6 +433,7 @@ public class DatabaseHandler extends Configs {
                     " SET " + Const.SEATS_BOOKED + " = " + bookingNumber +
                     " WHERE " + Const.FLIGHTS_ID + " = " + stFlightToBook +
                     " AND " + Const.SEAT + " = " + stSeatToBook;
+            System.out.println(query);
             statement = dbConnection.createStatement();
             rs = statement.executeQuery(query);
             rs.next();
@@ -567,11 +448,12 @@ public class DatabaseHandler extends Configs {
 
         return bookingNumber;
     }
-
+    //add Booking To User
     public static void addBookingToUser(int booking, String login) throws SQLException {
         String query = " UPDATE " + Const.USER_TABLE +
                 " SET " + Const.USER_BOOKING_NUMBER + " = " + booking +
                 " WHERE " + Const.USER_LOGIN + " = '" + login + "'";
+        System.out.println(query);
         Statement statement = dbConnection.createStatement();
         statement.executeUpdate(query);
     }
@@ -606,6 +488,7 @@ public class DatabaseHandler extends Configs {
         clearUsersBooking(booking);
     }
 
+    //for admin: dell unvalid bookings
     public String DelUnValidBooking() {
         String query = " DELETE FROM " + Const.BOOKING_TABLE +
                 " WHERE " + Const.BOOKING_DATE+ " + 1 < SYSDATE " ;
@@ -621,7 +504,7 @@ public class DatabaseHandler extends Configs {
 
     }
 
-
+    //seats In Booking by booking number
     public static ArrayList<Seat> seatsInBooking(int bookingNumber) {
         String query = String.format(
                 "SELECT %1$s.*," +
@@ -655,7 +538,7 @@ public class DatabaseHandler extends Configs {
         }
         return arList;
     }
-
+// for admin to dell unvalid booking
     public boolean isBookingValid(int BookingNumber) {
 
         String query = " SELECT " + Const.BOOKING_DATE +
@@ -678,7 +561,7 @@ public class DatabaseHandler extends Configs {
         }
         return false;
     }
-
+//Sign up  return login
     public static String SignUp(String login, String password, String passTocheck) throws RuntimeException{
         if (!Objects.equals(password, passTocheck)) {
             throw new RuntimeException("Passwords don't match!");
@@ -708,7 +591,7 @@ public class DatabaseHandler extends Configs {
         String query = " SELECT COUNT(*) FROM " + Const.USER_TABLE +
                 " WHERE " + Const.USER_LOGIN + "='" + login + "'" +
                 " AND " + Const.USER_PASS + "='" + password + "'";
-        //System.out.println(query);
+        System.out.println(query);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -720,7 +603,7 @@ public class DatabaseHandler extends Configs {
                         " FROM " + Const.USER_TABLE +
                         " WHERE " + Const.USER_LOGIN + "='" + login + "'" +
                         " AND " + Const.USER_PASS + "='" + password + "'";
-                //System.out.println(query1);
+             System.out.println(query1);
                 try (Statement statement1 = dbConnection.createStatement();
                      ResultSet rs1 = statement1.executeQuery(query1)) {
                     rs1.next();
@@ -740,7 +623,7 @@ public class DatabaseHandler extends Configs {
         String query1 = " SELECT " + Const.USER_BOOKING_NUMBER +
                 " FROM " + Const.USER_TABLE +
                 " WHERE " + Const.USER_LOGIN + "='" + login + "'";
-        //System.out.println(query1);
+        System.out.println(query1);
         try (Statement statement1 = dbConnection.createStatement();
              ResultSet rs1 = statement1.executeQuery(query1)) {
             rs1.next();
@@ -755,7 +638,7 @@ public class DatabaseHandler extends Configs {
         String query = " SELECT " + Const.BOOKING_Total +
                 " FROM " + Const.BOOKING_TABLE +
                 " WHERE " + Const.BOOKING_NUMBER + " = '" + BookingNumber + "'";
-        //System.out.println(query);
+        System.out.println(query);
         Statement statement = dbConnection.createStatement();
         ResultSet rs = statement.executeQuery(query);
         rs.next();
@@ -885,31 +768,6 @@ public class DatabaseHandler extends Configs {
             return result;
     }
 
-    public String MyFlight(String passport){
-        String query="SELECT * FROM "+Const.PASSENGER_TABLE+
-                " WHERE "+Const.PASSENGER_ID+"= '"+passport+"'";
-        String MyFlight="";
-        try (Statement statement = dbConnection.createStatement();
-             ResultSet rs = statement.executeQuery(query)) {
-            rs.next();
-            MyFlight+="This amazing person: "+ rs.getString(Const.PASSENGER_FIRST_NAME)+
-                    " "+rs.getString(Const.PASSENGER_LAST_NAME)+'\n';
-            MyFlight+="Will flight on comfortable chair number "+rs.getString(Const.PASSENGER_SEAT)+'\n';
-            String Flight= rs.getString(Const.PASSENGER_FLIGHT);
-            MyFlight+="On flight number "+Flight+'\n';
-            MyFlight+="To wonderful journey:"+qFromToCities(Flight)+"("+
-                    qFromTo(Flight)+")"+'\n';
-            MyFlight+= "Which starts at "+getDeparture(Flight).toString()+'\n';
-            MyFlight+= "And will arrive to destination at "+getArrival(Flight)+'\n';
-            MyFlight+= "Have a nice flight!";
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return MyFlight;
-
-    }
     public static String getClass(String seat, String flight) {
      String query = "SELECT " + Const.SEATS_class +
              " FROM " + Const.SEAT_TABLE +

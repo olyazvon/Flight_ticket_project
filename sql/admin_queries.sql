@@ -1,14 +1,5 @@
 alter session set nls_date_format='DD/MM/YYYY hh24:mi';
 
-
-
-
-select * from airports;
-/*
-
-• book a flight for a user.
-
-*/
 -- adding/removing flights(admin can add flight only for existig airport)
 INSERT INTO airports VALUES('VKO','Moscow','Russia');
 INSERT INTO flights VALUES('ARTHNYS','VKO','TLV','23/02/2024 13:15','23/02/2024 17:15',450,670);
@@ -52,5 +43,40 @@ Delete Seats where flight_id='02EKPYM' and seat='30A';
 Select count (distinct  country) from airports;
 
 
---• book a flight for a user.
+-- delete unvalid bookings:(booking is valid for 24 hours)
+DELETE FROM Administrator.Bookings WHERE BookingDate + 1 < SYSDATE;
 
+
+--Select all flights with seats and more than 1 hour departure time
+
+SELECT fl.flight_id,airport_from,airport_to, to_char(Departure, 'dd.mm.yy hh24:mi'), to_char(Arrival, 'dd.mm.yy hh24:mi'), 
+       PriceEconom,PriceBusiness, s_economy.seats_left_economy, s_business.seats_left_business 
+FROM Administrator.flights fl,
+    (SELECT flight_id, (count(seat) - count(booked)) AS seats_left_Business
+        FROM Administrator.seats WHERE TicketClass= 'Business' GROUP BY flight_id) s_business,
+     (SELECT flight_id, (count(seat) - count(booked)) AS seats_left_Economy 
+        FROM Administrator.seats WHERE TicketClass= 'Economy' GROUP BY flight_id) s_economy 
+WHERE fl.flight_id=s_economy.flight_id and fl.flight_id=s_business.flight_id  and
+     (seats_left_business > 0 OR seats_left_economy > 0) AND 
+     Departure > (SElect SYSDATE + 1/24 from dual);
+     
+     
+     --Select flight by flight_id with seats and more than 1 hour departure time
+
+SELECT fl.flight_id,airport_from,airport_to, to_char(Departure, 'dd.mm.yy hh24:mi'), to_char(Arrival, 'dd.mm.yy hh24:mi'), 
+       PriceEconom,PriceBusiness, s_economy.seats_left_economy, s_business.seats_left_business 
+FROM Administrator.flights fl,
+    (SELECT flight_id, (count(seat) - count(booked)) AS seats_left_Business
+        FROM Administrator.seats WHERE TicketClass= 'Business' GROUP BY flight_id) s_business,
+     (SELECT flight_id, (count(seat) - count(booked)) AS seats_left_Economy 
+        FROM Administrator.seats WHERE TicketClass= 'Economy' GROUP BY flight_id) s_economy 
+WHERE fl.flight_id=s_economy.flight_id and fl.flight_id=s_business.flight_id  and
+     (seats_left_business > 0 OR seats_left_economy > 0) AND 
+     Departure > (SElect SYSDATE + 1/24 from dual) and fl.flight_id='3U9QSVG';
+     
+     --insert new booking  into bookings:     
+     
+     INSERT INTO Administrator.Bookings VALUES (43255, 1499.76, TO_DATE('2024-01-28', 'YYYY-MM-DD'))
+
+ -- insert pasenger  
+INSERT INTO Administrator.PASSENGERS VALUES ('13258','iii','uuu','7G','TQUISY3')
