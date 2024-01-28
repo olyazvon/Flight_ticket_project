@@ -1,36 +1,38 @@
-
-CREATE USER admin IDENTIFIED BY 1234;
 ALTER SESSION SET CURRENT_SCHEMA = administrator;
- 
- 
-CREATE USER clients IDENTIFIED BY 123;
-ALTER SESSION SET CURRENT_SCHEMA = administrator;
+ CREATE user admin IDENTIFIED BY 1234;
+GRANT CREATE SESSION TO admin;
+GRANT CREAT;
 
---Creating roles
+ CREATE user clients IDENTIFIED BY 123;
+GRANT CREATE SESSION TO clients;
+
+--roles:
 CREATE ROLE cl;
 CREATE ROLE admin_role;
---Giving permissions
+
+--privilages
 GRANT SELECT ON AIRPORTS TO cl;
 GRANT SELECT ON FLIGHTS TO cl;
 GRANT SELECT ON SEATS TO cl;
-
-GRANT UPDATE (booked) ON seats TO cl;
-GRANT UPDATE (bought) ON seats TO cl;
-GRANT Select,UPDATE,INSERT ON users TO cl;
-GRANT SELECT,UPDATE,INSERT,DELETE ON passengers TO cl;
-GRANT SELECT,UPDATE,INSERT,DELETE ON bookings TO cl;
-
-GRANT CREATE SESSION TO cl;
+GRANT UPDATE (booked) on seats to cl;
+GRANT UPDATE (bought) on seats to cl;
+GRANT Select,UPDATE,Insert on users to cl;
+GRANT SELECT,UPDATE,INSERT,delete on passengers to cl;
+GRANT SELECT,UPDATE,Insert,Delete on bookings to cl;
 
 
+GRANT SELECT,UPDATE,INSERT,delete ON AIRPORTS TO admin_role;
+GRANT SELECT,UPDATE,INSERT,delete ON FLIGHTS TO admin_role;
+GRANT SELECT,UPDATE,INSERT,delete ON SEATS TO admin_role;
+GRANT SELECT,UPDATE,INSERT,delete on users to admin_role;
+GRANT SELECT,UPDATE,Insert,Delete on passengers to admin_role;
 
-GRANT SELECT,UPDATE,INSERT,DELETE ON airports TO admin_role;
-GRANT SELECT,UPDATE,INSERT,DELETE ON flights TO admin_role;
-GRANT SELECT,UPDATE,INSERT,DELETE ON seats TO admin_role;
-GRANT SELECT,UPDATE,INSERT,DELETE ON users TO admin_role;
-GRANT SELECT,UPDATE,INSERT,DELETE ON passengers TO admin_role;
-GRANT CREATE SESSION TO admin_role;
-
---Connecting roles with users
 GRANT cl TO clients;
-GRANT admin_role TO admin;
+GRANT admin_role to admin;
+
+GRANT CREATE SESSION TO clients;
+GRANT CREATE SESSION TO admin;
+
+
+
+
