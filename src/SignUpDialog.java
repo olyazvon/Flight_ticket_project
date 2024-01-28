@@ -26,27 +26,21 @@ public class SignUpDialog extends JDialog {
                 result = null;
             }
         });
-        // добавляем расположение в центр окна
         getContentPane().add(createGUI());
         setResizable(false);
-        // задаем предпочтительный размер
         pack();
         setSize(getSize());
         setLocationRelativeTo(parent);
         setModal(true);
-        // выводим окно на экран
         setVisible(true);
     }
 
-    // этот метод будет возвращать панель с созданным расположением
     private JPanel createGUI() {
-        // Создание панели для размещение компонентов
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        // Определение отступов от границ ранели. Для этого используем пустую рамку
         panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        // Создание панели для размещения метки и текстового поля логина
+        // Panel for login
         JPanel name = new JPanel();
         name.setLayout(new BoxLayout(name, BoxLayout.X_AXIS));
         JLabel nameLabel = new JLabel("Login:", SwingConstants.RIGHT);
@@ -57,7 +51,7 @@ public class SignUpDialog extends JDialog {
         tfLogin.setBorder(BorderFactory.createLoweredBevelBorder());
         name.add(tfLogin);
 
-        // Создание панели для размещения метки и текстового поля пароля
+        // Panel for password
         JPanel password = new JPanel();
         password.setLayout(new BoxLayout(password, BoxLayout.X_AXIS));
         JLabel passwrdLabel = new JLabel("Password:", SwingConstants.RIGHT);
@@ -77,7 +71,7 @@ public class SignUpDialog extends JDialog {
         tfRepeat.setBorder(BorderFactory.createLoweredBevelBorder());
         passwordToCheck.add(tfRepeat);
 
-        // Создание панели для размещения кнопок управления
+        // Panel for buttons
         JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         btnOk = new JButton("Sign up");
         //btnCancel = new JButton("Cancel");
@@ -95,13 +89,11 @@ public class SignUpDialog extends JDialog {
                 }
             }
         });
-
-        // Определение размеров надписей к текстовым полям
-
+        // Label size
         nameLabel.setPreferredSize(new Dimension(65, 20));
         passwrdLabel.setPreferredSize(new Dimension(65, 20));
         passwrdToCheckLabel.setPreferredSize(new Dimension(65, 20));
-        // Сборка интерфейса
+        // Interface
         panel.add(name);
         panel.add(Box.createVerticalStrut(12));
         panel.add(password);
@@ -109,15 +101,11 @@ public class SignUpDialog extends JDialog {
         panel.add(passwordToCheck);
         panel.add(Box.createVerticalStrut(12));
         panel.add(flow);
-        // готово
+        //return
         return panel;
     }
 
-    // тестовый метод для проверки диалогового окна
-    public static void main(String[] args) {
-        SignUpDialog a = new SignUpDialog(new JFrame());
-        System.out.println(a.tfLogin);
-    }
+
 
 
 }

@@ -23,27 +23,21 @@ public class LoginDialog extends JDialog {
                 resultLogin = null;
             }
         });
-        // добавляем расположение в центр окна
         getContentPane().add(createGUI());
         setResizable(false);
-        // задаем предпочтительный размер
         pack();
         setSize(getSize());
         setLocationRelativeTo(parent);
         setModal(true);
-        // выводим окно на экран
         setVisible(true);
     }
 
-    // этот метод будет возвращать панель с созданным расположением
     private JPanel createGUI() {
-        // Создание панели для размещение компонентов
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        // Определение отступов от границ ранели. Для этого используем пустую рамку
         panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        // Создание панели для размещения метки и текстового поля логина
+        // Panel for login
         JPanel name = new JPanel();
         name.setLayout(new BoxLayout(name, BoxLayout.X_AXIS));
         JLabel nameLabel = new JLabel("Login:", SwingConstants.RIGHT);
@@ -54,7 +48,7 @@ public class LoginDialog extends JDialog {
         tfLogin.setBorder(BorderFactory.createLoweredBevelBorder());
         name.add(tfLogin);
 
-        // Создание панели для размещения метки и текстового поля пароля
+      // Panel for password
         JPanel password = new JPanel();
         password.setLayout(new BoxLayout(password, BoxLayout.X_AXIS));
         JLabel passwrdLabel = new JLabel("Password:", SwingConstants.RIGHT);
@@ -64,7 +58,7 @@ public class LoginDialog extends JDialog {
         tfPassword.setFont(new Font(null, Font.PLAIN, 14));
         tfPassword.setBorder(BorderFactory.createLoweredBevelBorder());
         password.add(tfPassword);
-        // Создание панели для размещения кнопок управления
+        // Panel for buttons
         JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         btnOk = new JButton("Log in");
         //btnCancel = new JButton("Cancel");
@@ -85,27 +79,23 @@ public class LoginDialog extends JDialog {
             }
         });
 
-        // Определение размеров надписей к текстовым полям
+        // Label size
 
         nameLabel.setPreferredSize(new Dimension(63, 20));
         passwrdLabel.setPreferredSize(new Dimension(63, 20));
 
-        // Сборка интерфейса
+        // Interface
         panel.add(name);
         panel.add(Box.createVerticalStrut(12));
         panel.add(password);
         panel.add(Box.createVerticalStrut(12));
         panel.add(flow);
-        // готово
+        // return
         return panel;
     }
 
 
-    // тестовый метод для проверки диалогового окна
-    public static void main(String[] args) {
-        JDialog a = new LoginDialog(new JFrame());
-        a.getContentPane();
-    }
+
 
 
 }

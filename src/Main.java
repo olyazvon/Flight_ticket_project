@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import static com.sun.java.accessibility.util.AWTEventMonitor.addActionListener;
 
 public class Main {
@@ -12,6 +11,7 @@ public class Main {
         DatabaseHandler.makeDbConnection();
         MainWindowC mainWindow = new MainWindowC();
         mainWindow.setVisible(true);
+
     }
 
     public static  boolean  noNumbersInString(String st){
