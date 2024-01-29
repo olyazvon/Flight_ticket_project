@@ -4,6 +4,7 @@ import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 
 import javax.swing.*;
@@ -43,7 +44,19 @@ public class SelectPanel extends JPanel {
         dateSettings.setFormatForDatesCommonEra("dd.MM.yyyy");
         dateSettings.setFormatForDatesBeforeCommonEra("dd.MM.uuuu");
         FlightTableModel tabMod = new FlightTableModel(DatabaseHandler.search_flights(DatabaseHandler.q_search_flights(new String[]{"Any iata"},new String[]{"Any iata"},null,null)));
-        table = new JTable(tabMod);
+        table = new JTable(tabMod){
+            public String getToolTipText(MouseEvent e) {
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = convertColumnIndexToModel(columnAtPoint(p));
+
+                if (colIndex == 1) {
+                    return DatabaseHandler.qFromToCities((String)getValueAt(rowIndex, 0));
+                }
+                return null;
+            }
+        };
+
         //table.setDefaultEditor(Object.class, null);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
