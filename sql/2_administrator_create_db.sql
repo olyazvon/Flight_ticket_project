@@ -9,7 +9,6 @@ Drop TABLE bookings;
 
 --create tables
 
-
 --@@'C:\Users\admin\Documents\MSSE\Project\seats.sql';
 --@@'C:\Users\admin\Documents\MSSE\Project\users_passengers.sql';
 --@@'C:\Users\admin\Documents\MSSE\Project\airports.sql';
@@ -22,5 +21,9 @@ Drop TABLE bookings;
 @@'C:\Users\misha\IdeaProjects\TestGUI\sql\flights.sql' ;
 @@'C:\Users\misha\IdeaProjects\TestGUI\sql\bookings.sql';
 
-
+select count(*) from users;
+select count(*) from passengers;
+select count(*) from airports;
+select count(*) from flights;
 select count(*) from seats;
+select count(*) from bookings;
