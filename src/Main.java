@@ -1,3 +1,5 @@
+// O. Zvonkina and M. Solovyev, 2024
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
