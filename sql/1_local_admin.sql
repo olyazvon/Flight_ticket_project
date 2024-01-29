@@ -1,4 +1,4 @@
-DROP USER administrator;
+DROP USER administrator CASCADE;
 
 CREATE user administrator IDENTIFIED BY 12345;
 
