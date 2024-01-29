@@ -300,7 +300,7 @@ public class SearchPanel extends JPanel {
     private boolean matchFromTo(String one, String two) {
         String[] oneSpl = one.split(" - ");
         String[] twoSpl = two.split(" - ");
-        System.out.println(Arrays.toString(oneSpl) + "   " + Arrays.toString(twoSpl));
+        //System.out.println(Arrays.toString(oneSpl) + "   " + Arrays.toString(twoSpl));
         return Objects.equals(oneSpl[0], twoSpl[1]) && Objects.equals(oneSpl[1], twoSpl[0]);
     }
 

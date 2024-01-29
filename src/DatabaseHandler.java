@@ -136,7 +136,7 @@ public class DatabaseHandler extends Configs {
             for (String i : iata_from) {
                 stIata_from += "'" + i + "'" + ",";
             }
-            System.out.println(Arrays.toString(iata_from));
+            //System.out.println(Arrays.toString(iata_from));
             if ((iata_from.length != 1 || iata_from[0].equals("Any iata"))) {
                 stIata_from = "(" + stIata_from.substring(iata_from[0].length() + 3, stIata_from.length() - 1) + ")";
             } else {
@@ -176,7 +176,7 @@ public class DatabaseHandler extends Configs {
                         "', 'yyyy-mm-dd hh24:mi')";
             }
         }
-        System.out.println(query);
+        //System.out.println(query);
         return query;
 
     }
@@ -321,7 +321,7 @@ public class DatabaseHandler extends Configs {
                 Const.FLIGHTS_FROM, Const.FLIGHTS_TO,
                 Const.FLIGHT_TABLE,
                 Const.FLIGHTS_ID, flight);
-        System.out.println(query);
+        //System.out.println(query);
         String result = "";
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -379,7 +379,7 @@ public class DatabaseHandler extends Configs {
                 " FROM " + Const.SEAT_TABLE +
                 " WHERE " + Const.FLIGHTS_ID + " = '" + flight +
                 "' AND " + Const.SEAT + " = '" + seat + "'";
-        System.out.println(query);
+        //System.out.println(query);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -433,7 +433,7 @@ public class DatabaseHandler extends Configs {
                     " SET " + Const.SEATS_BOOKED + " = " + bookingNumber +
                     " WHERE " + Const.FLIGHTS_ID + " = " + stFlightToBook +
                     " AND " + Const.SEAT + " = " + stSeatToBook;
-            System.out.println(query);
+            //System.out.println(query);
             statement = dbConnection.createStatement();
             rs = statement.executeQuery(query);
             rs.next();
@@ -442,7 +442,7 @@ public class DatabaseHandler extends Configs {
         query = " INSERT INTO " + Const.BOOKING_TABLE +
                 " VALUES ("+bookingNumber+", "+total+
                 ", TO_DATE('"+LocalDate.now()+"', 'YYYY-MM-DD'"+"))";
-        System.out.println(query);
+        //System.out.println(query);
         statement = dbConnection.createStatement();
         statement.executeUpdate(query);
 
@@ -453,7 +453,7 @@ public class DatabaseHandler extends Configs {
         String query = " UPDATE " + Const.USER_TABLE +
                 " SET " + Const.USER_BOOKING_NUMBER + " = " + booking +
                 " WHERE " + Const.USER_LOGIN + " = '" + login + "'";
-        System.out.println(query);
+        //System.out.println(query);
         Statement statement = dbConnection.createStatement();
         statement.executeUpdate(query);
     }
@@ -462,7 +462,7 @@ public class DatabaseHandler extends Configs {
         String query = " UPDATE " + Const.SEAT_TABLE +
                 " SET " + Const.SEATS_BOOKED + " = " + "null" +
                 " WHERE " + Const.SEATS_BOOKED + " = " + BookingNumber;
-        //System.out.println(query);
+        ////System.out.println(query);
         Statement statement = dbConnection.createStatement();
         statement.executeUpdate(query);
     }
@@ -492,7 +492,7 @@ public class DatabaseHandler extends Configs {
     public String DelUnValidBooking() {
         String query = " DELETE FROM " + Const.BOOKING_TABLE +
                 " WHERE " + Const.BOOKING_DATE+ " + 1 < SYSDATE " ;
-        System.out.println(query);
+        //System.out.println(query);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             statement.executeUpdate(query);
@@ -517,7 +517,7 @@ public class DatabaseHandler extends Configs {
                 Const.SEAT_TABLE, Const.FLIGHT_TABLE,
                 Const.SEAT_TABLE, Const.SEATS_FLIGHT_ID, Const.FLIGHT_TABLE, Const.FLIGHTS_ID,
                 Const.SEAT_TABLE, Const.SEATS_BOOKED, bookingNumber);
-        //System.out.println(query);
+        ////System.out.println(query);
         ArrayList arList = new ArrayList<Seat>();
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
@@ -544,7 +544,7 @@ public class DatabaseHandler extends Configs {
         String query = " SELECT " + Const.BOOKING_DATE +
                 " FROM " + Const.BOOKING_TABLE +
                 " WHERE " + Const.BOOKING_NUMBER + " = '" + BookingNumber + "'";
-        //System.out.println(query);
+        ////System.out.println(query);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -573,7 +573,7 @@ public class DatabaseHandler extends Configs {
             String query = " INSERT INTO " + Const.USER_TABLE +
                     "(" + Const.USER_LOGIN + "," + Const.USER_PASS + ")" +
                     "VALUES ('" + login + "','" + password + "')";
-            System.out.println(query);
+            //System.out.println(query);
             try (Statement statement = dbConnection.createStatement();
                  ResultSet rs = statement.executeQuery(query)) {
 
@@ -591,7 +591,7 @@ public class DatabaseHandler extends Configs {
         String query = " SELECT COUNT(*) FROM " + Const.USER_TABLE +
                 " WHERE " + Const.USER_LOGIN + "='" + login + "'" +
                 " AND " + Const.USER_PASS + "='" + password + "'";
-        System.out.println(query);
+        //System.out.println(query);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -603,7 +603,7 @@ public class DatabaseHandler extends Configs {
                         " FROM " + Const.USER_TABLE +
                         " WHERE " + Const.USER_LOGIN + "='" + login + "'" +
                         " AND " + Const.USER_PASS + "='" + password + "'";
-             System.out.println(query1);
+             //System.out.println(query1);
                 try (Statement statement1 = dbConnection.createStatement();
                      ResultSet rs1 = statement1.executeQuery(query1)) {
                     rs1.next();
@@ -623,7 +623,7 @@ public class DatabaseHandler extends Configs {
         String query1 = " SELECT " + Const.USER_BOOKING_NUMBER +
                 " FROM " + Const.USER_TABLE +
                 " WHERE " + Const.USER_LOGIN + "='" + login + "'";
-        System.out.println(query1);
+        //System.out.println(query1);
         try (Statement statement1 = dbConnection.createStatement();
              ResultSet rs1 = statement1.executeQuery(query1)) {
             rs1.next();
@@ -638,7 +638,7 @@ public class DatabaseHandler extends Configs {
         String query = " SELECT " + Const.BOOKING_Total +
                 " FROM " + Const.BOOKING_TABLE +
                 " WHERE " + Const.BOOKING_NUMBER + " = '" + BookingNumber + "'";
-        System.out.println(query);
+        //System.out.println(query);
         Statement statement = dbConnection.createStatement();
         ResultSet rs = statement.executeQuery(query);
         rs.next();
@@ -654,7 +654,7 @@ public class DatabaseHandler extends Configs {
                    "TO_DATE('" + carddate + "', 'YYYY-MM-DD')" + " , " +
                    Const.USER_NAME + " = '" + name + "'" +
                    " WHERE " + Const.USER_LOGIN + " = '" + login + "'";
-           System.out.println(query);
+           //System.out.println(query);
            try (Statement statement = dbConnection.createStatement();
                 ResultSet rs = statement.executeQuery(query)) {
                rs.next();
@@ -673,7 +673,7 @@ public class DatabaseHandler extends Configs {
            String query1 = " UPDATE " + Const.USER_TABLE +
                    " SET "+Const.USER_BOOKING_NUMBER+"= null"+
                    " WHERE " + Const.USER_BOOKING_NUMBER + " = " + bookingNumber;
-           System.out.println(query);
+           //System.out.println(query);
            Statement statement1 = dbConnection.createStatement();
            ResultSet rs1 = statement1.executeQuery(query1);
            rs1.next();
@@ -689,7 +689,7 @@ public class DatabaseHandler extends Configs {
                String query=String.format("INSERT INTO "+Const.PASSENGER_TABLE+
                        " VALUES ("+"'%1$s','%2$s','%3$s','%4$s','%5$s')",
                        Passport,LastName,FirstName,Seat,Flight);
-               System.out.println(query);
+               //System.out.println(query);
                try (Statement statement = dbConnection.createStatement();
                     ResultSet rs = statement.executeQuery(query)) {
                    rs.next();
@@ -707,7 +707,7 @@ public class DatabaseHandler extends Configs {
                                      " WHERE "+ Const.SEATS_BOOKED+" = " +BookingNumber+
                                      ")");
 
-        System.out.println(query);
+        //System.out.println(query);
            try (Statement statement = dbConnection.createStatement()){
                statement.executeUpdate(query);
            } catch (Exception e) {
@@ -721,7 +721,7 @@ public class DatabaseHandler extends Configs {
                 + Const.USER_CARD_DATE + "," + Const.USER_NAME +
                 " FROM " + Const.USER_TABLE +
                 " WHERE " +Const.USER_LOGIN + "= '" + login +"'";
-        System.out.println(query);
+        //System.out.println(query);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(query)) {
             rs.next();
@@ -743,7 +743,7 @@ public class DatabaseHandler extends Configs {
                 " a WHERE a."+Const.AIRPORTS_ID+" = "+Const.FLIGHTS_FROM +
                 " AND "+Const.FLIGHTS_ID+" = '"+ flight+"'");
 
-        System.out.println(queryFrom);
+        //System.out.println(queryFrom);
         String result = "";
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs = statement.executeQuery(queryFrom)) {
@@ -757,7 +757,7 @@ public class DatabaseHandler extends Configs {
                         " FROM "+     Const.FLIGHT_TABLE + " , " + Const.AIRPORT_TABLE+
                         " a WHERE a."+Const.AIRPORTS_ID+" = "+Const.FLIGHTS_TO+
                         " AND "+Const.FLIGHTS_ID+" = '"+ flight+"'");
-        System.out.println(queryTo);
+        //System.out.println(queryTo);
         try (Statement statement = dbConnection.createStatement();
              ResultSet rs1 = statement.executeQuery(queryTo)) {
             rs1.next();
@@ -773,7 +773,7 @@ public class DatabaseHandler extends Configs {
              " FROM " + Const.SEAT_TABLE +
              " WHERE " + Const.SEAT + "= '" + seat + "' AND " +
              Const.SEATS_FLIGHT_ID + "= '" + flight + "'";
-     System.out.println(query);
+     //System.out.println(query);
      String Class;
      try (Statement statement = dbConnection.createStatement();
           ResultSet rs = statement.executeQuery(query)) {
@@ -792,7 +792,7 @@ public class DatabaseHandler extends Configs {
                         " WHERE " + Const.PASSENGER_SEAT + " = '" + Seat + "' AND " +
                         Const.PASSENGER_FLIGHT + " = '" + Flight + "'");
 
-        System.out.println(query);
+        //System.out.println(query);
 
         String[] Passenger = new String[3];
         try (Statement statement = dbConnection.createStatement();
@@ -820,7 +820,7 @@ public class DatabaseHandler extends Configs {
                 MyFlight [1]= rs.getString(Const.PASSENGER_SEAT);
                 String Flight = rs.getString(Const.PASSENGER_FLIGHT);
                 MyFlight [2] = Flight;
-                System.out.println(Flight);
+                //System.out.println(Flight);
                 MyFlight [3] = qFromToCities(Flight) + " (" +
                                qFromTo(Flight) + ")";
                 MyFlight [4] = getDeparture(Flight).format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm"));

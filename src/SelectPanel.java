@@ -192,7 +192,7 @@ public class SelectPanel extends JPanel {
                 } else {
                     arrayTo = new String[] {(String) iataTo.getSelectedItem()};
                 }
-                System.out.println(Arrays.toString(arrayFrom));
+                //System.out.println(Arrays.toString(arrayFrom));
                 tabMod.data = DatabaseHandler.search_flights(DatabaseHandler.q_search_flights(arrayFrom, arrayTo, dateP.getDate(),timeP.getTime()));
                 tabMod.fireTableDataChanged();
             }
@@ -226,7 +226,7 @@ public class SelectPanel extends JPanel {
                 stepsToDisappear--;
                 if (stepsToDisappear <= 0) {
                     timer.stop();
-                    System.out.println("stop");
+                    //System.out.println("stop");
                     dateP.setDate(null);
                     earlierPanel.setMaxDate(LocalDate.MAX);
                 }
@@ -252,7 +252,7 @@ public class SelectPanel extends JPanel {
                 stepsToGrow--;
                 if (stepsToGrow <= 0) {
                     timer.stop();
-                    System.out.println("stop");
+                    //System.out.println("stop");
                 }
                 //repaint();
                 revalidate();
