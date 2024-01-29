@@ -1,3 +1,5 @@
+ALTER SESSION SET CURRENT_SCHEMA = administrator;
+
 Drop TABLE Users;
 Drop TABLE Passengers;
 Drop TABLE seats;
